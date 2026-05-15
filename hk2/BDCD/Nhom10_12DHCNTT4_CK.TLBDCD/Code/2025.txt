@@ -1,0 +1,360 @@
+// =====================
+// 1) RANH GIỚI HÀ NỘI
+// =====================
+var hanoiFc = ee.FeatureCollection(
+  "projects/vernal-tracer-472104-c0/assets/Ha_Noi_tinh_thanh_34"
+);
+
+var region = hanoiFc.geometry();
+
+Map.centerObject(region, 9);
+
+Map.addLayer(
+  hanoiFc.style({
+    color: 'red',
+    fillColor: '00000000',
+    width: 2
+  }),
+  {},
+  'Hanoi boundary'
+);
+
+
+// =====================
+// 2) THỜI GIAN
+// =====================
+var startDate = '2025-03-01';
+var endDate   = '2025-10-01';
+var maxCloud  = 20;
+
+
+// =====================
+// 3) CLOUD MASK
+// =====================
+function maskL89(img){
+
+  var qa = img.select('QA_PIXEL');
+
+  var cloud  = qa.bitwiseAnd(1 << 3).neq(0);
+  var shadow = qa.bitwiseAnd(1 << 4).neq(0);
+  var cirrus = qa.bitwiseAnd(1 << 2).neq(0);
+  var snow   = qa.bitwiseAnd(1 << 5).neq(0);
+
+  var mask = cloud.or(shadow).or(cirrus).or(snow).not();
+
+  return img.updateMask(mask);
+}
+
+
+// =====================
+// 4) TÍNH LST NDVI NDBI
+// =====================
+function addIndices(img){
+
+  var lstK = img.select('ST_B10')
+    .multiply(0.00341802)
+    .add(149.0);
+
+  var lstC = lstK.subtract(273.15)
+    .rename('LST_C');
+
+  var ndvi = img.normalizedDifference(['SR_B5','SR_B4'])
+    .rename('NDVI');
+
+  var ndbi = img.normalizedDifference(['SR_B6','SR_B5'])
+    .rename('NDBI');
+
+  return img.addBands([lstC, ndvi, ndbi]);
+}
+
+
+// =====================
+// 5) LANDSAT 8 + 9
+// =====================
+var l8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
+  .filterDate(startDate,endDate)
+  .filterBounds(region)
+  .filter(ee.Filter.lte('CLOUD_COVER', maxCloud))
+  .map(maskL89)
+  .map(addIndices);
+
+var l9 = ee.ImageCollection("LANDSAT/LC09/C02/T1_L2")
+  .filterDate(startDate,endDate)
+  .filterBounds(region)
+  .filter(ee.Filter.lte('CLOUD_COVER', maxCloud))
+  .map(maskL89)
+  .map(addIndices);
+
+var col = l8.merge(l9);
+
+print('L8 scenes:',l8.size());
+print('L9 scenes:',l9.size());
+print('Total scenes:',col.size());
+
+var comp2025 = col
+  .select(['LST_C','NDVI','NDBI'])
+  .median()
+  .clip(region);
+
+
+// =====================
+// 6) BUILT / VEG MASK
+// =====================
+var dw2025 = ee.ImageCollection('GOOGLE/DYNAMICWORLD/V1')
+  .filterDate(startDate,endDate)
+  .filterBounds(region);
+
+var dwLabel2025 = dw2025
+  .select('label')
+  .mode()
+  .clip(region);
+
+
+// BUILT
+var builtMask2025 = dwLabel2025
+  .eq(6)
+  .selfMask()
+  .rename('BuiltMask')
+  .clip(region);
+
+
+// VEGETATION
+var vegMask2025 = dwLabel2025
+  .eq(1)
+  .or(dwLabel2025.eq(2))
+  .or(dwLabel2025.eq(4))
+  .or(dwLabel2025.eq(5))
+  .selfMask()
+  .rename('VegMask')
+  .clip(region);
+
+
+// ADD BANDS
+var out2025 = comp2025
+  .addBands(builtMask2025)
+  .addBands(vegMask2025)
+  .clip(region);
+
+
+// =====================
+// 7) SUHI
+// =====================
+var lst2025 = out2025.select('LST_C');
+
+var meanBuilt2025 = ee.Number(
+  lst2025.updateMask(builtMask2025).reduceRegion({
+    reducer: ee.Reducer.mean(),
+    geometry: region,
+    scale: 30,
+    maxPixels: 1e13,
+    bestEffort:true
+  }).get('LST_C')
+);
+
+var meanVeg2025 = ee.Number(
+  lst2025.updateMask(vegMask2025).reduceRegion({
+    reducer: ee.Reducer.mean(),
+    geometry: region,
+    scale: 30,
+    maxPixels: 1e13,
+    bestEffort:true
+  }).get('LST_C')
+);
+
+var suhiIntensity2025 = meanBuilt2025.subtract(meanVeg2025);
+
+var suhi2025 = lst2025
+  .subtract(meanVeg2025)
+  .rename('SUHI_C');
+
+print('Mean LST Built:',meanBuilt2025);
+print('Mean LST Veg:',meanVeg2025);
+print('SUHI intensity:',suhiIntensity2025);
+
+out2025 = out2025.addBands(suhi2025);
+
+
+// =====================
+// 8) VISUALIZATION
+// =====================
+var lstViz = {
+  min:20,
+  max:45,
+  palette:["#0000FF","#0066FF","#00FFFF","#00FF00",
+           "#FFFF00","#FFCC00","#FF6600","#FF0000"]
+};
+
+var ndviViz = {
+  min:-0.2,
+  max:1,
+  palette:['#FF0000','#FF7F00','#FFFF00','#ADFF2F',
+           '#00FF00','#00FFFF','#007FFF','#0000FF']
+};
+
+var ndbiViz = {
+  min:-0.5,
+  max:0.5,
+  palette:['#2c7bb6','#00a6ca','#00ccbc','#90eb9d',
+           '#ffff8c','#f9d057','#f29e2e','#e76818','#d7191c']
+};
+
+var suhiViz = {
+  min:-2,
+  max:6,
+  palette:['#2b83ba','#ffffbf','#d7191c']
+};
+
+Map.addLayer(out2025.select('LST_C'),lstViz,'2025 LST');
+Map.addLayer(out2025.select('NDVI'),ndviViz,'2025 NDVI');
+Map.addLayer(out2025.select('NDBI'),ndbiViz,'2025 NDBI');
+Map.addLayer(out2025.select('SUHI_C'),suhiViz,'2025 SUHI');
+
+Map.addLayer(builtMask2025,{palette:['#666666']},'2025 Built');
+Map.addLayer(vegMask2025,{palette:['#2ecc71']},'2025 Vegetation');
+
+
+// =====================
+// =====================
+// 9) EXPORT - VN_2000 / UTM Zone 48N
+// =====================
+
+var exportCrs = 'EPSG:3405';   // VN2000 UTM Zone 48N
+var exportScale = 30;
+
+
+// ép toàn bộ band về Float32
+out2025 = out2025.toFloat();
+
+
+// reproject từng band sang VN2000
+var lst2025_vn2000 = out2025
+  .select('LST_C')
+  .reproject({
+    crs: exportCrs,
+    scale: exportScale
+  });
+
+var ndvi2025_vn2000 = out2025
+  .select('NDVI')
+  .reproject({
+    crs: exportCrs,
+    scale: exportScale
+  });
+
+var ndbi2025_vn2000 = out2025
+  .select('NDBI')
+  .reproject({
+    crs: exportCrs,
+    scale: exportScale
+  });
+
+var suhi2025_vn2000 = out2025
+  .select('SUHI_C')
+  .reproject({
+    crs: exportCrs,
+    scale: exportScale
+  });
+
+var built2025_vn2000 = out2025
+  .select('BuiltMask')
+  .reproject({
+    crs: exportCrs,
+    scale: exportScale
+  });
+
+var veg2025_vn2000 = out2025
+  .select('VegMask')
+  .reproject({
+    crs: exportCrs,
+    scale: exportScale
+  });
+
+
+// =====================
+// LST
+// =====================
+Export.image.toDrive({
+  image: lst2025_vn2000,
+  description: 'Hanoi_2025_LST_VN2000_UTM48N',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Hanoi_2025_LST_VN2000_UTM48N',
+  region: region,
+  scale: exportScale,
+  crs: exportCrs,
+  maxPixels: 1e13
+});
+
+
+// =====================
+// NDVI
+// =====================
+Export.image.toDrive({
+  image: ndvi2025_vn2000,
+  description: 'Hanoi_2025_NDVI_VN2000_UTM48N',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Hanoi_2025_NDVI_VN2000_UTM48N',
+  region: region,
+  scale: exportScale,
+  crs: exportCrs,
+  maxPixels: 1e13
+});
+
+
+// =====================
+// NDBI
+// =====================
+Export.image.toDrive({
+  image: ndbi2025_vn2000,
+  description: 'Hanoi_2025_NDBI_VN2000_UTM48N',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Hanoi_2025_NDBI_VN2000_UTM48N',
+  region: region,
+  scale: exportScale,
+  crs: exportCrs,
+  maxPixels: 1e13
+});
+
+
+// =====================
+// SUHI
+// =====================
+Export.image.toDrive({
+  image: suhi2025_vn2000,
+  description: 'Hanoi_2025_SUHI_VN2000_UTM48N',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Hanoi_2025_SUHI_VN2000_UTM48N',
+  region: region,
+  scale: exportScale,
+  crs: exportCrs,
+  maxPixels: 1e13
+});
+
+
+// =====================
+// Built Mask
+// =====================
+Export.image.toDrive({
+  image: built2025_vn2000,
+  description: 'Hanoi_2025_BuiltMask_VN2000_UTM48N',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Hanoi_2025_BuiltMask_VN2000_UTM48N',
+  region: region,
+  scale: exportScale,
+  crs: exportCrs,
+  maxPixels: 1e13
+});
+
+
+// =====================
+// Vegetation Mask
+// =====================
+Export.image.toDrive({
+  image: veg2025_vn2000,
+  description: 'Hanoi_2025_VegMask_VN2000_UTM48N',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Hanoi_2025_VegMask_VN2000_UTM48N',
+  region: region,
+  scale: exportScale,
+  crs: exportCrs,
+  maxPixels: 1e13
+});
