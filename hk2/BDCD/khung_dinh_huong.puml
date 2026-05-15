@@ -1,0 +1,61 @@
+﻿@startuml
+skinparam monochrome false
+skinparam shadowing false
+skinparam defaultFontName "Time new roman"
+skinparam defaultFontSize 15
+skinparam ArrowColor #444444
+skinparam backgroundColor white
+skinparam linetype ortho
+hide stereotype
+
+skinparam rectangle {
+  BorderColor #6F6F6F
+  RoundCorner 12
+}
+skinparam rectangle<<group>> {
+  BorderColor #666666
+  BorderStyle dashed
+  RoundCorner 20
+  BackgroundColor transparent
+}
+
+top to bottom direction
+
+rectangle "Báo cáo, các nghiên cứu\nkhoa học" as REF #ADD8E6
+rectangle "Landsat 8 (2019), Landsat 9 (2025)\nDynamic World, ranh giới Hà Nội\nNguồn: USGS / GEE / GAUL" as DATA_SRC #ADD8E6
+rectangle "NDVI=(NIR-RED)/(NIR+RED)\nNDBI=(SWIR-NIR)/(SWIR+NIR)\nLST: ST_B10 (Landsat)" as FORMULA #FFF8DC
+
+rectangle " " as G1 <<group>> {
+  rectangle "Thu thập dữ liệu" as COLLECT #C1F0C1
+  rectangle "Tiền xử lý dữ liệu" as PRE #C1F0C1
+  rectangle "Tính toán các chỉ số viễn thám\n(NDVI, NDBI, LST)" as INDEX #C1F0C1
+  COLLECT -down-> PRE
+  PRE -down-> INDEX
+}
+
+rectangle "Xác định SUHI\n(SUHI = LSTurban - LSTrural)" as SUHI #C1F0C1
+rectangle "Phân tích và so sánh\n2019 -> 2025" as COMPARE #C1F0C1
+rectangle "Đánh giá tác động của đô thị hóa\nđến đảo nhiệt bề mặt tại nội thành Hà Nội" as EVAL #FFC0CB
+rectangle "Kết luận và kiến nghị" as CONCLUSION #FFC0CB
+
+rectangle "Phương pháp xử lý số liệu\n(lọc mây, clip, chuẩn hóa tọa độ)" as M_PRE #FFE4B5
+rectangle "Phương pháp bản đồ và GIS\n(Raster analysis, Spatial analysis)" as M_GIS #FFE4B5
+
+rectangle "Nhóm chỉ số đầu vào\nNDVI / NDBI / LST" as INPUT_IDX #E6CCFF
+rectangle "Nhóm bản đồ đầu vào\nBản đồ NDVI / NDBI / LST / SUHI" as INPUT_MAP #FFC0CB
+rectangle "Tổng hợp đầu vào" as IN_HUB #EAFBEA
+
+COLLECT <-left- REF
+PRE <-left- DATA_SRC
+INDEX <-left- FORMULA
+PRE -right-> M_PRE
+SUHI -right-> M_GIS
+
+INDEX -down-> SUHI
+SUHI -down-> INPUT_IDX
+INPUT_IDX --> IN_HUB
+INPUT_MAP --> IN_HUB
+IN_HUB -down-> COMPARE
+COMPARE -down-> EVAL
+EVAL -down-> CONCLUSION
+@enduml

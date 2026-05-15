@@ -1,0 +1,161 @@
+// =====================
+// 1) RANH GIOI HA NOI
+// =====================
+var hanoiFc = ee.FeatureCollection(
+  'projects/vernal-tracer-472104-c0/assets/Ha_Noi_tinh_thanh_34'
+);
+
+var region = hanoiFc.geometry();
+
+Map.centerObject(region, 9);
+
+Map.addLayer(
+  hanoiFc.style({
+    color: 'red',
+    fillColor: '00000000',
+    width: 2
+  }),
+  {},
+  'Hanoi boundary'
+);
+
+// =====================
+// 2) THOI GIAN
+// =====================
+var startDate = '2019-03-01';
+var endDate = '2019-10-01';
+
+// =====================
+// 3) ANH VE TINH KHONG BI KHUYET
+// =====================
+function maskS2clouds(img) {
+  var qa = img.select('QA60');
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0)
+    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+
+  return img.updateMask(mask).divide(10000);
+}
+
+var anhVeTinh = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+  .filterBounds(region)
+  .filterDate(startDate, endDate)
+  .filter(ee.Filter.lte('CLOUDY_PIXEL_PERCENTAGE', 30))
+  .map(maskS2clouds)
+  .select(['B4', 'B3', 'B2'])
+  .median()
+  .clip(region);
+
+Map.addLayer(
+  anhVeTinh,
+  {min: 0.02, max: 0.3},
+  'Anh ve tinh Sentinel-2 2019'
+);
+
+// =====================
+// 4) DIEM MAU TU GEE
+// =====================
+// Tren GEE, ban khai bao san 3 bien:
+// Khu_xay_dung, Tham_thuc_vat, Song
+
+// =====================
+// 5) CHUAN HOA DIEM MAU
+// =====================
+function chuanHoaDiem(geom, loai, hauToTen) {
+  var toaDoList = ee.List(ee.Geometry(geom).coordinates());
+  var indices = ee.List.sequence(0, toaDoList.size().subtract(1));
+
+  return ee.FeatureCollection(indices.map(function(i) {
+    i = ee.Number(i);
+    var coord = ee.List(toaDoList.get(i));
+    var lon = ee.Number(coord.get(0));
+    var lat = ee.Number(coord.get(1));
+
+    return ee.Feature(ee.Geometry.Point([lon, lat])).set({
+      'Loai': loai,
+      'Kieu_hinh_hoc': 'Point',
+      'Kinh_do': lon,
+      'Vi_do': lat
+    });
+  }));
+}
+
+var built = chuanHoaDiem(Khu_xay_dung, 'Dat_xay_dung', 'XayDung');
+var veg = chuanHoaDiem(Tham_thuc_vat, 'Thuc_vat', 'ThucVat');
+var water = chuanHoaDiem(Song, 'Song', 'Song');
+
+var diem_khao_sat_raw = built.merge(veg).merge(water);
+var diemList = diem_khao_sat_raw.toList(diem_khao_sat_raw.size());
+var diem_khao_sat = ee.FeatureCollection(
+  ee.List.sequence(0, diem_khao_sat_raw.size().subtract(1)).map(function(i) {
+    i = ee.Number(i);
+    var f = ee.Feature(diemList.get(i));
+    return f.set('STT', i.add(1));
+  })
+);
+
+Map.addLayer(built, {color: 'orange'}, 'Khu xay dung');
+Map.addLayer(veg, {color: 'green'}, 'Tham thuc vat');
+Map.addLayer(water, {color: 'blue'}, 'Song / Nuoc');
+Map.addLayer(diem_khao_sat, {color: 'yellow'}, 'Tat ca point khao sat');
+
+// =====================
+// 6) EXPORT FILE DIEM
+// =====================
+Export.table.toDrive({
+  collection: diem_khao_sat,
+  description: 'Diem_khao_sat_HaNoi_SHP',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Diem_khao_sat_HaNoi_day_du_thong_tin',
+  fileFormat: 'SHP',
+  selectors: [
+    'STT',
+    'Loai',
+    'Kieu_hinh_hoc',
+    'Kinh_do',
+    'Vi_do'
+  ]
+});
+
+Export.table.toDrive({
+  collection: diem_khao_sat,
+  description: 'Diem_khao_sat_HaNoi_KML',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Diem_khao_sat_HaNoi_day_du_thong_tin',
+  fileFormat: 'KML',
+  selectors: [
+    'STT',
+    'Loai',
+    'Kinh_do',
+    'Vi_do'
+  ]
+});
+
+Export.table.toDrive({
+  collection: diem_khao_sat,
+  description: 'Bang_du_lieu_diem_khao_sat_HaNoi_CSV',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Bang_du_lieu_diem_khao_sat_HaNoi',
+  fileFormat: 'CSV',
+  selectors: [
+    'STT',
+    'Loai',
+    'Kieu_hinh_hoc',
+    'Kinh_do',
+    'Vi_do'
+  ]
+});
+
+// =====================
+// 7) EXPORT ANH VE TINH TIFF
+// =====================
+Export.image.toDrive({
+  image: anhVeTinh,
+  description: 'Ban_do_ve_tinh_HaNoi_2019_TIF',
+  folder: 'GEE_Export',
+  fileNamePrefix: 'Ban_do_ve_tinh_HaNoi_2019_TIF',
+  region: region,
+  scale: 10,
+  maxPixels: 1e13
+});
