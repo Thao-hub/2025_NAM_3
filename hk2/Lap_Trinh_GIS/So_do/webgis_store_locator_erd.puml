@@ -1,0 +1,127 @@
+﻿@startuml webgis_store_locator_erd
+left to right direction
+hide methods
+hide stereotypes
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 60
+
+title ERD - WebGIS Store Locator (Circle K / GS25)
+
+entity "ThuongHieu" as ThuongHieu {
+  * id : BigAutoField <<PK>>
+  --
+  ten : CharField(50) <<UNIQUE>>
+}
+
+entity "NhaCungCap" as NhaCungCap {
+  * id : BigAutoField <<PK>>
+  --
+  ten : CharField(120)
+  ghi_chu : TextField
+}
+
+entity "NhomSanPham" as NhomSanPham {
+  * id : BigAutoField <<PK>>
+  --
+  ten : CharField(80) <<UNIQUE>>
+}
+
+entity "SanPham" as SanPham {
+  * id : BigAutoField <<PK>>
+  --
+  ten : CharField(120)
+  nhom_san_pham_id : FK -> NhomSanPham (NULLABLE)
+  nha_cung_cap_id : FK -> NhaCungCap (NULLABLE)
+  thuong_hieu_id : FK -> ThuongHieu (NULLABLE)
+  hinh_anh : ImageField
+}
+
+entity "ChuoiCuaHang" as ChuoiCuaHang {
+  * id : BigAutoField <<PK>>
+  --
+  ten : CharField(100)
+  mo_ta : TextField
+  logo : ImageField
+}
+
+entity "CuaHang" as CuaHang {
+  * id : BigAutoField <<PK>>
+  --
+  chuoi_id : FK -> ChuoiCuaHang
+  ten : CharField(100)
+  dia_chi : CharField(255)
+  quan_huyen : CharField(50)
+  vi_do : FloatField
+  kinh_do : FloatField
+  mo_cua : TimeField
+  dong_cua : TimeField
+  hoat_dong_24h : BooleanField
+}
+
+entity "NhanVien" as NhanVien {
+  * id : BigAutoField <<PK>>
+  --
+  cua_hang_id : FK -> CuaHang
+  ho_ten : CharField(120)
+  chuc_vu : CharField(50)
+  so_dien_thoai : CharField(15)
+  email : EmailField
+  dia_chi : CharField(255)
+  avatar : ImageField
+}
+
+entity "KhuyenMai" as KhuyenMai {
+  * id : BigAutoField <<PK>>
+  --
+  ten : CharField(150)
+  mo_ta : TextField
+}
+
+entity "CuaHang_SanPham" as CuaHangSanPham {
+  * id : BigAutoField <<PK>>
+  --
+  cua_hang_id : FK -> CuaHang
+  san_pham_id : FK -> SanPham
+}
+
+entity "KhuyenMai_ThuongHieu" as KhuyenMaiThuongHieu {
+  * id : BigAutoField <<PK>>
+  --
+  khuyen_mai_id : FK -> KhuyenMai
+  thuong_hieu_id : FK -> ThuongHieu
+}
+
+entity "KhuyenMai_CuaHang" as KhuyenMaiCuaHang {
+  * id : BigAutoField <<PK>>
+  --
+  khuyen_mai_id : FK -> KhuyenMai
+  cua_hang_id : FK -> CuaHang
+}
+
+' Alignment hints (hidden)
+NhomSanPham -[hidden]- NhaCungCap
+NhaCungCap -[hidden]- ThuongHieu
+ChuoiCuaHang -[hidden]- CuaHang
+CuaHang -[hidden]- KhuyenMai
+CuaHangSanPham -[hidden]- NhanVien
+KhuyenMaiThuongHieu -[hidden]- KhuyenMaiCuaHang
+
+NhomSanPham ||--o{ SanPham : "phan_loai"
+NhaCungCap  ||--o{ SanPham : "cung_cap"
+ThuongHieu  ||--o{ SanPham : "thuoc_thuong_hieu"
+
+ChuoiCuaHang ||--|{ CuaHang : "so_huu"
+CuaHang      ||--|{ NhanVien : "quan_ly_nhan_su"
+
+CuaHang ||--o{ CuaHangSanPham : "M2M"
+SanPham ||--o{ CuaHangSanPham : "M2M"
+
+KhuyenMai  ||--o{ KhuyenMaiThuongHieu : "M2M"
+ThuongHieu ||--o{ KhuyenMaiThuongHieu : "M2M"
+
+KhuyenMai ||--o{ KhuyenMaiCuaHang : "M2M"
+CuaHang   ||--o{ KhuyenMaiCuaHang : "M2M"
+
+@enduml

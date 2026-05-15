@@ -1,0 +1,96 @@
+﻿erDiagram
+    THUONG_HIEU {
+        bigint id PK
+        string ten "UNIQUE"
+    }
+
+    NHA_CUNG_CAP {
+        bigint id PK
+        string ten
+        text ghi_chu
+    }
+
+    NHOM_SAN_PHAM {
+        bigint id PK
+        string ten "UNIQUE"
+    }
+
+    SAN_PHAM {
+        bigint id PK
+        string ten
+        bigint nhom_san_pham_id FK "NULLABLE"
+        bigint nha_cung_cap_id FK "NULLABLE"
+        bigint thuong_hieu_id FK "NULLABLE"
+        string hinh_anh
+    }
+
+    CHUOI_CUA_HANG {
+        bigint id PK
+        string ten
+        text mo_ta
+        string logo
+    }
+
+    CUA_HANG {
+        bigint id PK
+        bigint chuoi_id FK
+        string ten
+        string dia_chi
+        string quan_huyen
+        float vi_do
+        float kinh_do
+        time mo_cua
+        time dong_cua
+        bool hoat_dong_24h
+    }
+
+    NHAN_VIEN {
+        bigint id PK
+        bigint cua_hang_id FK
+        string ho_ten
+        string chuc_vu
+        string so_dien_thoai
+        string email
+        string dia_chi
+        string avatar
+    }
+
+    KHUYEN_MAI {
+        bigint id PK
+        string ten
+        text mo_ta
+    }
+
+    CUA_HANG_SAN_PHAM {
+        bigint id PK
+        bigint cua_hang_id FK
+        bigint san_pham_id FK
+    }
+
+    KHUYEN_MAI_THUONG_HIEU {
+        bigint id PK
+        bigint khuyen_mai_id FK
+        bigint thuong_hieu_id FK
+    }
+
+    KHUYEN_MAI_CUA_HANG {
+        bigint id PK
+        bigint khuyen_mai_id FK
+        bigint cua_hang_id FK
+    }
+
+    NHOM_SAN_PHAM ||--o{ SAN_PHAM : "phan_loai"
+    NHA_CUNG_CAP ||--o{ SAN_PHAM : "cung_cap"
+    THUONG_HIEU ||--o{ SAN_PHAM : "thuoc_thuong_hieu"
+
+    CHUOI_CUA_HANG ||--|{ CUA_HANG : "so_huu"
+    CUA_HANG ||--|{ NHAN_VIEN : "quan_ly_nhan_su"
+
+    CUA_HANG ||--o{ CUA_HANG_SAN_PHAM : "M2M"
+    SAN_PHAM ||--o{ CUA_HANG_SAN_PHAM : "M2M"
+
+    KHUYEN_MAI ||--o{ KHUYEN_MAI_THUONG_HIEU : "M2M"
+    THUONG_HIEU ||--o{ KHUYEN_MAI_THUONG_HIEU : "M2M"
+
+    KHUYEN_MAI ||--o{ KHUYEN_MAI_CUA_HANG : "M2M"
+    CUA_HANG ||--o{ KHUYEN_MAI_CUA_HANG : "M2M"

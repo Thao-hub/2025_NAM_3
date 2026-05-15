@@ -1,0 +1,6 @@
+Thành phố mốc: Tokyo (35.6895, 139.6917)
+Khoảng cách (km) từ thành phố mốc đến các thành phố khác:
+- Los Angeles: 8815.47 km
+- London: 9558.71 km
+- Sydney: 7826.62 km
+- Paris: 9712.07 km

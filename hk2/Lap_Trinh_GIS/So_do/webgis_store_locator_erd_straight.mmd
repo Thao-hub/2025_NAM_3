@@ -1,0 +1,36 @@
+﻿%%{init: {'theme':'dark','flowchart': {'curve': 'linear', 'nodeSpacing': 40, 'rankSpacing': 60}} }%%
+flowchart LR
+
+  %% Top row
+  TH[THUONG_HIEU]
+  NCC[NHA_CUNG_CAP]
+  NSP[NHOM_SAN_PHAM]
+  CCH[CHUOI_CUA_HANG]
+
+  %% Middle row
+  SP[SAN_PHAM]
+  CH[CUA_HANG]
+  KM[KHUYEN_MAI]
+
+  %% Bottom row
+  CHSP[CUA_HANG_SAN_PHAM]
+  NV[NHAN_VIEN]
+  KMTH[KHUYEN_MAI_THUONG_HIEU]
+  KMCH[KHUYEN_MAI_CUA_HANG]
+
+  %% Core 1-n
+  TH -->|thuoc_thuong_hieu| SP
+  NCC -->|cung_cap| SP
+  NSP -->|phan_loai| SP
+  CCH -->|so_huu| CH
+  CH -->|quan_ly_nhan_su| NV
+
+  %% M2M bridges
+  CH -->|M2M| CHSP
+  SP -->|M2M| CHSP
+
+  KM -->|M2M| KMTH
+  TH -->|M2M| KMTH
+
+  KM -->|M2M| KMCH
+  CH -->|M2M| KMCH

@@ -1,0 +1,55 @@
+﻿@startuml hoat_dong_webgis_theo_project
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #8fd3f4
+  BorderColor #3a6f8f
+  FontColor #0b2b40
+  DiamondBackgroundColor #8fd3f4
+  DiamondBorderColor #3a6f8f
+}
+
+title Sơ đồ hoạt động WebGIS theo project
+
+start
+:Người dùng mở trang bản đồ;
+
+if (Cách tìm kiếm?) then (Địa chỉ)
+  :Nhập địa chỉ/khu vực;
+  :Geocode lấy tọa độ;
+  if (Geocode lỗi?) then (Có)
+    :Dùng vị trí hiện tại
+hoặc mặc định TP.HCM;
+  endif
+else (Vị trí hiện tại)
+  :Lấy GPS;
+  if (GPS lỗi?) then (Có)
+    :Dùng tọa độ mặc định TP.HCM;
+  endif
+endif
+
+:Chọn bộ lọc
+(brand, quận/huyện, bán kính);
+:Tìm cửa hàng
+(stores_in_radius / smart_search);
+:Backend xử lý
+(chuẩn hóa + lọc + tính khoảng cách);
+
+if (Có kết quả?) then (Có)
+  :Hiển thị marker + popup;
+  if (Cần chỉ đường?) then (Có)
+    :Gọi route_osrm;
+    :Vẽ tuyến đường;
+  endif
+else (Không)
+  :Thông báo không có cửa hàng phù hợp;
+endif
+
+if (Admin cập nhật dữ liệu?) then (Có)
+  :Vào Django Admin;
+  :Thêm/Sửa/Xóa dữ liệu cửa hàng;
+endif
+
+:Tiếp tục tra cứu hoặc kết thúc;
+stop
+@enduml
