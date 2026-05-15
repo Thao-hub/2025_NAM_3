@@ -1,0 +1,32 @@
+@startuml
+
+
+|Admin|
+start
+:Admin nhấn nút Xóa ở một sinh viên;
+if (Hiển thị hộp thoại xác nhận) then (Có)
+    :Gửi yêu cầu GET (action=delete + maSV);
+    
+    |Servlet (StudentManageServlet)|
+    :Servlet lấy Mã SV;
+    :Gọi CSDL (deleteStudent);
+    
+    |CSDL|
+    :Thực hiện DELETE FROM TaiKhoan (Tự động xóa SinhVien + Diem qua CASCADE);
+    :Trả kết quả (rows);
+    
+    |Servlet (StudentManageServlet)|
+    if (Xóa thành công?) then (Có)
+        :Chuyển hướng về trang Quản lý Sinh viên;
+    else (Không)
+        :Chuyển hướng về trang Quản lý (kèm thông báo lỗi);
+    endif
+    
+    |Admin|
+    stop
+else (Không)
+    |Admin|
+    stop
+endif
+
+@enduml

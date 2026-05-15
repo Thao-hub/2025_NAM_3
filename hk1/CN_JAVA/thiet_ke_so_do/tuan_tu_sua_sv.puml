@@ -1,0 +1,54 @@
+@startuml sua
+
+
+participant Admin as "Actor: Admin" #ADD8E6
+participant JSP_Manage as "JSP: admin_manage_student" #ADD8E6
+participant Servlet_Manage as "StudentManageServlet" #ADD8E6
+participant DAO as "CSDL" #ADD8E6
+participant DB as "DB" #ADD8E6
+
+' GET form edit
+Admin -> Servlet_Manage : Yêu cầu GET (action=editForm + maSV)
+activate Admin #ADD8E6
+activate Servlet_Manage #ADD8E6
+
+Servlet_Manage -> DAO : getSinhVienByMaSV(maSV)
+activate DAO #ADD8E6
+DAO -> DB : SELECT * FROM SinhVien WHERE maSV=?
+activate DB #ADD8E6
+DB --> DAO : return SinhVien
+deactivate DB
+DAO --> Servlet_Manage : return SinhVien
+deactivate DAO
+
+Servlet_Manage --> JSP_Manage : forward Hiển thị Form Sửa
+activate JSP_Manage #ADD8E6
+JSP_Manage --> Admin : Hiển thị Form (đã điền thông tin cũ)
+deactivate JSP_Manage
+deactivate Servlet_Manage
+deactivate Admin
+
+' POST edit form
+Admin -> JSP_Manage : Chỉnh sửa & Submit Form
+activate Admin #ADD8E6
+activate JSP_Manage #ADD8E6
+
+JSP_Manage -> Servlet_Manage : Gửi yêu cầu POST (action=edit)
+deactivate JSP_Manage
+activate Servlet_Manage #ADD8E6
+
+Servlet_Manage -> Servlet_Manage : Xử lý file upload nếu có
+Servlet_Manage -> DAO : updateStudent(sinhVien)
+activate DAO #ADD8E6
+DAO -> DB : executeUpdate UPDATE bảng SinhVien
+activate DB #ADD8E6
+DB --> DAO : return rows_num
+deactivate DB
+DAO --> Servlet_Manage : return true
+deactivate DAO
+
+Servlet_Manage -> Admin : sendRedirect /studentManage
+deactivate Servlet_Manage
+deactivate Admin
+
+@enduml

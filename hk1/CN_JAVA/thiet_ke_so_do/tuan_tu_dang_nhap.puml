@@ -1,0 +1,69 @@
+@startuml dangnhap
+
+
+participant User as "Actor: admin/student" #ADD8E6
+participant JSP_Login as "JSP: login" #ADD8E6
+participant Servlet_Login as "LoginServlet" #ADD8E6
+participant DAO as "CSDL" #ADD8E6
+participant DB as "DB" #ADD8E6
+
+' Gửi yêu cầu POST từ User
+User -> JSP_Login : Gửi yêu cầu POST
+activate JSP_Login #ADD8E6
+
+JSP_Login -> Servlet_Login : Gửi dữ liệu form
+deactivate JSP_Login
+activate Servlet_Login #ADD8E6
+
+Servlet_Login -> DAO : checkLogin(tendn, matkhau)
+activate DAO #ADD8E6
+
+DAO -> DB : SELECT * FROM TaiKhoan
+activate DB #ADD8E6
+DB --> DAO : return TaiKhoan (tk)
+deactivate DB
+
+DAO --> Servlet_Login : return TaiKhoan (tk)
+deactivate DAO
+
+alt Đăng nhập thành công (tk != null)
+    Servlet_Login -> Servlet_Login : (tk.getVaitro() == 'admin') ?
+
+    opt Vai trò là Admin
+        Servlet_Login -> DAO : getCanBoQuanLyByTendn(tk.getTendn())
+        activate DAO #ADD8E6
+        DAO -> DB : SELECT * FROM CanBoQuanLy
+        activate DB #ADD8E6
+        DB --> DAO : return CanBoQuanLy (profile)
+        deactivate DB
+        DAO --> Servlet_Login : return CanBoQuanLy (profile)
+        deactivate DAO
+
+        Servlet_Login -> Servlet_Login : Tạo Phiên làm việc (Session)
+        Servlet_Login -> User : sendRedirect (Tới Admin Dashboard)
+    end
+
+    opt Vai trò là Sinh Viên
+        Servlet_Login -> DAO : getSinhVienByTendn(tk.getTendn())
+        activate DAO #ADD8E6
+        DAO -> DB : SELECT * FROM SinhVien JOIN Lop
+        activate DB #ADD8E6
+        DB --> DAO : return SinhVien (profile)
+        deactivate DB
+        DAO --> Servlet_Login : return SinhVien (profile)
+        deactivate DAO
+
+        Servlet_Login -> Servlet_Login : Tạo Phiên làm việc (Session)
+        Servlet_Login -> User : sendRedirect (Tới Student Dashboard)
+    end
+
+else Đăng nhập thất bại (tk == null)
+    Servlet_Login -> JSP_Login : forward Gửi kèm báo lỗi
+    activate JSP_Login #ADD8E6
+    JSP_Login --> User : Hiển thị Form kèm lỗi
+    deactivate JSP_Login
+end
+
+deactivate Servlet_Login
+
+@enduml

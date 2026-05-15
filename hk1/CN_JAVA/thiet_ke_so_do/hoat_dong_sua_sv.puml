@@ -1,0 +1,56 @@
+@startuml
+
+
+|Admin|
+start
+:Nhấn nút Sửa (Gửi GET + maSV);
+
+|Servlet (StudentManageServlet)|
+:Nhận GET, Gọi CSDL lấy thông tin SV cũ;
+
+|CSDL|
+:SELECT * FROM SinhVien WHERE maSV=?;
+:Trả về object SinhVien;
+
+|Servlet (StudentManageServlet)|
+:Gọi CSDL lấy DS Khoa Lớp;
+
+|CSDL|
+:SELECT từ Khoa/Lớp;
+:Trả DS Khoa Lớp;
+
+|Servlet (StudentManageServlet)|
+:Forward (SinhVien + DS) về JSP;
+
+|JSP (admin_manage_student)|
+:Hiển thị Form Sửa (đã điền thông tin cũ);
+
+|Admin|
+:Chỉnh sửa thông tin, chọn ảnh mới (nếu có);
+:Gửi yêu cầu POST (Submit Form);
+
+|Servlet (StudentManageServlet)|
+:Nhận POST, Xử lý upload ảnh mới (nếu có);
+:Gói dữ liệu vào object SinhVien;
+:Gọi CSDL (updateStudent);
+
+|CSDL|
+:Thực hiện UPDATE vào bảng SinhVien;
+:Trả kết quả (rows);
+
+|Servlet (StudentManageServlet)|
+if (Sửa thành công?) then (Có)
+    :Chuyển hướng về trang Quản lý Sinh viên;
+    |Admin|
+    stop
+else (Không)
+    :Forward về JSP kèm thông báo lỗi;
+    
+    |JSP (admin_manage_student)|
+    :Hiển thị lại Form kèm thông báo lỗi;
+    
+    |Admin|
+    stop
+endif
+
+@enduml

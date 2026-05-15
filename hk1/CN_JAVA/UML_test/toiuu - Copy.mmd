@@ -1,0 +1,116 @@
+erDiagram
+    NguoiDung {
+        INT id PK "ID Người dùng"
+        VARCHAR ho_ten "Họ tên"
+        VARCHAR email "Email (unique)"
+        VARCHAR so_dien_thoai "SĐT (unique)"
+        VARCHAR mat_khau_hash "Mật khẩu"
+        ENUM vai_tro "Vai trò (customer, admin)"
+    }
+
+    DiaChi {
+        INT id PK "ID Địa chỉ"
+        INT id_nguoi_dung FK "ID Người dùng"
+        VARCHAR dia_chi_day_du "Địa chỉ đầy đủ"
+        BOOLEAN la_mac_dinh "Là mặc định"
+    }
+
+    DonHang {
+        INT id PK "ID Đơn hàng"
+        INT id_nguoi_dung FK "ID Người dùng (nullable)"
+        INT id_dia_chi_giao_hang FK "ID Địa chỉ giao"
+        DECIMAL tong_tien "Tổng tiền"
+        ENUM trang_thai_don_hang "Trạng thái"
+        VARCHAR phuong_thuc_thanh_toan "PT Thanh toán"
+    }
+
+    ChiTietDonHang {
+        INT id PK "ID Chi tiết"
+        INT id_don_hang FK "ID Đơn hàng"
+        INT id_san_pham FK "ID Sản phẩm"
+        INT so_luong "Số lượng"
+        DECIMAL gia_luc_mua "Giá lúc mua"
+    }
+
+    SanPham {
+        INT id PK "ID Sản phẩm"
+        VARCHAR ten_san_pham "Tên sản phẩm"
+        VARCHAR sku "SKU (unique)"
+        INT id_danh_muc FK "ID Danh mục"
+        INT id_thuong_hieu FK "ID Thương hiệu"
+        DECIMAL gia_goc "Giá gốc"
+        DECIMAL gia_ban "Giá bán"
+        INT so_luong_ton_kho "Tồn kho"
+        TEXT mo_ta_day_du "Mô tả"
+    }
+
+    DanhMuc {
+        INT id PK "ID Danh mục"
+        VARCHAR ten_danh_muc "Tên danh mục"
+        INT id_danh_muc_cha FK "ID Danh mục cha (tự tham chiếu)"
+    }
+
+    ThuongHieu {
+        INT id PK "ID Thương hiệu"
+        VARCHAR ten_thuong_hieu "Tên thương hiệu (unique)"
+        VARCHAR logo_url "Logo"
+    }
+
+    AnhSanPham {
+        INT id PK "ID Ảnh"
+        INT id_san_pham FK "ID Sản phẩm"
+        VARCHAR image_url "Đường dẫn ảnh"
+        VARCHAR alt_text "Văn bản thay thế"
+    }
+
+    DanhGia {
+        INT id PK "ID Đánh giá"
+        INT id_san_pham FK "ID Sản phẩm"
+        INT id_nguoi_dung FK "ID Người dùng"
+        INT rating "Điểm (1-5)"
+        TEXT binh_luan "Bình luận"
+    }
+
+    ThuocTinh {
+        INT id PK "ID Thuộc tính"
+        VARCHAR ten_thuoc_tinh "Tên thuộc tính (Vd: Màu sắc)"
+    }
+
+    GiaTriThuocTinh {
+        INT id PK "ID Giá trị"
+        INT id_thuoc_tinh FK "ID Thuộc tính"
+        VARCHAR gia_tri "Giá trị (Vd: Đỏ cam)"
+    }
+
+    SanPham_ThuocTinh {
+        INT id_san_pham FK "ID Sản phẩm"
+        INT id_gia_tri_thuoc_tinh FK "ID Giá trị thuộc tính"
+    }
+
+    MaGiamGia {
+        INT id PK "ID Coupon"
+        VARCHAR ma_code "Mã code (unique)"
+        ENUM loai_giam_gia "Loại (%, fixed)"
+        DECIMAL gia_tri "Giá trị giảm"
+        DATE ngay_het_han "Ngày hết hạn"
+    }
+
+    %% --- Định nghĩa các mối quan hệ ---
+    NguoiDung ||--o{ DiaChi : "Sở hữu"
+    NguoiDung ||--o{ DonHang : "Đặt"
+    NguoiDung ||--o{ DanhGia : "Viết"
+    DiaChi ||--o{ DonHang : "Giao đến"
+    
+    DanhMuc ||--o{ SanPham : "Chứa"
+    DanhMuc ||--o{ DanhMuc : "Là con của"
+    ThuongHieu ||--o{ SanPham : "Thuộc"
+    
+    SanPham ||--o{ AnhSanPham : "Có"
+    SanPham ||--o{ ChiTietDonHang : "Có trong"
+    SanPham ||--o{ DanhGia : "Được"
+    SanPham }|--|{ GiaTriThuocTinh : "Có (N-N)"
+    
+    ThuocTinh ||--o{ GiaTriThuocTinh : "Có"
+    
+    DonHang ||--o{ ChiTietDonHang : "Bao gồm"
+    DonHang |o--o| MaGiamGia : "Áp dụng"

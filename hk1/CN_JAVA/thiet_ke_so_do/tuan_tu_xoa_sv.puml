@@ -1,0 +1,32 @@
+@startuml xoa
+
+
+participant Admin as "Actor: Admin" #ADD8E6
+participant Servlet_Manage as "StudentManageServlet" #ADD8E6
+participant DAO as "CSDL" #ADD8E6
+participant DB as "DB" #ADD8E6
+
+' Tạo cột dọc chính từ Actor bằng nét đứt
+Admin --> Servlet_Manage
+
+' GET delete
+Admin -> Servlet_Manage : Yêu cầu GET (action=delete + maSV)
+activate Admin #ADD8E6
+activate Servlet_Manage #ADD8E6
+
+Servlet_Manage -> DAO : deleteStudent(maSV)
+activate DAO #ADD8E6
+
+DAO -> DB : DELETE FROM TaiKhoan WHERE tendn = ?
+activate DB #ADD8E6
+DB --> DAO : rows deleted (CSDL tự động xóa SinhVien + Diem)
+deactivate DB
+DAO --> Servlet_Manage : return true
+deactivate DAO
+
+Servlet_Manage -> Admin : sendRedirect /studentManage
+
+deactivate Servlet_Manage
+deactivate Admin
+
+@enduml

@@ -1,0 +1,66 @@
+@startuml use
+' Tựa đề
+
+' Hướng và giao diện
+left to right direction
+skinparam actorStyle stickman
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor #EAF4FF
+    BorderColor #0055CC
+}
+
+' Định nghĩa 2 Tác nhân (Actors)
+actor "Admin" as A
+actor "Sinh viên" as S
+
+' --- BẮT ĐẦU KHUNG HỆ THỐNG ---
+rectangle "Hệ Thống Quản Lý Sinh Viên" as System {
+    
+    ' --- Chức năng chung ---
+    (Đăng nhập) as UC_Login
+    (Đăng xuất) as UC_Logout
+    (Đăng ký) as UC_Signup
+
+    ' --- Chức năng của Sinh viên ---
+    (Xem thông tin cá nhân) as UC_ViewInfo
+    (Xem bảng điểm) as UC_ViewGrade
+
+    ' --- Chức năng Quản lý của Admin ---
+    ' (Đã bao gồm Thêm/Sửa/Xóa/Xem bên trong)
+    (Quản lý Sinh viên) as UC_ManageStudent
+    (Quản lý Khoa) as UC_ManageKhoa
+    (Quản lý Lớp) as UC_ManageLop
+    (Quản lý Điểm) as UC_ManageDiem
+    (Quản lý Giảng viên) as UC_ManageGV
+    (Quản lý Môn học) as UC_ManageMH
+    (Quản lý Cán bộ) as UC_ManageAdmin
+}
+' --- KẾT THÚC KHUNG HỆ THỐNG ---
+
+
+' =====================
+' --- Mối quan hệ ---
+' =====================
+
+' --- Xác thực chung ---
+A --> UC_Login
+A --> UC_Logout
+S --> UC_Login
+S --> UC_Logout
+S --> UC_Signup
+
+' --- Chức năng của Admin ---
+A --> UC_ManageStudent
+A --> UC_ManageKhoa
+A --> UC_ManageLop
+A --> UC_ManageDiem
+A --> UC_ManageGV
+A --> UC_ManageMH
+A --> UC_ManageAdmin
+
+' --- Chức năng của Sinh viên ---
+S --> UC_ViewInfo
+S --> UC_ViewGrade
+
+@enduml

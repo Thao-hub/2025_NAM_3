@@ -1,0 +1,34 @@
+@startuml xemdiem
+
+
+participant SinhVien as "Actor: SinhVien" #ADD8E6
+participant JSP_Dashboard as "JSP: student_dashboard" #ADD8E6
+participant Servlet_Dashboard as "StudentDashboardServlet" #ADD8E6
+participant DAO as "CSDL" #ADD8E6
+participant DB as "DB" #ADD8E6
+
+' GET /studentDashboard
+SinhVien -> Servlet_Dashboard : Yêu cầu GET /studentDashboard
+activate SinhVien #ADD8E6
+activate Servlet_Dashboard #ADD8E6
+
+Servlet_Dashboard -> Servlet_Dashboard : Lấy maSV từ Phiên làm việc
+
+Servlet_Dashboard -> DAO : getDiemByMaSV(maSV)
+activate DAO #ADD8E6
+DAO -> DB : SELECT d.*, mh.tenMH, mh.soTinChi FROM Diem d JOIN ...
+activate DB #ADD8E6
+DB --> DAO : return List Diem
+deactivate DB
+DAO --> Servlet_Dashboard : return List Diem
+deactivate DAO
+
+Servlet_Dashboard --> JSP_Dashboard : setAttribute và forward
+activate JSP_Dashboard #ADD8E6
+JSP_Dashboard --> SinhVien : Hiển thị trang Bảng Điểm
+deactivate JSP_Dashboard
+
+deactivate Servlet_Dashboard
+deactivate SinhVien
+
+@enduml

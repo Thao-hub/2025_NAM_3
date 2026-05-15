@@ -1,0 +1,75 @@
+erDiagram
+    TaiKhoan {
+        NVARCHAR tendn PK
+        NVARCHAR matKhau
+        NVARCHAR vaitro
+    }
+
+    CanBoQuanLy {
+        NVARCHAR maCBQL PK
+        NVARCHAR hoTen
+        NVARCHAR email
+        NVARCHAR sdt
+        NVARCHAR hinh
+        NVARCHAR tendn_cb FK,UK
+    }
+
+    SinhVien {
+        NVARCHAR maSV PK
+        NVARCHAR hoTen
+        NVARCHAR email
+        NVARCHAR sdt
+        NVARCHAR hinh
+        NVARCHAR maLop FK
+        NVARCHAR tendn_sv FK,UK
+    }
+    
+    %% B_NG M_I
+    GiangVien {
+        NVARCHAR maGV PK
+        NVARCHAR hoTen
+        NVARCHAR email
+        NVARCHAR sdt
+        NVARCHAR hinh
+        NVARCHAR maKhoa FK
+    }
+
+    Khoa {
+        NVARCHAR maKhoa PK
+        NVARCHAR tenKhoa
+    }
+
+    Lop {
+        NVARCHAR maLop PK
+        NVARCHAR tenLop
+        NVARCHAR nienKhoa
+        NVARCHAR maKhoa FK
+        NVARCHAR maGVCN FK
+    }
+
+    MonHoc {
+        NVARCHAR maMH PK
+        NVARCHAR tenMH
+        INT soTinChi
+        INT hocKy
+    }
+
+    Diem {
+        INT maD PK
+        NVARCHAR maSV FK
+        NVARCHAR maMH FK
+        FLOAT diem
+    }
+
+    %% === Mối Quan H_ ===
+    TaiKhoan ||--|| SinhVien : "sở hữu (SV)"
+    TaiKhoan ||--|| CanBoQuanLy : "sở hữu (Admin)"
+    
+    Khoa ||--o{ Lop : "quản lý"
+    Khoa ||--o{ GiangVien : "thuộc"
+    
+    Lop ||--o{ SinhVien : "thuộc"
+    Lop ||..o| GiangVien : "chủ nhiệm"
+
+    SinhVien ||--o{ Diem : "có điểm"
+    MonHoc ||--o{ Diem : "có điểm"

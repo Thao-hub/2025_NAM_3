@@ -1,0 +1,50 @@
+@startuml CapNhatTraSach_Sequence
+title Biểu Đồ Tuần Tự - Thủ Thư Cập nhật Ngày Trả & Hoàn kho
+
+participant ThuThu as "Actor: Thủ Thư" #ADD8E6
+participant UI_CTM as "Giao Diện QL Chi Tiết PM" #FFFACD
+participant Controller as "Controller (Logic Hoàn kho)" #DDA0DD
+participant DAO as "DAO (Thao tác CSDL)" #AFEEEE
+participant DB as "Cơ Sở Dữ Liệu (DB)" #FFA07A
+
+activate ThuThu
+ThuThu -> UI_CTM : Mở màn hình QL Chi tiết PM
+ThuThu -> UI_CTM : Tìm kiếm CTM cần trả (theo MaPM/MaSach)
+
+UI_CTM -> ThuThu : Hiển thị Chi tiết Mượn (NgayTra = NULL)
+ThuThu -> UI_CTM : Kích hoạt chức năng "Sửa"
+ThuThu -> UI_CTM : Nhập/Chọn Ngày Trả Thực tế
+ThuThu -> UI_CTM : Bấm nút "Cập nhật"
+
+UI_CTM -> Controller : Gửi yêu cầu UPDATE ChiTietMuon (NgayTra, MaCTM)
+activate Controller
+Controller -> DAO : getCTMDetails(MaCTM)
+activate DAO
+DAO -> DB : SELECT MaSach, SoLuongMuon, MaPhieuMuon FROM ChiTietMuon WHERE...
+activate DB
+DB --> DAO : Trả về chi tiết sách mượn
+deactivate DB
+deactivate DAO
+
+Controller -> DAO : updateNgayTra(MaCTM, NgayTra)
+Controller -> DAO : updateSoLuongSach(MaSach, +SoLuongMuon) ' HOÀN KHO
+
+activate DAO
+DAO -> DB : UPDATE ChiTietMuon; UPDATE Sach (Tăng tồn kho)
+DAO -> DB : SELECT COUNT(*) FROM ChiTietMuon WHERE MaPhieuMuon = ? AND NgayTra IS NULL
+DB --> DAO : Trả về count (Sách còn nợ?)
+
+alt Tất cả sách đã trả (count == 0)
+    Controller -> DAO : updatePhieuMuonStatus(MaPM, 'Đã trả')
+    DAO -> DB : UPDATE PhieuMuon
+end
+deactivate DAO
+DAO --> Controller : Thông báo "Thành công"
+
+Controller -> UI_CTM : Thông báo "Ghi nhận trả sách thành công"
+deactivate Controller
+
+UI_CTM -> ThuThu : Cập nhật danh sách CTM
+
+deactivate ThuThu
+@enduml

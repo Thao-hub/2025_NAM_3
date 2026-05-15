@@ -1,0 +1,65 @@
+@startuml them
+
+
+participant Admin as "Actor: Admin" #ADD8E6
+participant JSP_Manage as "JSP: admin_manage_student" #ADD8E6
+participant Servlet_Manage as "StudentManageServlet" #ADD8E6
+participant DAO as "CSDL" #ADD8E6
+participant DB as "DB" #ADD8E6
+
+' GET /studentManage
+Admin -> Servlet_Manage : Yêu cầu GET /studentManage
+activate Admin #ADD8E6
+activate Servlet_Manage #ADD8E6
+
+Servlet_Manage -> DAO : Lấy DS Khoa Lớp
+activate DAO #ADD8E6
+DAO -> DB : SELECT từ Khoa
+activate DB #ADD8E6
+DB --> DAO : return List Khoa
+deactivate DB
+DAO --> Servlet_Manage : return List Khoa
+deactivate DAO
+
+Servlet_Manage --> JSP_Manage : forward Hiển thị Trang
+activate JSP_Manage #ADD8E6
+JSP_Manage --> Admin : Hiển thị Trang (có form thêm)
+deactivate JSP_Manage
+deactivate Servlet_Manage
+deactivate Admin
+
+' POST thêm sinh viên
+Admin -> JSP_Manage : Nhập thông tin & Submit Form Thêm
+activate Admin #ADD8E6
+activate JSP_Manage #ADD8E6
+
+JSP_Manage -> Servlet_Manage : Gửi yêu cầu POST (action=add)
+deactivate JSP_Manage
+activate Servlet_Manage #ADD8E6
+
+' Luồng xử lý POST
+alt Xử lý thêm thành công
+    Servlet_Manage -> Servlet_Manage : Xử lý file upload
+    Servlet_Manage -> DAO : addStudentWithAccount(taiKhoan, sinhVien)
+    activate DAO #ADD8E6
+    DAO -> DB : (Bắt đầu Transaction)
+    activate DB #ADD8E6
+    DAO -> DB : INSERT INTO TaiKhoan
+    DAO -> DB : INSERT INTO SinhVien
+    DAO -> DB : (Commit Transaction)
+    DB --> DAO : return rows_num
+    deactivate DB
+    DAO --> Servlet_Manage : return true
+    deactivate DAO
+    Servlet_Manage -> Admin : sendRedirect /studentManage
+else Thêm thất bại
+    Servlet_Manage -> JSP_Manage : forward Gửi kèm báo lỗi
+    activate JSP_Manage #ADD8E6
+    JSP_Manage --> Admin : Hiển thị lại Trang kèm lỗi
+    deactivate JSP_Manage
+end
+
+deactivate Servlet_Manage
+deactivate Admin
+
+@enduml

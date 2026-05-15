@@ -1,0 +1,65 @@
+@startuml ThemPM_CTM_Sequence
+title Biểu Đồ Tuần Tự - Thủ Thư Thêm PM & Chi Tiết (Trực tiếp)
+
+participant ThuThu as "Actor: Thủ Thư"
+participant UI_PM as "Giao Diện QL Phiếu Mượn"
+participant UI_CTM as "Giao Diện QL Chi Tiết PM"
+participant Controller as "Controller (Logic Nghiệp vụ)"
+participant DAO as "DAO (Thao tác CSDL)"
+participant DB as "Cơ Sở Dữ Liệu (DB)"
+
+activate ThuThu
+ThuThu -> UI_PM : Mở màn hình QL Phiếu Mượn
+ThuThu -> UI_PM : Bấm nút "Thêm"
+
+' BƯỚC 1: TẠO PHIẾU MƯỢN GỐC
+ThuThu -> UI_PM : Nhập thông tin PM (MaSV, Ngày hẹn trả, MaThuThu)
+ThuThu -> UI_PM : Bấm nút "Lưu PM"
+
+UI_PM -> Controller : Gửi yêu cầu INSERT PhieuMuon (data)
+activate Controller
+Controller -> DAO : createPhieuMuon(data)
+activate DAO
+DAO -> DB : INSERT INTO PhieuMuon
+activate DB
+DB --> DAO : Trả về MaPhieuMuon_New
+deactivate DB
+DAO --> Controller : MaPhieuMuon_New
+deactivate DAO
+
+Controller -> Controller : Kiểm tra logic (MaSV hợp lệ?)
+
+Controller -> UI_CTM : Chuyển hướng đến Giao diện CTPM
+deactivate Controller
+
+' BƯỚC 2: THÊM CÁC CHI TIẾT SÁCH (LẶP)
+activate UI_CTM
+UI_CTM -> ThuThu : Hiển thị Form Thêm CTM (MaPM_New đã điền sẵn)
+
+loop Cho mỗi sách được mượn
+  ThuThu -> UI_CTM : Nhập Mã Sách và Số lượng mượn
+  ThuThu -> UI_CTM : Bấm nút "Thêm CTM"
+
+  UI_CTM -> Controller : Gửi yêu cầu Thêm Chi Tiết Mượn
+  activate Controller
+  Controller -> Controller : Kiểm tra số lượng tồn kho > 0
+  alt Sách còn tồn kho
+      Controller -> DAO : insertChiTietMuon(...)
+      Controller -> DAO : updateSoLuongSach(MaSach, -SoLuong)
+      activate DAO
+      DAO -> DB : INSERT ChiTietMuon; UPDATE Sach (Giảm tồn kho)
+      DB --> DAO : Lưu thành công
+      deactivate DAO
+      DAO --> Controller : Thông báo "Thành công"
+      Controller -> UI_CTM : Cập nhật danh sách CTM
+  else Sách hết tồn kho
+      Controller -> UI_CTM : Trả về thông báo lỗi "Sách tạm hết"
+  end
+  deactivate Controller
+end loop
+
+UI_CTM -> ThuThu : Xác nhận hoàn tất Phiếu Mượn
+
+deactivate UI_CTM
+deactivate ThuThu
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+
+|User|
+start
+:Nhập Tên và Mật khẩu;
+:Bấm nút Đăng nhập;
+:Gửi Yêu cầu;
+
+|Servlet (LoginServlet)|
+:Nhận Yêu cầu;
+:Gọi CSDL kiểm tra (checkLogin);
+
+|CSDL|
+:Kiểm tra thông tin (SELECT * FROM TaiKhoan);
+:Trả kết quả (TaiKhoan);
+
+|Servlet (LoginServlet)|
+if (Thông tin chính xác? (tk != null)) then (Chính xác)
+    :Tạo Phiên làm việc;
+    if (Kiểm tra vai trò) then (Là Admin)
+        :Lấy profile Admin & Chuyển hướng Trang Quản Trị;
+        |User|
+        stop
+    else (Là Sinh Viên)
+        :Lấy profile SV & Chuyển hướng Trang Sinh Viên;
+        |User|
+        stop
+    endif
+else (Sai)
+    :Gửi lỗi về JSP;
+    
+    |JSP (login)|
+    :Hiển thị thông báo lỗi;
+    :Hiển thị lại Form Đăng nhập;
+    
+    |User|
+    stop
+endif
+
+@enduml

@@ -1,0 +1,49 @@
+@startuml
+
+
+|Admin|
+start
+:Mở trang thêm sinh viên (Gửi GET);
+
+|Servlet (StudentManageServlet)|
+:Nhận GET, Gọi CSDL lấy DS Khoa Lớp;
+
+|CSDL|
+:SELECT từ Khoa/Lớp;
+:Trả DS Khoa Lớp;
+
+|Servlet (StudentManageServlet)|
+:Forward về JSP;
+
+|JSP (admin_manage_student)|
+:Hiển thị Form Thêm Sinh Viên;
+
+|Admin|
+:Nhập thông tin, chọn ảnh;
+:Gửi yêu cầu POST (Submit Form);
+
+|Servlet (StudentManageServlet)|
+:Nhận POST, Xử lý tải lên ảnh (nếu có);
+:Tạo đối tượng Tài Khoản và Sinh Viên;
+:Gọi CSDL thêm (addStudentWithAccount);
+
+|CSDL|
+:Thực hiện Transaction (INSERT TaiKhoan, INSERT SinhVien);
+:Trả kết quả (rows);
+
+|Servlet (StudentManageServlet)|
+if (Thêm thành công?) then (Có)
+    :Chuyển hướng về trang Quản lý Sinh viên;
+    |Admin|
+    stop
+else (Không)
+    :Forward về JSP kèm thông báo lỗi;
+    
+    |JSP (admin_manage_student)|
+    :Hiển thị lại Form kèm thông báo lỗi;
+    
+    |Admin|
+    stop
+endif
+
+@enduml

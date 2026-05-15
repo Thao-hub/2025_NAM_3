@@ -1,0 +1,28 @@
+@startuml
+
+
+|SinhVien|
+start
+:Sinh viên đăng nhập thành công;
+:Chọn mục Xem Bảng Điểm (Gửi GET);
+
+|Servlet (StudentDashboardServlet)|
+:Nhận GET, Lấy maSV từ Phiên làm việc;
+:Gọi CSDL (getDiemByMaSV);
+
+|CSDL|
+:Truy vấn CSDL để lấy Danh sách Điểm (JOIN);
+:Trả về List Điểm;
+
+|Servlet (StudentDashboardServlet)|
+:Nhận List Điểm;
+:Tính toán Điểm Trung Bình (nếu cần);
+:setAttribute và forward về JSP;
+
+|JSP (student_dashboard)|
+:Hiển thị Bảng Điểm và Điểm Trung Bình;
+
+|SinhVien|
+stop
+
+@enduml

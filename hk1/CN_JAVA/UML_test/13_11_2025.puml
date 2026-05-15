@@ -1,0 +1,13 @@
+@startwbs
+* Hệ thống Quản lý Đơn hàng (Mini POS)
+** Quản lý Sản phẩm
+*** Tra cứu sản phẩm
+*** Cập nhật giá bán
+** Quản lý Bán hàng
+*** Tạo đơn hàng mới
+*** Tính tiền & Thanh toán
+*** In hóa đơn
+** Quản lý Khách hàng
+*** Đăng ký thành viên
+*** Tích điểm thưởng
+@endwbs
