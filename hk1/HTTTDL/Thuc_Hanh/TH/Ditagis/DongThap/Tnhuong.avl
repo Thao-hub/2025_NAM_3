@@ -1,0 +1,626 @@
+/3.1
+(ODB.1
+	FirstRootClassName:	"Legend"
+	Roots:	2
+	Version:	31
+)
+
+(Legend.2
+	SymType:	0x02
+	LegType:	0x08
+	ClassType:	0x03
+	FieldNames:	3
+	Symbols:	4
+	Class:	69
+	Class:	70
+	Class:	71
+	Class:	72
+	Class:	73
+	Class:	74
+	Class:	75
+	Class:	76
+	Class:	77
+	Class:	78
+	Class:	79
+	Class:	80
+	Class:	81
+	Class:	82
+	Class:	83
+	Class:	84
+	StdDevs:	1.00000000000000
+	NullSym:	85
+	NullValues:	89
+	StatValues:	90
+	Precision:	-3
+)
+
+(AVStr.3
+	S:	"Ten"
+)
+
+(SymList.4
+	Child:	5
+	Child:	9
+	Child:	13
+	Child:	17
+	Child:	21
+	Child:	25
+	Child:	29
+	Child:	33
+	Child:	37
+	Child:	41
+	Child:	45
+	Child:	49
+	Child:	53
+	Child:	57
+	Child:	61
+	Child:	65
+)
+
+(BShSym.5
+	Color:	6
+	Outline:	1
+	OutlineColor:	7
+	OutlineWidth:	0.10000000000000
+	BgColor:	8
+)
+
+(TClr.6
+	Red:	0xf8e8
+	Green:	0xc33b
+	Blue:	0xfeff
+)
+
+(TClr.7
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.8
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.9
+	Color:	10
+	Outline:	1
+	OutlineColor:	11
+	OutlineWidth:	0.10000000000000
+	BgColor:	12
+)
+
+(TClr.10
+	Red:	0x6995
+	Green:	0xfeff
+	Blue:	0xfef7
+)
+
+(TClr.11
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.12
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.13
+	Color:	14
+	Outline:	1
+	OutlineColor:	15
+	OutlineWidth:	0.10000000000000
+	BgColor:	16
+)
+
+(TClr.14
+	Red:	0xd22c
+	Green:	0xd2e3
+	Blue:	0xfeff
+)
+
+(TClr.15
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.16
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.17
+	Color:	18
+	Outline:	1
+	OutlineColor:	19
+	OutlineWidth:	0.10000000000000
+	BgColor:	20
+)
+
+(TClr.18
+	Red:	0x6995
+	Green:	0xfeff
+	Blue:	0xd171
+)
+
+(TClr.19
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.20
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.21
+	Color:	22
+	Outline:	1
+	OutlineColor:	23
+	OutlineWidth:	0.10000000000000
+	BgColor:	24
+)
+
+(TClr.22
+	Red:	0xf7f6
+	Green:	0xa559
+	Blue:	0xfeff
+)
+
+(TClr.23
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.24
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.25
+	Color:	26
+	Outline:	1
+	OutlineColor:	27
+	OutlineWidth:	0.10000000000000
+	BgColor:	28
+)
+
+(TClr.26
+	Red:	0xa559
+	Green:	0xa6c7
+	Blue:	0xfeff
+)
+
+(TClr.27
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.28
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.29
+	Color:	30
+	Outline:	1
+	OutlineColor:	31
+	OutlineWidth:	0.10000000000000
+	BgColor:	32
+)
+
+(TClr.30
+	Red:	0xea
+	Green:	0xeaff
+	Blue:	0xa3a1
+)
+
+(TClr.31
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.32
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.33
+	Color:	34
+	Outline:	1
+	OutlineColor:	35
+	OutlineWidth:	0.10000000000000
+	BgColor:	36
+)
+
+(TClr.34
+	Red:	0xc2
+	Green:	0xc2ff
+	Blue:	0xc2f4
+)
+
+(TClr.35
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.36
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.37
+	Color:	38
+	Outline:	1
+	OutlineColor:	39
+	OutlineWidth:	0.10000000000000
+	BgColor:	40
+)
+
+(TClr.38
+	Red:	0xeeff
+	Green:	0xacb6
+	Blue:	0xceeb
+)
+
+(TClr.39
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.40
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.41
+	Color:	42
+	Outline:	1
+	OutlineColor:	43
+	OutlineWidth:	0.10000000000000
+	BgColor:	44
+)
+
+(TClr.42
+	Red:	0xaf4f
+	Green:	0xfeff
+	Blue:	0xdd5d
+)
+
+(TClr.43
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.44
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.45
+	Color:	46
+	Outline:	1
+	OutlineColor:	47
+	OutlineWidth:	0.10000000000000
+	BgColor:	48
+)
+
+(TClr.46
+	Red:	0xd22c
+	Green:	0xfeff
+	Blue:	0xfefd
+)
+
+(TClr.47
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.48
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.49
+	Color:	50
+	Outline:	1
+	OutlineColor:	51
+	OutlineWidth:	0.10000000000000
+	BgColor:	52
+)
+
+(TClr.50
+	Red:	0xaf4f
+	Green:	0xdd66
+	Blue:	0xfeff
+)
+
+(TClr.51
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.52
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.53
+	Color:	54
+	Outline:	1
+	OutlineColor:	55
+	OutlineWidth:	0.10000000000000
+	BgColor:	56
+)
+
+(TClr.54
+	Red:	0xe428
+	Green:	0xfeff
+	Blue:	0xb44a
+)
+
+(TClr.55
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.56
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.57
+	Color:	58
+	Outline:	1
+	OutlineColor:	59
+	OutlineWidth:	0.10000000000000
+	BgColor:	60
+)
+
+(TClr.58
+	Red:	0xf8e8
+	Green:	0xc33b
+	Blue:	0xfeff
+)
+
+(TClr.59
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.60
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.61
+	Color:	62
+	Outline:	1
+	OutlineColor:	63
+	OutlineWidth:	0.10000000000000
+	BgColor:	64
+)
+
+(TClr.62
+	Red:	0x6995
+	Green:	0xfeff
+	Blue:	0xfef7
+)
+
+(TClr.63
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.64
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(BShSym.65
+	Color:	66
+	Outline:	1
+	OutlineColor:	67
+	OutlineWidth:	0.10000000000000
+	BgColor:	68
+)
+
+(TClr.66
+	Name:	"Transparent"
+)
+
+(TClr.67
+	Name:	"Transparent"
+)
+
+(TClr.68
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(LClass.69
+	IsText:	1
+	Label:	"§Êt C¸t Giång"
+	MinStr:	"§Êt C¸t Giång"
+	MaxStr:	"§Êt C¸t Giång"
+	Precision:	-3
+)
+
+(LClass.70
+	IsText:	1
+	Label:	"§Êt PhÌn Cã Líp S­ên TÝch, Lò TÝch"
+	MinStr:	"§Êt PhÌn Cã Líp S­ên TÝch, Lò TÝch"
+	MaxStr:	"§Êt PhÌn Cã Líp S­ên TÝch, Lò TÝch"
+	Precision:	-3
+)
+
+(LClass.71
+	IsText:	1
+	Label:	"§Êt PhÌn Ho¹t §«ng S©u"
+	MinStr:	"§Êt PhÌn Ho¹t §«ng S©u"
+	MaxStr:	"§Êt PhÌn Ho¹t §«ng S©u"
+	Precision:	-3
+)
+
+(LClass.72
+	IsText:	1
+	Label:	"§Êt PhÌn Ho¹t §éng N«ng"
+	MinStr:	"§Êt PhÌn Ho¹t §éng N«ng"
+	MaxStr:	"§Êt PhÌn Ho¹t §éng N«ng"
+	Precision:	-3
+)
+
+(LClass.73
+	IsText:	1
+	Label:	"§Êt PhÌn TiÒm Tµng N«ng"
+	MinStr:	"§Êt PhÌn TiÒm Tµng N«ng"
+	MaxStr:	"§Êt PhÌn TiÒm Tµng N«ng"
+	Precision:	-3
+)
+
+(LClass.74
+	IsText:	1
+	Label:	"§Êt PhÌn TiÒm Tµng S©u"
+	MinStr:	"§Êt PhÌn TiÒm Tµng S©u"
+	MaxStr:	"§Êt PhÌn TiÒm Tµng S©u"
+	Precision:	-3
+)
+
+(LClass.75
+	IsText:	1
+	Label:	"§Êt Phï Sa Cã NÒn PhÌn"
+	MinStr:	"§Êt Phï Sa Cã NÒn PhÌn"
+	MaxStr:	"§Êt Phï Sa Cã NÒn PhÌn"
+	Precision:	-3
+)
+
+(LClass.76
+	IsText:	1
+	Label:	"§Êt Phï Sa Cã TÇng Loang Læ §á Vµng"
+	MinStr:	"§Êt Phï Sa Cã TÇng Loang Læ §á Vµng"
+	MaxStr:	"§Êt Phï Sa Cã TÇng Loang Læ §á Vµng"
+	Precision:	-3
+)
+
+(LClass.77
+	IsText:	1
+	Label:	"§Êt Phï Sa Gley"
+	MinStr:	"§Êt Phï Sa Gley"
+	MaxStr:	"§Êt Phï Sa Gley"
+	Precision:	-3
+)
+
+(LClass.78
+	IsText:	1
+	Label:	"§Êt Phï Sa Kh«ng §­îc Båi, Kh«ng Ph©n DÞ"
+	MinStr:	"§Êt Phï Sa Kh«ng §­îc Båi, Kh«ng Ph©n DÞ"
+	MaxStr:	"§Êt Phï Sa Kh«ng §­îc Båi, Kh«ng Ph©n DÞ"
+	Precision:	-3
+)
+
+(LClass.79
+	IsText:	1
+	Label:	"§Êt Phï Sa §­îc Båi"
+	MinStr:	"§Êt Phï Sa §­îc Båi"
+	MaxStr:	"§Êt Phï Sa §­îc Båi"
+	Precision:	-3
+)
+
+(LClass.80
+	IsText:	1
+	Label:	"§Êt X¸m B¹c Mµu Trªn Phï Sa Cæ"
+	MinStr:	"§Êt X¸m B¹c Mµu Trªn Phï Sa Cæ"
+	MaxStr:	"§Êt X¸m B¹c Mµu Trªn Phï Sa Cæ"
+	Precision:	-3
+)
+
+(LClass.81
+	IsText:	1
+	Label:	"§Êt X¸m Cã TÇng Loang Læ"
+	MinStr:	"§Êt X¸m Cã TÇng Loang Læ"
+	MaxStr:	"§Êt X¸m Cã TÇng Loang Læ"
+	Precision:	-3
+)
+
+(LClass.82
+	IsText:	1
+	Label:	"§Êt X¸m Gley"
+	MinStr:	"§Êt X¸m Gley"
+	MaxStr:	"§Êt X¸m Gley"
+	Precision:	-3
+)
+
+(LClass.83
+	IsText:	1
+	Label:	"§Êt X¸m Trªn Phï Sa Cæ"
+	MinStr:	"§Êt X¸m Trªn Phï Sa Cæ"
+	MaxStr:	"§Êt X¸m Trªn Phï Sa Cæ"
+	Precision:	-3
+)
+
+(LClass.84
+	IsNoData:	1
+	IsText:	1
+	Label:	"No Data"
+	Precision:	-3
+)
+
+(BShSym.85
+	Color:	86
+	Outline:	1
+	OutlineColor:	87
+	OutlineWidth:	0.10000000000000
+	BgColor:	88
+)
+
+(TClr.86
+	Name:	"Transparent"
+)
+
+(TClr.87
+	Name:	"Transparent"
+)
+
+(TClr.88
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(NameDict.89
+)
+
+(NameDict.90
+)
+

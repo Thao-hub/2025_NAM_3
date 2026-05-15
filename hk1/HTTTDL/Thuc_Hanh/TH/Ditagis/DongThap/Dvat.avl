@@ -1,0 +1,1970 @@
+/3.1
+(ODB.1
+	FirstRootClassName:	"Legend"
+	Roots:	2
+	Version:	31
+)
+
+(Legend.2
+	LegType:	0x08
+	ClassType:	0x03
+	FieldNames:	3
+	Symbols:	4
+	Class:	293
+	Class:	294
+	Class:	295
+	Class:	296
+	Class:	297
+	Class:	298
+	Class:	299
+	Class:	300
+	Class:	301
+	Class:	302
+	Class:	303
+	Class:	304
+	Class:	305
+	Class:	306
+	Class:	307
+	Class:	308
+	Class:	309
+	Class:	310
+	Class:	311
+	Class:	312
+	Class:	313
+	Class:	314
+	Class:	315
+	Class:	316
+	Class:	317
+	Class:	318
+	Class:	319
+	Class:	320
+	Class:	321
+	Class:	322
+	Class:	323
+	Class:	324
+	Class:	325
+	Class:	326
+	Class:	327
+	Class:	328
+	Class:	329
+	Class:	330
+	StdDevs:	1.00000000000000
+	NullSym:	331
+	NullValues:	338
+	StatValues:	339
+	RefScale:	7.00000000000000
+	Precision:	-3
+)
+
+(AVStr.3
+	S:	"Loai_dvat"
+)
+
+(SymList.4
+	Child:	5
+	Child:	12
+	Child:	19
+	Child:	26
+	Child:	33
+	Child:	40
+	Child:	47
+	Child:	54
+	Child:	61
+	Child:	68
+	Child:	75
+	Child:	82
+	Child:	89
+	Child:	96
+	Child:	103
+	Child:	110
+	Child:	117
+	Child:	124
+	Child:	131
+	Child:	138
+	Child:	145
+	Child:	152
+	Child:	159
+	Child:	166
+	Child:	184
+	Child:	191
+	Child:	198
+	Child:	205
+	Child:	212
+	Child:	219
+	Child:	226
+	Child:	233
+	Child:	240
+	Child:	247
+	Child:	254
+	Child:	261
+	Child:	268
+	Child:	286
+)
+
+(BMkSym.5
+	Color:	6
+	BgColor:	7
+	Font:	8
+	Size:	8.00000000000000
+	Pattern:	255
+	Angle:	360.00000000000000
+)
+
+(TClr.6
+)
+
+(TClr.7
+	Name:	"Transparent"
+)
+
+(NFont.8
+	Family:	9
+	Name:	10
+	Style:	11
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.9
+	S:	"ESRI Environmental & Icons"
+)
+
+(AVStr.10
+	S:	"ESRI Environmental & Icons"
+)
+
+(AVStr.11
+	S:	"Normal"
+)
+
+(BMkSym.12
+	Color:	13
+	BgColor:	14
+	Font:	15
+	Size:	8.00000000000000
+	Pattern:	209
+	Angle:	360.00000000000000
+)
+
+(TClr.13
+	Red:	0xffff
+)
+
+(TClr.14
+	Name:	"Transparent"
+)
+
+(NFont.15
+	Family:	16
+	Name:	17
+	Style:	18
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.16
+	S:	"ESRI Cartography"
+)
+
+(AVStr.17
+	S:	"ESRI Cartography"
+)
+
+(AVStr.18
+	S:	"Normal"
+)
+
+(BMkSym.19
+	Color:	20
+	BgColor:	21
+	Font:	22
+	Size:	8.00000000000000
+	Pattern:	229
+	Angle:	360.00000000000000
+)
+
+(TClr.20
+	Red:	0xffff
+)
+
+(TClr.21
+	Name:	"Transparent"
+)
+
+(NFont.22
+	Family:	23
+	Name:	24
+	Style:	25
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.23
+	S:	"ESRI Cartography"
+)
+
+(AVStr.24
+	S:	"ESRI Cartography"
+)
+
+(AVStr.25
+	S:	"Normal"
+)
+
+(BMkSym.26
+	Color:	27
+	BgColor:	28
+	Font:	29
+	Size:	10.00000000000000
+	Pattern:	206
+	Angle:	360.00000000000000
+)
+
+(TClr.27
+)
+
+(TClr.28
+	Name:	"Transparent"
+)
+
+(NFont.29
+	Family:	30
+	Name:	31
+	Style:	32
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.30
+	S:	"ESRI Cartography"
+)
+
+(AVStr.31
+	S:	"ESRI Cartography"
+)
+
+(AVStr.32
+	S:	"Normal"
+)
+
+(BMkSym.33
+	Color:	34
+	BgColor:	35
+	Font:	36
+	Size:	12.00000000000000
+	Pattern:	104
+	Angle:	360.00000000000000
+)
+
+(TClr.34
+)
+
+(TClr.35
+	Name:	"Transparent"
+)
+
+(NFont.36
+	Family:	37
+	Name:	38
+	Style:	39
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.37
+	S:	"ESRI Transportation & Municipal"
+)
+
+(AVStr.38
+	S:	"ESRI Transportation & Municipal"
+)
+
+(AVStr.39
+	S:	"Normal"
+)
+
+(BMkSym.40
+	Color:	41
+	BgColor:	42
+	Font:	43
+	Size:	10.00000000000000
+	Pattern:	105
+	Angle:	360.00000000000000
+)
+
+(TClr.41
+)
+
+(TClr.42
+	Name:	"Transparent"
+)
+
+(NFont.43
+	Family:	44
+	Name:	45
+	Style:	46
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.44
+	S:	"ESRI Transportation & Municipal"
+)
+
+(AVStr.45
+	S:	"ESRI Transportation & Municipal"
+)
+
+(AVStr.46
+	S:	"Normal"
+)
+
+(BMkSym.47
+	Color:	48
+	BgColor:	49
+	Font:	50
+	Size:	10.00000000000000
+	Pattern:	101
+	Angle:	360.00000000000000
+)
+
+(TClr.48
+)
+
+(TClr.49
+	Name:	"Transparent"
+)
+
+(NFont.50
+	Family:	51
+	Name:	52
+	Style:	53
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.51
+	S:	"ESRI Transportation & Municipal"
+)
+
+(AVStr.52
+	S:	"ESRI Transportation & Municipal"
+)
+
+(AVStr.53
+	S:	"Normal"
+)
+
+(BMkSym.54
+	Color:	55
+	BgColor:	56
+	Font:	57
+	Size:	12.00000000000000
+	Pattern:	234
+	Angle:	360.00000000000000
+)
+
+(TClr.55
+)
+
+(TClr.56
+	Name:	"Transparent"
+)
+
+(NFont.57
+	Family:	58
+	Name:	59
+	Style:	60
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.58
+	S:	"ESRI Cartography"
+)
+
+(AVStr.59
+	S:	"ESRI Cartography"
+)
+
+(AVStr.60
+	S:	"Normal"
+)
+
+(BMkSym.61
+	Color:	62
+	BgColor:	63
+	Font:	64
+	Size:	10.00000000000000
+	Pattern:	59
+	Angle:	360.00000000000000
+)
+
+(TClr.62
+)
+
+(TClr.63
+	Name:	"Transparent"
+)
+
+(NFont.64
+	Family:	65
+	Name:	66
+	Style:	67
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.65
+	S:	".VnCourier New"
+)
+
+(AVStr.66
+	S:	".VnCourier New"
+)
+
+(AVStr.67
+	S:	"Normal"
+)
+
+(BMkSym.68
+	Color:	69
+	BgColor:	70
+	Font:	71
+	Size:	10.00000000000000
+	Pattern:	249
+	Angle:	360.00000000000000
+)
+
+(TClr.69
+)
+
+(TClr.70
+	Name:	"Transparent"
+)
+
+(NFont.71
+	Family:	72
+	Name:	73
+	Style:	74
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.72
+	S:	"ESRI Environmental & Icons"
+)
+
+(AVStr.73
+	S:	"ESRI Environmental & Icons"
+)
+
+(AVStr.74
+	S:	"Normal"
+)
+
+(BMkSym.75
+	Color:	76
+	BgColor:	77
+	Font:	78
+	Size:	12.00000000000000
+	Pattern:	222
+	Angle:	360.00000000000000
+)
+
+(TClr.76
+	Red:	0x189
+	Green:	0x8200
+	Blue:	0x81
+)
+
+(TClr.77
+	Name:	"Transparent"
+)
+
+(NFont.78
+	Family:	79
+	Name:	80
+	Style:	81
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.79
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.80
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.81
+	S:	"Normal"
+)
+
+(BMkSym.82
+	Color:	83
+	BgColor:	84
+	Font:	85
+	Size:	22.00000000000000
+	Pattern:	181
+	Angle:	360.00000000000000
+)
+
+(TClr.83
+)
+
+(TClr.84
+	Name:	"Transparent"
+)
+
+(NFont.85
+	Family:	86
+	Name:	87
+	Style:	88
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.86
+	S:	"ESRI Oil, Gas, & Water"
+)
+
+(AVStr.87
+	S:	"ESRI Oil, Gas, & Water"
+)
+
+(AVStr.88
+	S:	"Normal"
+)
+
+(BMkSym.89
+	Color:	90
+	BgColor:	91
+	Font:	92
+	Size:	12.00000000000000
+	Pattern:	239
+	Angle:	360.00000000000000
+)
+
+(TClr.90
+)
+
+(TClr.91
+	Name:	"Transparent"
+)
+
+(NFont.92
+	Family:	93
+	Name:	94
+	Style:	95
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.93
+	S:	"ESRI Cartography"
+)
+
+(AVStr.94
+	S:	"ESRI Cartography"
+)
+
+(AVStr.95
+	S:	"Normal"
+)
+
+(BMkSym.96
+	Color:	97
+	BgColor:	98
+	Font:	99
+	Size:	8.00000000000000
+	Pattern:	44
+	Angle:	360.00000000000000
+)
+
+(TClr.97
+)
+
+(TClr.98
+	Name:	"Transparent"
+)
+
+(NFont.99
+	Family:	100
+	Name:	101
+	Style:	102
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.100
+	S:	".VnCourier New"
+)
+
+(AVStr.101
+	S:	".VnCourier New"
+)
+
+(AVStr.102
+	S:	"Normal"
+)
+
+(BMkSym.103
+	Color:	104
+	BgColor:	105
+	Font:	106
+	Size:	8.00000000000000
+	Pattern:	84
+	Angle:	360.00000000000000
+)
+
+(TClr.104
+)
+
+(TClr.105
+	Name:	"Transparent"
+)
+
+(NFont.106
+	Family:	107
+	Name:	108
+	Style:	109
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.107
+	S:	".VnCourier New"
+)
+
+(AVStr.108
+	S:	".VnCourier New"
+)
+
+(AVStr.109
+	S:	"Normal"
+)
+
+(BMkSym.110
+	Color:	111
+	BgColor:	112
+	Font:	113
+	Size:	8.00000000000000
+	Pattern:	36
+	Angle:	360.00000000000000
+)
+
+(TClr.111
+	Red:	0xffff
+)
+
+(TClr.112
+	Name:	"Transparent"
+)
+
+(NFont.113
+	Family:	114
+	Name:	115
+	Style:	116
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.114
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.115
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.116
+	S:	"Normal"
+)
+
+(BMkSym.117
+	Color:	118
+	BgColor:	119
+	Font:	120
+	Size:	10.00000000000000
+	Pattern:	65
+	Angle:	360.00000000000000
+)
+
+(TClr.118
+	Blue:	0xffff
+)
+
+(TClr.119
+	Name:	"Transparent"
+)
+
+(NFont.120
+	Family:	121
+	Name:	122
+	Style:	123
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.121
+	S:	"ESRI Cartography"
+)
+
+(AVStr.122
+	S:	"ESRI Cartography"
+)
+
+(AVStr.123
+	S:	"Normal"
+)
+
+(BMkSym.124
+	Color:	125
+	BgColor:	126
+	Font:	127
+	Size:	10.00000000000000
+	Pattern:	228
+	Angle:	360.00000000000000
+)
+
+(TClr.125
+)
+
+(TClr.126
+	Name:	"Transparent"
+)
+
+(NFont.127
+	Family:	128
+	Name:	129
+	Style:	130
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.128
+	S:	"ESRI Cartography"
+)
+
+(AVStr.129
+	S:	"ESRI Cartography"
+)
+
+(AVStr.130
+	S:	"Normal"
+)
+
+(BMkSym.131
+	Color:	132
+	BgColor:	133
+	Font:	134
+	Size:	10.00000000000000
+	Pattern:	62
+	Angle:	360.00000000000000
+)
+
+(TClr.132
+)
+
+(TClr.133
+	Name:	"Transparent"
+)
+
+(NFont.134
+	Family:	135
+	Name:	136
+	Style:	137
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.135
+	S:	".VnCourier New"
+)
+
+(AVStr.136
+	S:	".VnCourier New"
+)
+
+(AVStr.137
+	S:	"Normal"
+)
+
+(BMkSym.138
+	Color:	139
+	BgColor:	140
+	Font:	141
+	Size:	10.00000000000000
+	Pattern:	118
+	Angle:	360.00000000000000
+)
+
+(TClr.139
+)
+
+(TClr.140
+	Name:	"Transparent"
+)
+
+(NFont.141
+	Family:	142
+	Name:	143
+	Style:	144
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.142
+	S:	".VnCourier New"
+)
+
+(AVStr.143
+	S:	".VnCourier New"
+)
+
+(AVStr.144
+	S:	"Normal"
+)
+
+(BMkSym.145
+	Color:	146
+	BgColor:	147
+	Font:	148
+	Size:	8.00000000000000
+	Pattern:	76
+	Angle:	360.00000000000000
+)
+
+(TClr.146
+)
+
+(TClr.147
+	Name:	"Transparent"
+)
+
+(NFont.148
+	Family:	149
+	Name:	150
+	Style:	151
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.149
+	S:	".VnCourier New"
+)
+
+(AVStr.150
+	S:	".VnCourier New"
+)
+
+(AVStr.151
+	S:	"Normal"
+)
+
+(BMkSym.152
+	Color:	153
+	BgColor:	154
+	Font:	155
+	Size:	10.00000000000000
+	Pattern:	69
+	Angle:	360.00000000000000
+)
+
+(TClr.153
+)
+
+(TClr.154
+	Name:	"Transparent"
+)
+
+(NFont.155
+	Family:	156
+	Name:	157
+	Style:	158
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.156
+	S:	".Vn3DH"
+)
+
+(AVStr.157
+	S:	".Vn3DH  Normal"
+)
+
+(AVStr.158
+	S:	" Normal"
+)
+
+(BMkSym.159
+	Color:	160
+	BgColor:	161
+	Font:	162
+	Size:	8.00000000000000
+	Pattern:	232
+	Angle:	360.00000000000000
+)
+
+(TClr.160
+)
+
+(TClr.161
+	Name:	"Transparent"
+)
+
+(NFont.162
+	Family:	163
+	Name:	164
+	Style:	165
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.163
+	S:	"ESRI Environmental & Icons"
+)
+
+(AVStr.164
+	S:	"ESRI Environmental & Icons"
+)
+
+(AVStr.165
+	S:	"Normal"
+)
+
+(CMkSym.166
+	Color:	167
+	Symbols:	168
+	BgColor:	183
+	Size:	10.00000000000000
+)
+
+(TClr.167
+	Red:	0xffff
+)
+
+(SymList.168
+	Child:	169
+	Child:	176
+)
+
+(BMkSym.169
+	Color:	170
+	ColorLock:	1
+	BgColor:	171
+	Font:	172
+	Size:	10.00000000000000
+	Pattern:	101
+	Angle:	360.00000000000000
+)
+
+(TClr.170
+	Red:	0x9600
+	Green:	0x9600
+	Blue:	0x9600
+)
+
+(TClr.171
+	Name:	"Transparent"
+)
+
+(NFont.172
+	Family:	173
+	Name:	174
+	Style:	175
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.173
+	S:	"ESRI Cartography"
+)
+
+(AVStr.174
+	S:	"ESRI Cartography"
+)
+
+(AVStr.175
+	S:	"Normal"
+)
+
+(BMkSym.176
+	Color:	177
+	BgColor:	178
+	Font:	179
+	Size:	10.00000000000000
+	Pattern:	98
+	Angle:	360.00000000000000
+)
+
+(TClr.177
+	Red:	0xffff
+)
+
+(TClr.178
+	Name:	"Transparent"
+)
+
+(NFont.179
+	Family:	180
+	Name:	181
+	Style:	182
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.180
+	S:	"ESRI Cartography"
+)
+
+(AVStr.181
+	S:	"ESRI Cartography"
+)
+
+(AVStr.182
+	S:	"Normal"
+)
+
+(TClr.183
+	Name:	"Transparent"
+)
+
+(BMkSym.184
+	Color:	185
+	BgColor:	186
+	Font:	187
+	Size:	10.00000000000000
+	Pattern:	65
+	Angle:	360.00000000000000
+)
+
+(TClr.185
+)
+
+(TClr.186
+	Name:	"Transparent"
+)
+
+(NFont.187
+	Family:	188
+	Name:	189
+	Style:	190
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.188
+	S:	".VnCourier New"
+)
+
+(AVStr.189
+	S:	".VnCourier New"
+)
+
+(AVStr.190
+	S:	"Normal"
+)
+
+(BMkSym.191
+	Color:	192
+	BgColor:	193
+	Font:	194
+	Size:	8.00000000000000
+	Pattern:	203
+	Angle:	360.00000000000000
+)
+
+(TClr.192
+)
+
+(TClr.193
+	Name:	"Transparent"
+)
+
+(NFont.194
+	Family:	195
+	Name:	196
+	Style:	197
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.195
+	S:	"ESRI Cartography"
+)
+
+(AVStr.196
+	S:	"ESRI Cartography"
+)
+
+(AVStr.197
+	S:	"Normal"
+)
+
+(BMkSym.198
+	Color:	199
+	BgColor:	200
+	Font:	201
+	Size:	10.00000000000000
+	Pattern:	235
+	Angle:	360.00000000000000
+)
+
+(TClr.199
+)
+
+(TClr.200
+	Name:	"Transparent"
+)
+
+(NFont.201
+	Family:	202
+	Name:	203
+	Style:	204
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.202
+	S:	"ESRI Environmental & Icons"
+)
+
+(AVStr.203
+	S:	"ESRI Environmental & Icons"
+)
+
+(AVStr.204
+	S:	"Normal"
+)
+
+(BMkSym.205
+	Color:	206
+	BgColor:	207
+	Font:	208
+	Size:	10.00000000000000
+	Pattern:	74
+	Angle:	360.00000000000000
+)
+
+(TClr.206
+	Blue:	0xffff
+)
+
+(TClr.207
+	Name:	"Transparent"
+)
+
+(NFont.208
+	Family:	209
+	Name:	210
+	Style:	211
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.209
+	S:	".VnCourier New"
+)
+
+(AVStr.210
+	S:	".VnCourier New"
+)
+
+(AVStr.211
+	S:	"Normal"
+)
+
+(BMkSym.212
+	Color:	213
+	BgColor:	214
+	Font:	215
+	Size:	10.00000000000000
+	Pattern:	224
+	Angle:	360.00000000000000
+)
+
+(TClr.213
+	Blue:	0xffff
+)
+
+(TClr.214
+	Name:	"Transparent"
+)
+
+(NFont.215
+	Family:	216
+	Name:	217
+	Style:	218
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.216
+	S:	"ESRI Cartography"
+)
+
+(AVStr.217
+	S:	"ESRI Cartography"
+)
+
+(AVStr.218
+	S:	"Normal"
+)
+
+(BMkSym.219
+	Color:	220
+	BgColor:	221
+	Font:	222
+	Size:	10.00000000000000
+	Pattern:	224
+	Angle:	360.00000000000000
+)
+
+(TClr.220
+	Red:	0x278a
+	Green:	0x6ab8
+	Blue:	0xdd3a
+)
+
+(TClr.221
+	Name:	"Transparent"
+)
+
+(NFont.222
+	Family:	223
+	Name:	224
+	Style:	225
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.223
+	S:	"ESRI Cartography"
+)
+
+(AVStr.224
+	S:	"ESRI Cartography"
+)
+
+(AVStr.225
+	S:	"Normal"
+)
+
+(BMkSym.226
+	Color:	227
+	BgColor:	228
+	Font:	229
+	Size:	10.00000000000000
+	Pattern:	35
+	Angle:	360.00000000000000
+)
+
+(TClr.227
+	Red:	0x7878
+	Green:	0x7878
+	Blue:	0x7878
+)
+
+(TClr.228
+	Name:	"Transparent"
+)
+
+(NFont.229
+	Family:	230
+	Name:	231
+	Style:	232
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.230
+	S:	".VnCourier New"
+)
+
+(AVStr.231
+	S:	".VnCourier New"
+)
+
+(AVStr.232
+	S:	"Normal"
+)
+
+(BMkSym.233
+	Color:	234
+	BgColor:	235
+	Font:	236
+	Size:	10.00000000000000
+	Pattern:	45
+	Angle:	360.00000000000000
+)
+
+(TClr.234
+)
+
+(TClr.235
+	Name:	"Transparent"
+)
+
+(NFont.236
+	Family:	237
+	Name:	238
+	Style:	239
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.237
+	S:	".VnCourier New"
+)
+
+(AVStr.238
+	S:	".VnCourier New"
+)
+
+(AVStr.239
+	S:	"Normal"
+)
+
+(BMkSym.240
+	Color:	241
+	BgColor:	242
+	Font:	243
+	Size:	10.00000000000000
+	Pattern:	113
+	Angle:	360.00000000000000
+)
+
+(TClr.241
+)
+
+(TClr.242
+	Name:	"Transparent"
+)
+
+(NFont.243
+	Family:	244
+	Name:	245
+	Style:	246
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.244
+	S:	".VnCourier New"
+)
+
+(AVStr.245
+	S:	".VnCourier New"
+)
+
+(AVStr.246
+	S:	"Normal"
+)
+
+(BMkSym.247
+	Color:	248
+	BgColor:	249
+	Font:	250
+	Size:	10.00000000000000
+	Pattern:	119
+	Angle:	360.00000000000000
+)
+
+(TClr.248
+)
+
+(TClr.249
+	Name:	"Transparent"
+)
+
+(NFont.250
+	Family:	251
+	Name:	252
+	Style:	253
+	Serif:	1
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.251
+	S:	".VnCourier New"
+)
+
+(AVStr.252
+	S:	".VnCourier New"
+)
+
+(AVStr.253
+	S:	"Normal"
+)
+
+(BMkSym.254
+	Color:	255
+	BgColor:	256
+	Font:	257
+	Size:	8.00000000000000
+	Pattern:	226
+	Angle:	360.00000000000000
+)
+
+(TClr.255
+	Red:	0xffff
+)
+
+(TClr.256
+	Name:	"Transparent"
+)
+
+(NFont.257
+	Family:	258
+	Name:	259
+	Style:	260
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.258
+	S:	"ESRI Cartography"
+)
+
+(AVStr.259
+	S:	"ESRI Cartography"
+)
+
+(AVStr.260
+	S:	"Normal"
+)
+
+(BMkSym.261
+	Color:	262
+	BgColor:	263
+	Font:	264
+	Size:	8.00000000000000
+	Pattern:	254
+	Angle:	360.00000000000000
+)
+
+(TClr.262
+	Red:	0xffff
+)
+
+(TClr.263
+	Name:	"Transparent"
+)
+
+(NFont.264
+	Family:	265
+	Name:	266
+	Style:	267
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.265
+	S:	"ESRI Cartography"
+)
+
+(AVStr.266
+	S:	"ESRI Cartography"
+)
+
+(AVStr.267
+	S:	"Normal"
+)
+
+(CMkSym.268
+	Color:	269
+	Symbols:	270
+	BgColor:	285
+	Size:	10.00000000000000
+)
+
+(TClr.269
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(SymList.270
+	Child:	271
+	Child:	278
+)
+
+(BMkSym.271
+	Color:	272
+	BgColor:	273
+	Font:	274
+	Size:	10.00000000000000
+	Pattern:	35
+	Angle:	360.00000000000000
+)
+
+(TClr.272
+	Red:	0xffff
+	Green:	0xffff
+	Blue:	0xffff
+)
+
+(TClr.273
+	Name:	"Transparent"
+)
+
+(NFont.274
+	Family:	275
+	Name:	276
+	Style:	277
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.275
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.276
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.277
+	S:	"Normal"
+)
+
+(BMkSym.278
+	Color:	279
+	ColorLock:	1
+	BgColor:	280
+	Font:	281
+	Size:	10.00000000000000
+	Pattern:	179
+	Angle:	360.00000000000000
+)
+
+(TClr.279
+)
+
+(TClr.280
+	Name:	"Transparent"
+)
+
+(NFont.281
+	Family:	282
+	Name:	283
+	Style:	284
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.282
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.283
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.284
+	S:	"Normal"
+)
+
+(TClr.285
+	Name:	"Transparent"
+)
+
+(BMkSym.286
+	Color:	287
+	BgColor:	288
+	Font:	289
+	Size:	8.00000000000000
+	Pattern:	35
+	Angle:	360.00000000000000
+)
+
+(TClr.287
+	Name:	"Transparent"
+)
+
+(TClr.288
+	Name:	"Transparent"
+)
+
+(NFont.289
+	Family:	290
+	Name:	291
+	Style:	292
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.290
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.291
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.292
+	S:	"Normal"
+)
+
+(LClass.293
+	IsText:	1
+	Label:	"Nhµ m¸y ph¸t ®iÖn, tr¹m biÕn thÕ"
+	MinStr:	"1"
+	MaxStr:	"1"
+	Precision:	-3
+)
+
+(LClass.294
+	IsText:	1
+	Label:	"BÖnh viÖn, tr¹m x¸, tr¹m y tÕ"
+	MinStr:	"10"
+	MaxStr:	"10"
+	Precision:	-3
+)
+
+(LClass.295
+	IsText:	1
+	Label:	"Gi¸o dôc, tr­êng häc"
+	MinStr:	"11"
+	MaxStr:	"11"
+	Precision:	-3
+)
+
+(LClass.296
+	IsText:	1
+	Label:	"BÕn c¶ng"
+	MinStr:	"12"
+	MaxStr:	"12"
+	Precision:	-3
+)
+
+(LClass.297
+	IsText:	1
+	Label:	"BÕn xe"
+	MinStr:	"13"
+	MaxStr:	"13"
+	Precision:	-3
+)
+
+(LClass.298
+	IsText:	1
+	Label:	"Nhµ ga xe löa"
+	MinStr:	"14"
+	MaxStr:	"14"
+	Precision:	-3
+)
+
+(LClass.299
+	IsText:	1
+	Label:	"S©n bay"
+	MinStr:	"15"
+	MaxStr:	"15"
+	Precision:	-3
+)
+
+(LClass.300
+	IsText:	1
+	Label:	"Nhµ m¸y, xÝ nghiÖp"
+	MinStr:	"16"
+	MaxStr:	"16"
+	Precision:	-3
+)
+
+(LClass.301
+	IsText:	1
+	Label:	"Nhµ thi ®Êu TDTT, nhµ v¨n hãa."
+	MinStr:	"17"
+	MaxStr:	"17"
+	Precision:	-3
+)
+
+(LClass.302
+	IsText:	1
+	Label:	"S©n vËn ®éng"
+	MinStr:	"18"
+	MaxStr:	"18"
+	Precision:	-3
+)
+
+(LClass.303
+	IsText:	1
+	Label:	"C«ng viªn, khu vui ch¬i, gi¶i trÝ."
+	MinStr:	"19"
+	MaxStr:	"19"
+	Precision:	-3
+)
+
+(LClass.304
+	IsText:	1
+	Label:	"BÓ chøa: n­íc, x¨ng dÇu, gas"
+	MinStr:	"2"
+	MaxStr:	"2"
+	Precision:	-3
+)
+
+(LClass.305
+	IsText:	1
+	Label:	"Mé x©y, nghÜa ®Þa"
+	MinStr:	"20"
+	MaxStr:	"20"
+	Precision:	-3
+)
+
+(LClass.306
+	IsText:	1
+	Label:	"§×nh, chïa, ®Òn, miÕu"
+	MinStr:	"21"
+	MaxStr:	"21"
+	Precision:	-3
+)
+
+(LClass.307
+	IsText:	1
+	Label:	"Nhµ thê"
+	MinStr:	"22"
+	MaxStr:	"22"
+	Precision:	-3
+)
+
+(LClass.308
+	IsText:	1
+	Label:	"Chî"
+	MinStr:	"23"
+	MaxStr:	"23"
+	Precision:	-3
+)
+
+(LClass.309
+	IsText:	1
+	Label:	"Hå, ®µi phun n­íc"
+	MinStr:	"24"
+	MaxStr:	"24"
+	Precision:	-3
+)
+
+(LClass.310
+	IsText:	1
+	Label:	"KiÕn tróc d¹ng th¸p cæ"
+	MinStr:	"25"
+	MaxStr:	"25"
+	Precision:	-3
+)
+
+(LClass.311
+	IsText:	1
+	Label:	"T­îng ®µi. bia t­ëng niÖm"
+	MinStr:	"26"
+	MaxStr:	"26"
+	Precision:	-3
+)
+
+(LClass.312
+	IsText:	1
+	Label:	"Cét anten"
+	MinStr:	"27"
+	MaxStr:	"27"
+	Precision:	-3
+)
+
+(LClass.313
+	IsText:	1
+	Label:	"Cét ®Ìn pha"
+	MinStr:	"28"
+	MaxStr:	"28"
+	Precision:	-3
+)
+
+(LClass.314
+	IsText:	1
+	Label:	"Cét chèng sÐt"
+	MinStr:	"29"
+	MaxStr:	"29"
+	Precision:	-3
+)
+
+(LClass.315
+	IsText:	1
+	Label:	"Tr¹m tiÕp x¨ng, dÇu"
+	MinStr:	"3"
+	MaxStr:	"3"
+	Precision:	-3
+)
+
+(LClass.316
+	IsText:	1
+	Label:	"Cét cê"
+	MinStr:	"30"
+	MaxStr:	"30"
+	Precision:	-3
+)
+
+(LClass.317
+	IsText:	1
+	Label:	"Cét ®ång hå"
+	MinStr:	"31"
+	MaxStr:	"31"
+	Precision:	-3
+)
+
+(LClass.318
+	IsText:	1
+	Label:	"CÇu"
+	MinStr:	"32"
+	MaxStr:	"32"
+	Precision:	-3
+)
+
+(LClass.319
+	IsText:	1
+	Label:	"BÕn phµ"
+	MinStr:	"33"
+	MaxStr:	"33"
+	Precision:	-3
+)
+
+(LClass.320
+	IsText:	1
+	Label:	"Th¸c n­íc"
+	MinStr:	"34"
+	MaxStr:	"34"
+	Precision:	-3
+)
+
+(LClass.321
+	IsText:	1
+	Label:	"GhÒnh"
+	MinStr:	"35"
+	MaxStr:	"35"
+	Precision:	-3
+)
+
+(LClass.322
+	IsText:	1
+	Label:	"§Ëp n­íc"
+	MinStr:	"36"
+	MaxStr:	"36"
+	Precision:	-3
+)
+
+(LClass.323
+	IsText:	1
+	Label:	"Nhµ kho"
+	MinStr:	"4"
+	MaxStr:	"4"
+	Precision:	-3
+)
+
+(LClass.324
+	IsText:	1
+	Label:	"B­u ®iÖn"
+	MinStr:	"5"
+	MaxStr:	"5"
+	Precision:	-3
+)
+
+(LClass.325
+	IsText:	1
+	Label:	"§µi ph¸t thanh"
+	MinStr:	"6"
+	MaxStr:	"6"
+	Precision:	-3
+)
+
+(LClass.326
+	IsText:	1
+	Label:	"§µi truyÒn h×nh"
+	MinStr:	"7"
+	MaxStr:	"7"
+	Precision:	-3
+)
+
+(LClass.327
+	IsText:	1
+	Label:	"C¬ quan chÝnh quyÒn (UBND, c«ng an...)"
+	MinStr:	"8"
+	MaxStr:	"8"
+	Precision:	-3
+)
+
+(LClass.328
+	IsText:	1
+	Label:	"Phßng ch¸y ch÷a ch¸y"
+	MinStr:	"9"
+	MaxStr:	"9"
+	Precision:	-3
+)
+
+(LClass.329
+	IsText:	1
+	Label:	"C¸c ®Þa vËt, c«ng tr×nh kh¸c"
+	MinStr:	"99"
+	MaxStr:	"99"
+	Precision:	-3
+)
+
+(LClass.330
+	IsNoData:	1
+	IsText:	1
+	Label:	"No Data"
+	Precision:	-3
+)
+
+(BMkSym.331
+	Color:	332
+	BgColor:	333
+	Font:	334
+	Size:	8.00000000000000
+	Pattern:	35
+	Angle:	360.00000000000000
+)
+
+(TClr.332
+	Name:	"Transparent"
+)
+
+(TClr.333
+	Name:	"Transparent"
+)
+
+(NFont.334
+	Family:	335
+	Name:	336
+	Style:	337
+	Weight:	1
+	Wideness:	1
+)
+
+(AVStr.335
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.336
+	S:	"ESRI Geometric Symbols"
+)
+
+(AVStr.337
+	S:	"Normal"
+)
+
+(NameDict.338
+)
+
+(NameDict.339
+)
+

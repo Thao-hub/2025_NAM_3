@@ -1,0 +1,16 @@
+Spatial.Aspect: Unrecognized object: AnalysisPropertiesDialog at 333
+Spatial.Contour: Unrecognized object: AnalysisEnvironment at 410
+Spatial.Hillshade: Unrecognized object: AnalysisPropertiesDialog at 1242
+Spatial.SaveDataSet: Unrecognized object: GTHEME at 158
+Spatial.SaveDataSetUpdate: Unrecognized object: GTheme at 192
+Spatial.Slope: Unrecognized object: AnalysisPropertiesDialog at 342
+Spatial.Surface: Unrecognized object: AnalysisEnvironment at 209
+Surface.FeatureToGrid: Unrecognized object: GRID at 559
+Surface.GridExport: Unrecognized object: GRID at 323
+Surface.GridImport: Unrecognized object: GRID at 1388
+Surface.GridToGrid: Unrecognized object: GRID at 252
+Surface.ImageToGrid: Unrecognized object: GRID at 790
+Surface.TinToGrid: Unrecognized object: GRID at 252
+Surface.Viewshed: Unrecognized object: AnalysisPropertiesDialog at 597
+Surface.Load: Unrecognized object: AnalysisEnvironment at 73
+Surface.Unload: Unrecognized object: AnalysisEnvironment at 81
