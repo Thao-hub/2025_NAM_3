@@ -1,0 +1,31 @@
+@model LoginModel
+
+@if (TempData[key: "Msg"] != null)
+{
+    <p class="alert alert-primary">@TempData[key: "Msg"]</p>
+}
+<div asp-validation-summary="All"></div>
+<form method="post">
+    <div class="row mb-1">
+        <label class="form-label col-2" asp-for="Email"></label>
+        <div class="col-10">
+            <input class="form-control" type="email" asp-for="Email">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <label class="form-label col-2" asp-for="Password"></label>
+        <div class="col-10">
+            <input class="form-control" type="password" asp-for="Password">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <label class="form-label col-2" asp-for="Remember">Remember me!</label>
+        <div class="col-10">
+            <input class="form-checked" type="checkbox" asp-for="Remember">
+        </div>
+    </div>
+    <div>
+        <button class="offset-2 btn btn-primary">Login</button>
+        <span>New User? <a href="/auth/register">Register now</a></span>
+    </div>
+</form>

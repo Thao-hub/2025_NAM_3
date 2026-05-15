@@ -1,0 +1,58 @@
+@using Microsoft.AspNetCore.Http.Extensions
+@model List<Article>
+@{
+    ViewData["Title"] = $"Result search with keyword {Context.Request.Query["q"]}";
+    ViewData["Description"] = $"Result search with keyword {Context.Request.Query["q"]} in Web App Ceramic";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Context.Request.Query["q"]</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap">
+    @foreach(Category item in ViewBag.Categories){
+        <div class="flex-fill">
+            <a asp-action="category" asp-route-slug="@item.Slug" asp-route-id="@item.Id" asp-controller="home">
+                <img src="/images/@item.ImageUrl" alt="@item.Name" >
+            </a>
+            <div>
+                <a asp-controller="home" asp-action="category" asp-route-id="@item.Id" asp-route-slug="@item.Slug">@item.Name</a>
+            </div>
+        </div>
+    }
+</div>
+<!--Native-->
+<ul class="pagination mt-2">
+    @for(int i = 1; i <= ViewBag.NumPages; i++){
+        <li class="page-item">
+            @if(Context.GetPage(name: "page") == i){
+                <a class="active page-link" asp-route-page="@i" asp-controller="home" asp-action="search" asp-route-q="@Context.Request.Query["q"]">@i</a>
+            }else{
+                <a class="page-link" asp-route-page="@i" asp-controller="home" asp-action="search" asp-route-q="@Context.Request.Query["q"]">@i</a>
+            }
+        </li>
+    }
+</ul>
+<h1>Result search for keyword: <strong>@Context.Request.Query["q"]</strong></h1>
+<div class="row">
+    @foreach(Article item in Model){
+        <div class="col-3">
+            <div class="border p-2 mt-2 rounded">
+                <h2 class="h6">
+                    <a asp-route-slug="@item.Slug" asp-controller="home" asp-action="details" asp-route-id="@item.Id">
+                        @item.Title
+                    </a>
+                </h2>
+                <div>
+                    <img class="w-100" src="/articles/@item.ImageUrl" alt="@item.Title">
+                </div>
+                <div>
+                    <p>Price: <b>@item.Price</b></p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,82 @@
+@using Microsoft.AspNetCore.Http.Extensions
+@model List<Article>
+@{
+    ViewData["Title"] = ViewBag.Category.Name;
+    ViewData["Description"] = ViewBag.Category.Description;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@ViewBag.Category.Name</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap">
+    @foreach(Category item in ViewBag.Categories){
+        <div class="flex-fill">
+            <a asp-action="category" asp-route-slug="@item.Slug" asp-route-id="@item.Id" asp-controller="home">
+                <img src="/images/@item.ImageUrl" alt="@item.Name" >
+            </a>
+            <div>
+                <a asp-controller="home" asp-action="category" asp-route-id="@item.Id" asp-route-slug="@item.Slug">@item.Name</a>
+            </div>
+        </div>
+    }
+</div>
+<!--Native-->
+<ul class="pagination mt-2">
+    @for(int i = 1; i <= ViewBag.NumPages; i++){
+        <li class="page-item">
+            @if(Context.GetPage(name: "page") == i){
+                <a class="active page-link" asp-route-page="@i" asp-controller="home" asp-action="category" asp-route-slug="@ViewBag.Category.Slug" asp-route-id="@ViewBag.Category.Id">@i</a>
+            }else{
+                <a class="page-link" asp-route-page="@i" asp-controller="home" asp-action="category" asp-route-slug="@ViewBag.Category.Slug" asp-route-id="@ViewBag.Category.Id" >@i</a>
+            }
+        </li>
+    }
+</ul>
+
+<div class="row">
+    @foreach(Article item in Model){
+        <div class="col-3">
+            <div class="border p-2 mt-2 rounded">
+                <h2 class="h6">
+                    <a asp-route-slug="@item.Slug" asp-controller="home" asp-action="details" asp-route-id="@item.Id">
+                        @item.Title
+                    </a>
+                </h2>
+                <div>
+                    <img class="w-100" src="/articles/@item.ImageUrl" alt="@item.Title">
+                </div>
+                <div>
+                    <p>Price: <b>@item.Price</b></p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div class="card">
+    <div class="card-header">
+        <h1 class="card-title">@ViewBag.Category.Name</h1>
+    </div>
+    <div class="card-body">
+        <div><img src="~/images/@ViewBag.Category.ImageUrl" alt="@ViewBag.Category.Name"></div>
+        <div>@ViewBag.Category.Description</div>
+        <h2>@ViewBag.Category.Heading</h2>
+        <div>@Html.Raw(ViewBag.Category.Introduction)</div>
+        <div>@Html.Raw(ViewBag.Category.Content)</div>
+        <div id="fb-root"></div>
+        <script async defer crossorigin="anonymous"
+            src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v19.0">
+            </script>
+        <div class="fb-like"  
+            data-href="@Context.Request.GetDisplayUrl()"  
+            data-width="" 
+            data-layout="standard"
+            data-action="like" 
+            data-size="small" 
+            data-share="true">
+        </div>
+    </div>
+</div>

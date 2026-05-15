@@ -1,0 +1,27 @@
+@model IEnumerable<Member>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Email</th>
+            <th>Given Name</th>
+            <th>Surname</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Command</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Member item in Model){
+            <tr>
+                <td>@item.Email</td>
+                <td>@item.GivenName</td>
+                <td>@item.Surname</td>
+                <td>@item.Name</td>
+                <td>@item.Role</td>
+                <td>
+                    <a href="/member/details/@item.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

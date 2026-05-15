@@ -1,0 +1,18 @@
+@{
+    ViewData[index: "Title"] = "Search Keyword Ceramic Web From Google";
+    ViewData[index: "Description"] ="Search Keyword content on Ceramic Web From Google Search";
+}
+
+
+<form action="http://google.com/search" target="_blank">
+    <div class="row mb-2">
+        <label class="from-label col-2">Keyword</label>
+        <div class="col-10">
+            <input type="hidden" name="sitesearch" value="http://gombattrang3.somee.com/">
+            <input class="from-control" type="search" name="q" placeholder="Enter you keyword">
+        </div>
+    </div>
+    <div>
+        <button class="offset-2 btn btn-primary">Search</button>
+    </div>
+</form>

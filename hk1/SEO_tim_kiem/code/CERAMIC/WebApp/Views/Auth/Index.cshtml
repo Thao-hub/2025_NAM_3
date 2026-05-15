@@ -1,0 +1,25 @@
+@using System.Security.Claims
+@{
+    ViewData[index: "Title"] = $"Your Profile {User.Identity?.Name}";
+    ViewData[index: "Description"] = $"Description for Profile {User.Identity?.Name}";
+}" 
+<h2>Welcome: <strong>@User.Identity?.Name</strong></h2>
+
+<table>
+    <tr>
+        <th>Email</th>
+        <td>@User.FindFirstValue(ClaimTypes.Email)</td>
+    </tr>
+    <tr>
+        <th>Name</th>
+        <td>@User.FindFirstValue(ClaimTypes.Name)</td>
+    </tr>
+    <tr>
+        <th>Given Name</th>
+        <td>@User.FindFirstValue(ClaimTypes.GivenName)</td>
+    </tr>
+    <tr>
+        <th>Surname</th>
+        <td>@User.FindFirstValue(ClaimTypes.Surname)</td>
+    </tr>
+</table>

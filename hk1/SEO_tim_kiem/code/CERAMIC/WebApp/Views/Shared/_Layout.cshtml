@@ -1,0 +1,82 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData[index: "Title"]</title>
+    <meta name="description" content="@ViewData[index: "Decription"]">
+
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <meta name="google-site-verification" content="kTCYNcBXfbuUw38ONoyuonT6xdKTc_oEjKeT2HH_Ark" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Gốm Bát Tràng</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    </li>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <form action="/auth/logout" method="post">
+                                <button class="nav-link">Logout</button>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth">@User.Identity.Name</a>
+                        </li>
+                        @if (User.IsInRole(role: "Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    Dashboard
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/category">Category</a></li>
+                                    <li><a class="dropdown-item" href="/product">Product</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="/member">Member</a></li>
+                                </ul>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/register">Register</a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home/googlesearch">Google Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+                <form action="/home/search" class="d-flex" role="search">
+                    <input name="q" class="form-control me-2" value="@Context.Request.Query["q"]" type="search" placeholder="Search" aria-label="Search" />
+                    <button class="btn btn-outline-success">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        @RenderBody()
+    </div>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

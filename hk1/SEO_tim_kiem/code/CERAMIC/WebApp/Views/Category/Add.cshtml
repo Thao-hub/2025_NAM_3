@@ -1,0 +1,50 @@
+@model Category
+<div asp-validation-summary="All"></div>
+<form enctype="multipart/form-data" method="post">
+    <div>
+        <label asp-for="Name">Name</label>
+        <div>
+            <input type="text" asp-for="Name">
+        </div>
+    </div>
+    <div>
+        <label asp-for="Slug">Slug</label>
+        <div>
+            <input type="text" asp-for="Slug">
+        </div>
+    </div>
+    <div>
+        <label asp-for="Heading">Heading</label>
+        <div>
+            <input type="text" asp-for="Heading">
+        </div>
+    </div>
+    <div>
+        <label for="f">Image</label>
+        <div>
+            <input type="file" name="f" id="f" accept="image/*">
+        </div>
+    </div>
+    <div>
+        <label asp-for="Description">Description</label>
+        <div>
+            <textarea asp-for="Description"></textarea>
+        </div>
+    </div>
+    <div>
+        <label asp-for="Introduction">Introduction</label>
+        <div>
+            <textarea asp-for="Introduction"></textarea>
+        </div>
+    </div>
+    <div>
+        <label asp-for="Content">Content</label>
+        <div>
+            <textarea asp-for="Content"></textarea>
+        </div>
+    </div>
+    <div>
+        <button>Save Change</button>
+        <a href="/category">Cancel</a>
+    </div>
+</form>
