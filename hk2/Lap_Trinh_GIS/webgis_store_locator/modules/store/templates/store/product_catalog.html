@@ -1,0 +1,542 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ t.products_page|default:"Sản phẩm" }}</title>
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+  <style>
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1100px 420px at 10% -10%, rgba(197, 245, 234, .38) 0%, transparent 55%),
+        radial-gradient(900px 340px at 92% 0%, rgba(255, 232, 213, .34) 0%, transparent 58%),
+        linear-gradient(180deg, #f7fafc 0%, #edf7f5 52%, #e0f4ef 78%, #d7f0ea 100%);
+      background-attachment: fixed;
+    }
+    .site-shell { min-height: 100vh; }
+    .site-header {
+      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 10px 28px rgba(8, 47, 44, 0.18);
+    }
+    .site-header .wrap {
+      max-width: 1320px;
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: #fff;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo span { color: #ffd7a8; }
+    .site-nav { display: flex; gap: 28px; }
+    .site-nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btnFind, .btnWhite {
+      width: 140px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .btnFind {
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(249, 115, 22, .28);
+    }
+    .btnWhite {
+      width: 112px;
+      background: rgba(255,255,255,.92);
+      color: #123545;
+      border: 1px solid rgba(255,255,255,.45);
+    }
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+    .site-footer {
+      margin-top: 0;
+      background:
+        linear-gradient(180deg, rgba(15,118,110,.12) 0%, rgba(13,91,86,.82) 16%, #0f172a 50%);
+      color: #cbd5f5;
+    }
+    .site-footer .container {
+      width: min(100%, 1320px);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .newsletter-section {
+      position: relative;
+      background: linear-gradient(135deg, rgba(13, 110, 104, .88) 0%, rgba(20, 160, 150, .9) 100%);
+      padding: 38px 0 24px;
+    }
+    .newsletter-section::before {
+      content: "";
+      position: absolute;
+      inset: -54px 0 auto;
+      height: 70px;
+      background: linear-gradient(180deg, transparent 0%, rgba(20,184,166,.08) 45%, rgba(13,110,104,.18) 100%);
+      pointer-events: none;
+    }
+    .newsletter-content h3 {
+      color: #f8fafc;
+      text-shadow: 0 2px 12px rgba(15, 23, 42, .12);
+    }
+    .newsletter-form input {
+      box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
+    }
+    .newsletter-form button {
+      box-shadow: 0 10px 22px rgba(249, 115, 22, .2);
+    }
+    .newsletter-content {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .newsletter-content h3 { margin: 0; color: #fff; font-size: 20px; font-weight: 900; line-height: 1.35; }
+    .newsletter-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .newsletter-form input {
+      min-width: 280px;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: #fff;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .newsletter-form button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .footer-info { padding: 34px 0; }
+    .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 24px; }
+    .footer-col h4 { margin: 0 0 12px; font-size: 16px; color: #fff; font-weight: 900; }
+    .footer-col p, .footer-col li, .footer-col a { color: #cbd5f5; font-size: 14px; line-height: 1.6; }
+    .footer-col ul { margin: 0; padding: 0; list-style: none; }
+    .footer-col li + li { margin-top: 8px; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid rgba(203, 213, 245, 0.2); padding: 14px 0; text-align: center; }
+    .footer-bottom p { margin: 0; }
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .site-nav { gap: 16px; }
+    }
+    .product-media {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #f8fafc;
+    }
+    .product-media img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity .45s ease;
+    }
+    .product-media img.is-active { opacity: 1; }
+    .product-media-dots {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+    }
+    .product-media-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.45);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, .18);
+    }
+    .product-media-dots span.is-active { background: #fff; }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+    .filter-panel {
+      margin-bottom: 18px;
+      padding: 20px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(148, 163, 184, .16);
+      box-shadow: 0 18px 36px rgba(15, 23, 42, .06);
+      backdrop-filter: blur(10px);
+    }
+    .filter-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .filter-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+      color: #123545;
+    }
+    .filter-sub {
+      color: #5b6b7f;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .filter-form {
+      display: grid;
+      grid-template-columns: minmax(240px, 1.35fr) repeat(3, minmax(170px, 1fr)) auto auto;
+      gap: 12px;
+      align-items: end;
+    }
+    .filter-field {
+      display: grid;
+      gap: 8px;
+    }
+    .filter-field label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #345166;
+    }
+    .filter-input,
+    .filter-select {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, .28);
+      background: #fff;
+      color: #123545;
+      font-size: 14px;
+      font-weight: 700;
+      outline: none;
+    }
+    .filter-input:focus,
+    .filter-select:focus {
+      border-color: #14b8a6;
+      box-shadow: 0 0 0 4px rgba(20, 184, 166, .12);
+    }
+    .filter-summary {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(20,184,166,.1);
+      color: #0f766e;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .product-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border-radius: 24px;
+    }
+    .product-title {
+      margin: 12px 0 6px;
+      min-height: 76px;
+      line-height: 1.3;
+      display: flex;
+      align-items: flex-start;
+    }
+    .product-title a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .product-price {
+      margin-top: 8px;
+      font-weight: 800;
+      font-size: 20px;
+    }
+    .stock-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      min-height: 52px;
+    }
+    .stock-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .stock-badge.in-stock {
+      background: rgba(15, 118, 110, .12);
+      color: #0f766e;
+    }
+    .stock-badge.low-stock {
+      background: rgba(245, 158, 11, .16);
+      color: #b45309;
+    }
+    .stock-badge.out-stock {
+      background: rgba(239, 68, 68, .12);
+      color: #b91c1c;
+    }
+    .stock-hint {
+      color: #486581;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .card-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+    }
+    .card-actions form {
+      margin: 0;
+    }
+    .card-actions .btn,
+    .card-actions form .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .card-actions.is-single {
+      grid-template-columns: 1fr;
+    }
+    .btn.is-out-stock {
+      background: linear-gradient(180deg, #e5e7eb, #d1d5db);
+      color: #6b7280;
+      border-color: rgba(148, 163, 184, .35);
+      box-shadow: none;
+    }
+    .btn.is-out-stock[disabled] {
+      opacity: 1;
+      cursor: not-allowed;
+      transform: none;
+    }
+    @media (max-width: 640px) {
+      .filter-form {
+        grid-template-columns: 1fr;
+      }
+      .filter-form .btn {
+        width: 100%;
+      }
+      .product-title {
+        min-height: auto;
+      }
+      .card-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="site-shell">
+    {% include 'shared/navbar.html' %}
+
+    <main class="page-wrap">
+      {% if messages %}{% for message in messages %}<div class="msg">{{ message }}</div>{% endfor %}{% endif %}
+      <section class="panel card" style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+          <div>
+            <h1 class="top-title" style="font-size:32px;">{{ t.products_page|default:"Sản phẩm" }}</h1>
+            <div class="top-sub">{{ t.product_catalog_intro|default:"Khách có thể xem hàng tự do, nhưng cần tài khoản để thêm giỏ và đặt mua." }}</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a class="btn btn-light" href="{% url 'store:home' %}">Trang chủ</a>
+            <a class="btn btn-light" href="{% url 'store:cart' %}">{{ t.cart|default:"Giỏ hàng" }} ({{ cart_total_quantity }})</a>
+            {% if request.user.is_authenticated %}
+              <a class="btn btn-primary" href="{% url 'store:my_orders' %}">{{ t.my_orders|default:"Đơn hàng của tôi" }}</a>
+            {% else %}
+              <a class="btn btn-primary" href="{% url 'store:user_login' %}">{{ t.login|default:"Đăng nhập" }}</a>
+              <a class="btn btn-light" href="{% url 'store:user_register' %}">{{ t.register|default:"Đăng ký" }}</a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <section class="filter-panel">
+        <div class="filter-head">
+          <div>
+            <h2 class="filter-title">Bộ lọc sản phẩm</h2>
+            <div class="filter-sub">Lọc theo tên, nhóm, chi nhánh và chuỗi cửa hàng.</div>
+          </div>
+          <div class="filter-sub">{{ paginator.count }} sản phẩm phù hợp</div>
+        </div>
+        <form method="get" class="filter-form">
+          <div class="filter-field">
+            <label for="filter-q">Tên sản phẩm</label>
+            <input id="filter-q" class="filter-input" type="text" name="q" value="{{ search_query }}" placeholder="Ví dụ: Bánh mì, cà phê, snack...">
+          </div>
+          <div class="filter-field">
+            <label for="filter-group">Nhóm sản phẩm</label>
+            <select id="filter-group" class="filter-select" name="group">
+              <option value="">Tất cả nhóm</option>
+              {% for group in group_options %}
+                <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>{{ group.ten }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="filter-chain">Chuỗi cửa hàng</label>
+            <select id="filter-chain" class="filter-select" name="chain">
+              <option value="">Tất cả chuỗi</option>
+              {% for chain in chain_options %}
+                <option value="{{ chain.id }}" {% if selected_chain == chain.id|stringformat:"s" %}selected{% endif %}>{{ chain.ten }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="filter-store">Chi nhánh</label>
+            <select id="filter-store" class="filter-select" name="store">
+              <option value="">Tất cả chi nhánh</option>
+              {% for store in store_options %}
+                <option value="{{ store.id }}" {% if selected_store_id == store.id|stringformat:"s" %}selected{% endif %}>{{ store.ten }} - {{ store.chuoi.ten }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button class="btn btn-primary" type="submit">Lọc ngay</button>
+          <a class="btn btn-light" href="{% url 'store:product_catalog' %}">Xóa lọc</a>
+        </form>
+        {% if search_query or selected_group or selected_chain or selected_store_id %}
+          <div class="filter-summary">
+            {% if search_query %}<span class="filter-chip">Tên: {{ search_query }}</span>{% endif %}
+            {% if selected_group %}
+              {% for group in group_options %}
+                {% if selected_group == group.id|stringformat:"s" %}<span class="filter-chip">Nhóm: {{ group.ten }}</span>{% endif %}
+              {% endfor %}
+            {% endif %}
+            {% if selected_chain %}
+              {% for chain in chain_options %}
+                {% if selected_chain == chain.id|stringformat:"s" %}<span class="filter-chip">Chuỗi: {{ chain.ten }}</span>{% endif %}
+              {% endfor %}
+            {% endif %}
+            {% if selected_store %}
+              <span class="filter-chip">Chi nhánh: {{ selected_store.ten }}</span>
+            {% endif %}
+          </div>
+        {% endif %}
+      </section>
+
+      <section class="grid product-grid">
+        {% for product in products %}
+          <article class="panel card product-card">
+            <a href="{% url 'store:product_detail' product.pk %}" style="display:block;">
+              <div class="product-media" data-product-gallery data-autoplay-ms="5000">
+                {% for image_url in product.card_gallery %}
+                  <img
+                    src="{{ image_url }}"
+                    alt="{{ product.ten }}"
+                    class="{% if forloop.first %}is-active{% endif %}"
+                    loading="lazy"
+                  >
+                {% endfor %}
+                {% if product.card_gallery|length > 1 %}
+                  <div class="product-media-dots">
+                    {% for image_url in product.card_gallery %}
+                      <span class="{% if forloop.first %}is-active{% endif %}" data-gallery-dot></span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </a>
+            <h3 class="product-title"><a href="{% url 'store:product_detail' product.pk %}">{{ product.ten }}</a></h3>
+            <div class="top-sub">{{ product.nhom_san_pham|default:"-" }} | {{ product.thuong_hieu|default:"-" }}</div>
+            <div class="product-price">{{ product.display_price }}</div>
+            <div class="stock-row">
+              <span class="stock-badge {{ product.stock_css }}">{{ product.catalog_stock_label }}</span>
+              <span class="stock-hint">{{ product.catalog_stock_hint }}</span>
+            </div>
+            <div class="card-actions {% if product.ton_kho <= 0 %}is-single{% endif %}">
+              {% if product.ton_kho <= 0 %}
+                <button class="btn btn-light is-out-stock" type="button" disabled>Hết hàng</button>
+              {% else %}
+                <form method="post" action="{% url 'store:cart_add' product.pk %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="store_id" value="{{ selected_store_id }}">
+                  <input type="hidden" name="next" value="{% url 'store:cart' %}">
+                  <button class="btn btn-light" type="submit">Thêm vào giỏ</button>
+                </form>
+                <form method="post" action="{% url 'store:cart_add' product.pk %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="store_id" value="{{ selected_store_id }}">
+                  <input type="hidden" name="next" value="{% url 'store:checkout' %}">
+                  <button class="btn btn-primary" type="submit">Mua ngay</button>
+                </form>
+              {% endif %}
+            </div>
+          </article>
+        {% empty %}
+          <section class="panel card">{{ t.no_data|default:"Chưa có dữ liệu." }}</section>
+        {% endfor %}
+      </section>
+
+      {% if paginator.num_pages > 1 %}
+        <section class="panel card" style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+            <div class="top-sub">Trang {{ page_obj.number }} / {{ paginator.num_pages }}</div>
+            <nav style="display:flex;gap:8px;flex-wrap:wrap;">
+              <a class="btn btn-light" href="{% if page_obj.has_previous %}?{% if query_string %}{{ query_string }}&{% endif %}page=1{% else %}#{% endif %}" {% if not page_obj.has_previous %}aria-disabled="true"{% endif %}>Đầu</a>
+              <a class="btn btn-light" href="{% if page_obj.has_previous %}?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}{% else %}#{% endif %}" {% if not page_obj.has_previous %}aria-disabled="true"{% endif %}>Trước</a>
+              {% for p in paginator.page_range %}
+                {% if p == 1 or p == paginator.num_pages or p >= page_obj.number|add:"-1" and p <= page_obj.number|add:"1" %}
+                  <a class="btn {% if p == page_obj.number %}btn-primary{% else %}btn-light{% endif %}" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ p }}">{{ p }}</a>
+                {% endif %}
+              {% endfor %}
+              <a class="btn btn-light" href="{% if page_obj.has_next %}?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}{% else %}#{% endif %}" {% if not page_obj.has_next %}aria-disabled="true"{% endif %}>Sau</a>
+              <a class="btn btn-light" href="{% if page_obj.has_next %}?{% if query_string %}{{ query_string }}&{% endif %}page={{ paginator.num_pages }}{% else %}#{% endif %}" {% if not page_obj.has_next %}aria-disabled="true"{% endif %}>Cuối</a>
+            </nav>
+          </div>
+        </section>
+      {% endif %}
+    </main>
+
+    {% include 'shared/footer.html' %}
+  </div>
+  <script src="/static/store/js/product_gallery.js"></script>
+</body>
+</html>

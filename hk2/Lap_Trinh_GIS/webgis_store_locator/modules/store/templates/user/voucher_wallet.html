@@ -1,0 +1,66 @@
+{% extends 'user/account_base.html' %}
+{% block extra_head %}
+.voucher-top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.voucher-links{display:flex;gap:14px;flex-wrap:wrap;color:#0f766e;font-size:15px;font-weight:700;line-height:1.45}.voucher-links span:last-child{color:#64748b;font-weight:500}.voucher-input{display:grid;grid-template-columns:130px minmax(0,1fr) 110px;gap:10px;align-items:center;padding:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;margin-bottom:14px}.voucher-input label,.voucher-input input{font-size:15px;line-height:1.45}.voucher-input input{min-height:42px;border:1px solid #dbe3ea;border-radius:12px;padding:0 14px}.voucher-tabs{display:flex;gap:12px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid #eef2f7;margin-bottom:16px}.voucher-tabs a{text-decoration:none;color:#64748b;font-size:15px;line-height:1.45;padding-bottom:6px}.voucher-tabs a.is-active{color:#0f766e;font-weight:800;border-bottom:2px solid #14b8a6}.voucher-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.voucher-card{display:grid;grid-template-columns:118px minmax(0,1fr) 110px;border:1px solid #e2e8f0;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 10px 22px rgba(15,23,42,.04)}.voucher-left{background:linear-gradient(135deg,#0f766e,#14b8a6);padding:18px 14px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;min-height:148px}.voucher-mark{font-size:28px;line-height:1}.voucher-brand{font-size:15px;line-height:1.35;font-weight:800}.voucher-mid{padding:14px 14px 12px}.voucher-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px}.voucher-title{font-size:15px;line-height:1.45;color:#0f172a;margin:0;font-weight:800}.voucher-qty{background:#ecfeff;color:#0f766e;padding:2px 8px;border-radius:999px;font-size:15px;font-weight:700;white-space:nowrap}.voucher-meta{color:#64748b;font-size:15px;line-height:1.5}.voucher-action{display:flex;align-items:center;justify-content:center;padding:14px;border-left:1px solid #eef2f7}.voucher-conditions{margin-top:10px}.voucher-conditions summary{list-style:none;cursor:pointer;color:#0f766e;font-size:15px;line-height:1.45;font-weight:700;display:inline-flex;align-items:center;gap:6px}.voucher-conditions summary::-webkit-details-marker{display:none}.voucher-conditions summary::before{content:"+";font-weight:800}.voucher-conditions[open] summary::before{content:"-"}.voucher-detail-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0}.voucher-detail-row{display:grid;grid-template-columns:108px minmax(0,1fr);gap:10px;font-size:15px;line-height:1.45;padding:4px 0}.voucher-detail-row strong{color:#0f172a}.voucher-detail-row span{color:#64748b}.voucher-empty{padding:18px 0;color:#64748b;font-size:15px;line-height:1.45}@media (max-width:1000px){.voucher-grid{grid-template-columns:1fr}}@media (max-width:720px){.voucher-input{grid-template-columns:1fr}.voucher-card{grid-template-columns:1fr}.voucher-left{min-height:100px}.voucher-action{border-left:none;border-top:1px solid #eef2f7}}
+{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-body">
+    <div class="voucher-top">
+      <h1 class="panel-title" style="margin:0;">Kho Voucher</h1>
+      <div class="voucher-links">
+        <span>Tìm thêm voucher</span>
+        <span>Xem lịch sử voucher</span>
+        <span>Tìm hiểu</span>
+      </div>
+    </div>
+
+    <div class="voucher-input">
+      <label for="voucher-code-input">Mã voucher</label>
+      <input id="voucher-code-input" type="text" placeholder="Nhập mã voucher tại đây">
+      <button class="ghost-btn" type="button">Lưu</button>
+    </div>
+
+    <div class="voucher-tabs">
+      {% for tab in voucher_tabs %}
+        <a href="?group={{ tab.key }}" class="{% if active_group == tab.key %}is-active{% endif %}">{{ tab.label }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="voucher-grid">
+      {% for voucher in vouchers %}
+        <article class="voucher-card">
+          <div class="voucher-left">
+            <div class="voucher-mark">🎟</div>
+            <div class="voucher-brand">{{ voucher.badge_label }}</div>
+          </div>
+          <div class="voucher-mid">
+            <div class="voucher-head">
+              <h2 class="voucher-title">{{ voucher.ten }}</h2>
+              <span class="voucher-qty">x3</span>
+            </div>
+            <div class="voucher-meta">Giảm {{ voucher.display_amount }}</div>
+            <div class="voucher-meta">Đơn tối thiểu {{ voucher.display_min_order }}</div>
+            <div class="voucher-meta">Hết hạn: {{ voucher.display_expiry }}</div>
+            <details class="voucher-conditions">
+              <summary>Điều kiện</summary>
+              <div class="voucher-detail-box">
+                {% for row in voucher.detail_rows %}
+                  <div class="voucher-detail-row">
+                    <strong>{{ row.label }}</strong>
+                    <span>{{ row.value }}</span>
+                  </div>
+                {% endfor %}
+              </div>
+            </details>
+          </div>
+          <div class="voucher-action">
+            <a class="ghost-btn" href="{% url 'store:checkout' %}">Dùng ngay</a>
+          </div>
+        </article>
+      {% empty %}
+        <div class="voucher-empty">Chưa có voucher phù hợp.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

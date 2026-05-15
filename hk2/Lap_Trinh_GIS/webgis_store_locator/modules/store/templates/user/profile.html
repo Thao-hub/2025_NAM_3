@@ -1,0 +1,70 @@
+﻿{% extends 'user/account_base.html' %}
+{% block extra_head %}
+.field-grid { display:grid; grid-template-columns: 180px minmax(0, 1fr); gap: 22px 26px; align-items:center; }
+.field-label { color:#64748b; font-size:15px; line-height:1.45; text-align:right; }
+.field-control input[type='text'], .field-control input[type='email'], .field-control input[type='date'] { width:100%; min-height:48px; border:1px solid #dbe3ea; border-radius:14px; padding:0 16px; font-size:15px; }
+.profile-main-grid { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap: 34px; }
+.avatar-box { border-left:1px solid #eef2f7; padding-left:34px; display:grid; justify-items:center; align-content:start; gap:16px; }
+.avatar-preview { width:120px; height:120px; border-radius:50%; overflow:hidden; background:#f5f5f5; display:grid; place-items:center; color:#bbb; font-size:42px; box-shadow:0 8px 20px rgba(15,23,42,.08); }
+.avatar-preview img { width:100%; height:100%; object-fit:cover; }
+.radio-row { display:flex; gap:18px; flex-wrap:wrap; }
+.profile-actions { margin-left:206px; margin-top:10px; display:flex; gap:12px; flex-wrap:wrap; }
+.note-text { color:#94a3b8; font-size:15px; line-height:1.55; text-align:center; }
+@media (max-width: 900px){ .profile-main-grid{grid-template-columns:1fr;} .avatar-box{border-left:0;padding-left:0;border-top:1px solid #f0f0f0;padding-top:24px;} .field-grid{grid-template-columns:1fr;} .field-label{text-align:left;} .profile-actions{margin-left:0;} }
+{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h1 class="panel-title">Hồ Sơ Của Tôi</h1>
+    <p class="panel-subtitle">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+  </div>
+  <div class="panel-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="profile-main-grid">
+        <div>
+          <div class="field-grid">
+            <div class="field-label">Tên đăng nhập</div>
+            <div class="field-control"><input type="text" value="{{ request.user.username }}" readonly></div>
+
+            <div class="field-label">Tên</div>
+            <div class="field-control"><input type="text" name="full_name" value="{{ display_name }}"></div>
+
+            <div class="field-label">Email</div>
+            <div class="field-control"><input type="email" name="email" value="{{ request.user.email|default:'' }}"></div>
+
+            <div class="field-label">Số điện thoại</div>
+            <div class="field-control">
+              <input type="text" value="{{ profile.so_dien_thoai|default:'' }}" readonly>
+            </div>
+
+            <div class="field-label">Giới tính</div>
+            <div class="field-control radio-row">
+              <label><input type="radio" name="gender" value="male" {% if profile_extra.gender == 'male' %}checked{% endif %}> Nam</label>
+              <label><input type="radio" name="gender" value="female" {% if profile_extra.gender == 'female' %}checked{% endif %}> Nữ</label>
+              <label><input type="radio" name="gender" value="other" {% if profile_extra.gender == 'other' %}checked{% endif %}> Khác</label>
+            </div>
+
+            <div class="field-label">Ngày sinh</div>
+            <div class="field-control"><input type="date" name="birth_date" value="{{ profile_extra.birth_date }}"></div>
+          </div>
+          <div class="profile-actions">
+            <button class="action-btn" type="submit">Lưu</button>
+          </div>
+        </div>
+        <div class="avatar-box">
+          <div class="avatar-preview">
+            {% if profile.avatar %}<img id="avatarPreview" src="{{ profile.avatar.url }}" alt="{{ display_name }}">{% else %}<img id="avatarPreview" alt="{{ display_name }}" style="display:none;"><span id="avatarFallback">👤</span>{% endif %}
+          </div>
+          <label class="ghost-btn" for="avatarInput">Chọn Ảnh</label>
+          <input id="avatarInput" type="file" name="avatar" accept=".jpg,.jpeg,.png,image/jpeg,image/png" style="display:none;">
+          <div class="note-text">Dung lượng file tối đa 1 MB<br>Định dạng:.JPEG, .PNG</div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+<script>
+(function(){const input=document.getElementById('avatarInput');const preview=document.getElementById('avatarPreview');const fallback=document.getElementById('avatarFallback');if(!input||!preview)return;input.addEventListener('change',function(){const file=input.files&&input.files[0];if(!file)return;preview.src=URL.createObjectURL(file);preview.style.display='block';if(fallback)fallback.style.display='none';});})();
+</script>
+{% endblock %}

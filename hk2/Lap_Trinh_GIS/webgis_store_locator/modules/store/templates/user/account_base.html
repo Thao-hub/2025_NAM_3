@@ -1,0 +1,402 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ page_title|default:'Tài khoản của tôi' }}{% endblock %}</title>
+  <style>
+    :root {
+      --brand-strong: #0f766e;
+      --brand: #14b8a6;
+      --brand-soft: #ecfeff;
+      --brand-line: #99f6e4;
+      --accent: #ef6c00;
+      --bg: #f5f7f8;
+      --card: #ffffff;
+      --line: #e5e7eb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --muted-soft: #9ca3af;
+      --danger: #ef4444;
+      --shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+      --card-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+      --radius-xl: 26px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(20, 184, 166, 0.18), transparent 20%),
+        radial-gradient(circle at 88% 12%, rgba(251, 191, 36, 0.14), transparent 22%),
+        linear-gradient(180deg, #f7fafb 0%, #eef6f5 58%, #f8fbfb 100%);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    }
+    a {
+      color: inherit;
+    }
+    .account-page {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+    }
+    .account-layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .account-sidebar {
+      position: sticky;
+      top: 98px;
+      align-self: start;
+      color: #4b5563;
+    }
+    .account-profile {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+    .account-profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: #cbd5e1;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    }
+    .account-profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .account-profile-avatar svg {
+      width: 26px;
+      height: 26px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+    }
+    .account-profile-name {
+      color: #111827;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+    .account-profile-edit {
+      display: inline-block;
+      margin-top: 4px;
+      color: var(--muted-soft);
+      font-size: 15px;
+      line-height: 1.45;
+      text-decoration: none;
+    }
+    .sidebar-block {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .sidebar-block.is-open .sidebar-submenu {
+      display: grid;
+    }
+    .sidebar-parent {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      color: #475569;
+      text-decoration: none;
+      font-size: 15px;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+    .sidebar-parent.is-active,
+    .sidebar-parent:hover {
+      color: var(--accent);
+    }
+    .sidebar-symbol {
+      width: 18px;
+      text-align: center;
+      font-weight: 900;
+      color: inherit;
+    }
+    .sidebar-submenu {
+      margin-left: 28px;
+      display: none;
+      gap: 4px;
+      padding-top: 2px;
+    }
+    .sidebar-submenu a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 4px 0;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .sidebar-submenu a.is-active,
+    .sidebar-submenu a:hover {
+      color: var(--accent);
+    }
+    .account-main {
+      min-width: 0;
+      display: grid;
+      gap: 18px;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .account-main p,
+    .account-main li,
+    .account-main label,
+    .account-main input,
+    .account-main textarea,
+    .account-main select,
+    .account-main button,
+    .account-main .helptext,
+    .account-main .text-muted {
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .panel {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 24px 28px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .panel-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.45;
+    }
+    .panel-subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .panel-body {
+      padding: 28px;
+    }
+    .msg-wrap {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .msg-item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      color: #9a3412;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .action-btn,
+    .ghost-btn,
+    .small-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+      border: 1px solid transparent;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .action-btn {
+      background: linear-gradient(135deg, var(--brand-strong), var(--brand));
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(20, 184, 166, 0.18);
+    }
+    .action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 26px rgba(20, 184, 166, 0.24);
+    }
+    .ghost-btn,
+    .small-btn {
+      background: #fff;
+      color: #475569;
+      border-color: #dbe3ea;
+    }
+    .ghost-btn:hover,
+    .small-btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+    .small-btn {
+      min-height: 36px;
+      padding: 0 14px;
+      font-size: 15px;
+      border-radius: 12px;
+    }
+    .accent-link {
+      color: var(--brand-strong);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .accent-link:hover {
+      text-decoration: underline;
+    }
+    .empty-state {
+      padding: 34px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+    }
+@media (max-width: 1080px) {
+      .account-layout {
+        grid-template-columns: 1fr;
+      }
+      .account-sidebar {
+        position: static;
+      }
+    }
+    @media (max-width: 720px) {
+      .account-page {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+      .panel-header,
+      .panel-body {
+        padding: 20px;
+      }
+    }
+    {% block extra_head %}{% endblock %}
+  </style>
+</head>
+<body>
+  {% include 'shared/navbar.html' %}
+
+  <main class="account-page">
+    <div class="account-layout">
+      <aside class="account-sidebar">
+        <div class="account-profile">
+          <div class="account-profile-avatar">
+            {% if avatar_url %}
+              <img src="{{ avatar_url }}" alt="{{ display_name }}">
+            {% else %}
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M5 19c0-3.3 3.1-6 7-6s7 2.7 7 6"></path>
+              </svg>
+            {% endif %}
+          </div>
+          <div>
+            <div class="account-profile-name">{{ request.user.username|default:display_name }}</div>
+            <a class="account-profile-edit" href="{% url 'store:user_profile_account' %}">Sửa hồ sơ</a>
+          </div>
+        </div>
+
+        <div class="sidebar-block {% if account_section == 'notifications' %}is-open{% endif %}">
+          <a class="sidebar-parent {% if account_section == 'notifications' %}is-active{% endif %}" href="{% url 'store:user_notifications_category' 'order' %}" data-sidebar-toggle="notifications" aria-expanded="{% if account_section == 'notifications' %}true{% else %}false{% endif %}">
+            <span class="sidebar-symbol">!</span>
+            <span>Thông báo</span>
+          </a>
+          <div class="sidebar-submenu">
+            <a href="{% url 'store:user_notifications_category' 'order' %}" class="{% if notification_section == 'order' %}is-active{% endif %}">Cập nhật đơn hàng</a>
+            <a href="{% url 'store:user_notifications_category' 'promotion' %}" class="{% if notification_section == 'promotion' %}is-active{% endif %}">Khuyến mãi</a>
+            <a href="{% url 'store:user_notifications_category' 'wallet' %}" class="{% if notification_section == 'wallet' %}is-active{% endif %}">Cập nhật ví</a>
+            <a href="{% url 'store:user_notifications_category' 'shopee' %}" class="{% if notification_section == 'shopee' %}is-active{% endif %}">Cập nhật hệ thống</a>
+          </div>
+        </div>
+
+        <div class="sidebar-block {% if account_section == 'account' %}is-open{% endif %}">
+          <a class="sidebar-parent {% if account_section == 'account' %}is-active{% endif %}" href="{% url 'store:user_profile_account' %}" data-sidebar-toggle="account" aria-expanded="{% if account_section == 'account' %}true{% else %}false{% endif %}">
+            <span class="sidebar-symbol">@</span>
+            <span>Tài khoản của tôi</span>
+          </a>
+          <div class="sidebar-submenu">
+            <a href="{% url 'store:user_profile_account' %}" class="{% if account_profile_subsection == 'profile' %}is-active{% endif %}">Hồ sơ</a>
+            <a href="{% url 'store:user_payment' %}" class="{% if account_profile_subsection == 'payment' %}is-active{% endif %}">Ngân hàng</a>
+            <a href="{% url 'store:user_address_account' %}" class="{% if account_profile_subsection == 'address' %}is-active{% endif %}">Địa chỉ</a>
+            <a href="{% url 'store:user_password_change_account' %}" class="{% if account_profile_subsection == 'password' %}is-active{% endif %}">Đổi mật khẩu</a>
+            <a href="{% url 'store:user_notification_settings' %}" class="{% if account_profile_subsection == 'notification_settings' %}is-active{% endif %}">Cài đặt thông báo</a>
+            <a href="{% url 'store:user_privacy_settings' %}" class="{% if account_profile_subsection == 'privacy' %}is-active{% endif %}">Thiết lập riêng tư</a>
+            <a href="{% url 'store:user_personal_info' %}" class="{% if account_profile_subsection == 'personal_info' %}is-active{% endif %}">Thông tin cá nhân</a>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <a class="sidebar-parent {% if account_section == 'orders' %}is-active{% endif %}" href="{% url 'store:user_purchase' %}">
+            <span class="sidebar-symbol">#</span>
+            <span>Đơn mua</span>
+          </a>
+        </div>
+
+        <div class="sidebar-block">
+          <a class="sidebar-parent {% if account_section == 'vouchers' %}is-active{% endif %}" href="{% url 'store:user_voucher_wallet' %}">
+            <span class="sidebar-symbol">%</span>
+            <span>Kho Voucher</span>
+          </a>
+        </div>
+      </aside>
+
+      <section class="account-main">
+        {% if messages %}
+          <div class="msg-wrap">
+            {% for message in messages %}
+              <div class="msg-item">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </section>
+    </div>
+  </main>
+<script>
+    (function () {
+      const blocks = Array.from(document.querySelectorAll(".sidebar-block"));
+      const toggles = Array.from(document.querySelectorAll("[data-sidebar-toggle]"));
+      if (!blocks.length || !toggles.length) return;
+
+      const setOpenBlock = function (key) {
+        blocks.forEach((block) => {
+          const toggle = block.querySelector("[data-sidebar-toggle]");
+          if (!toggle) return;
+          const isOpen = toggle.dataset.sidebarToggle === key;
+          block.classList.toggle("is-open", isOpen);
+          toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+      };
+
+      toggles.forEach((toggle) => {
+        toggle.addEventListener("click", function (event) {
+          const key = toggle.dataset.sidebarToggle;
+          const block = toggle.closest(".sidebar-block");
+          const isOpen = block && block.classList.contains("is-open");
+          if (!isOpen) {
+            event.preventDefault();
+            setOpenBlock(key);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
+

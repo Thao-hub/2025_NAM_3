@@ -1,0 +1,40 @@
+﻿{% extends 'user/account_base.html' %}
+{% block extra_head %}
+.pay-grid{display:grid;gap:26px}.pay-section{padding-bottom:28px;border-bottom:1px solid #eef2f7}.pay-section:last-child{border-bottom:0;padding-bottom:0}.pay-head{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:18px}.pay-title{margin:0;font-size:15px;font-weight:800;color:#0f172a;line-height:1.45}.empty-center{min-height:220px;display:grid;place-items:center;color:#94a3b8;font-size:15px;line-height:1.45;text-align:center}.method-list{display:grid;gap:14px}.method-item{padding:18px;border:1px solid #dbe3ea;background:#f8fffe;border-radius:18px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;font-size:15px;line-height:1.45}
+{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-body pay-grid">
+    <section class="pay-section">
+      <div class="pay-head">
+        <h1 class="pay-title">Thẻ Tín Dụng/Ghi Nợ</h1>
+        <button class="action-btn" type="button">＋ Thêm Thẻ Mới</button>
+      </div>
+      {% if linked_cards %}
+        <div class="method-list">
+          {% for item in linked_cards %}
+            <div class="method-item"><div><strong>{{ item.title }}</strong><div style="margin-top:6px;color:#666;">{{ item.subtitle }}</div></div><strong>{{ item.amount }}</strong></div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-center">Bạn chưa liên kết thẻ.</div>
+      {% endif %}
+    </section>
+    <section class="pay-section">
+      <div class="pay-head">
+        <h2 class="pay-title">Tài Khoản Ngân Hàng Của Tôi</h2>
+        <button class="action-btn" type="button">＋ Thêm Ngân Hàng Liên Kết</button>
+      </div>
+      {% if linked_banks %}
+        <div class="method-list">
+          {% for item in linked_banks %}
+            <div class="method-item"><div><strong>{{ item.title }}</strong><div style="margin-top:6px;color:#666;">{{ item.subtitle }}</div></div><strong>{{ item.amount }}</strong></div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-center">Bạn chưa có tài khoản ngân hàng.</div>
+      {% endif %}
+    </section>
+  </div>
+</section>
+{% endblock %}

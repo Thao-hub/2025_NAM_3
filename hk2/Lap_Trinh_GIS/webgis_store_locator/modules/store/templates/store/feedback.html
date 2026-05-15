@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Góp ý và phản hồi | Circle K & GS25</title>
+  <style>
+    :root {
+      --red: #e31c23;
+      --red-dark: #c3141a;
+      --yellow: #ffd100;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #dbe4f6;
+      --bg: linear-gradient(180deg, #f8f9ff 0%, #eef2ff 100%);
+      --card: #ffffff;
+      --success: #0f766e;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    a { color: inherit; text-decoration: none; }
+    header {
+      background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 10px 24px rgba(227, 28, 35, .2);
+    }
+    .header-wrap {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .logo span { color: var(--yellow); }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 116px;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+    .pill-primary {
+      background: var(--yellow);
+      color: #111827;
+      box-shadow: 0 8px 22px rgba(255, 209, 0, .35);
+    }
+    .pill-white {
+      background: #fff;
+      color: #111827;
+      border-color: #eef2ff;
+    }
+    main {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 42px 20px 64px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+    .hero-copy,
+    .hero-side {
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(219,228,246,.8);
+      border-radius: 30px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, .08);
+      backdrop-filter: blur(12px);
+    }
+    .hero-copy {
+      padding: 34px;
+    }
+    .hero-copy .eyebrow {
+      display: inline-flex;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(227, 28, 35, .08);
+      color: var(--red);
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+    .hero-copy h1 {
+      margin: 0 0 14px;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.02;
+      letter-spacing: -.02em;
+    }
+    .hero-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.75;
+    }
+    .hero-side {
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .info-card {
+      background: linear-gradient(180deg, #fff, #fff8f4);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+    }
+    .info-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .info-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .layout {
+      display: block;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(219,228,246,.85);
+      border-radius: 30px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, .08);
+      overflow: hidden;
+    }
+    .card-head {
+      padding: 24px 28px 18px;
+      border-bottom: 1px solid #edf2ff;
+      background: linear-gradient(180deg, #ffffff, #fff9f6);
+    }
+    .card-head h2 {
+      margin: 0;
+      font-size: 30px;
+    }
+    .card-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    .card-body {
+      padding: 28px;
+    }
+    .messages {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .message {
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-weight: 700;
+    }
+    .message.success {
+      background: rgba(15,118,110,.1);
+      color: var(--success);
+      border: 1px solid rgba(15,118,110,.18);
+    }
+    .message.warning {
+      background: rgba(245,158,11,.12);
+      color: #b45309;
+      border: 1px solid rgba(245,158,11,.2);
+    }
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .field-full {
+      grid-column: 1 / -1;
+    }
+    label {
+      font-weight: 900;
+      font-size: 14px;
+    }
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 15px 16px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    input:focus,
+    textarea:focus {
+      border-color: rgba(227, 28, 35, .4);
+      box-shadow: 0 0 0 4px rgba(227, 28, 35, .08);
+    }
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+    }
+    .error {
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    button {
+      border: none;
+      cursor: pointer;
+      font: inherit;
+    }
+    .submit-btn,
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 140px;
+      height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      font-weight: 900;
+    }
+    .submit-btn {
+      background: linear-gradient(180deg, #ffd100, #ffc400);
+      color: #111827;
+      box-shadow: 0 14px 28px rgba(255, 209, 0, .24);
+    }
+    .ghost-btn {
+      background: #fff;
+      color: #111827;
+      border: 1px solid var(--line);
+    }
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .hero-side,
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'shared/navbar.html' %}
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Góp ý và phản hồi</div>
+        <h1>Chia sẻ góp ý để Circle K & GS25 phục vụ bạn tốt hơn.</h1>
+        <p>
+          Bạn có thể gửi phản ánh về dịch vụ, cửa hàng, sản phẩm hoặc trải nghiệm mua sắm.
+          Hệ thống sẽ lưu góp ý và gửi email xác nhận ngay sau khi tiếp nhận.
+        </p>
+      </div>
+      <div class="hero-side">
+        <div class="info-card">
+          <h3>Xác nhận qua email</h3>
+          <p>Khi Mailtrap hoặc SMTP được cấu hình, người dùng sẽ nhận email xác nhận ngay sau khi gửi góp ý.</p>
+        </div>
+        <div class="info-card">
+          <h3>Lưu lịch sử góp ý</h3>
+          <p>Mọi góp ý đều được lưu trong hệ thống để đội ngũ có thể theo dõi và phản hồi sau đó.</p>
+        </div>
+        <div class="info-card">
+          <h3>Dễ quản lý</h3>
+          <p>Admin có thể xem danh sách góp ý ngay trong khu quản trị nội bộ của dự án.</p>
+        </div>
+        <div class="info-card">
+          <h3>Phù hợp để demo</h3>
+          <p>Nếu chưa có Mailtrap thật, hệ thống vẫn chạy được nhờ fallback sang console backend.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="card">
+        <div class="card-head">
+          <h2>Gửi góp ý</h2>
+          <p>Điền thông tin bên dưới, tụi mình sẽ tiếp nhận và gửi phản hồi xác nhận cho bạn.</p>
+        </div>
+        <div class="card-body">
+          {% if messages %}
+            <div class="messages">
+              {% for message in messages %}
+                <div class="message {{ message.tags|default:'success' }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="field-grid">
+              <div class="field">
+                <label for="id_ho_ten">Họ tên</label>
+                <input id="id_ho_ten" name="ho_ten" value="{{ feedback_form.ho_ten }}" placeholder="Nguyễn Văn A">
+                {% if feedback_errors.ho_ten %}<div class="error">{{ feedback_errors.ho_ten }}</div>{% endif %}
+              </div>
+              <div class="field">
+                <label for="id_email">Email</label>
+                <input id="id_email" type="email" name="email" value="{{ feedback_form.email }}" placeholder="ban@example.com">
+                {% if feedback_errors.email %}<div class="error">{{ feedback_errors.email }}</div>{% endif %}
+              </div>
+              <div class="field">
+                <label for="id_phone">Số điện thoại</label>
+                <input id="id_phone" name="so_dien_thoai" value="{{ feedback_form.so_dien_thoai }}" placeholder="0909 000 000">
+              </div>
+              <div class="field">
+                <label for="id_subject">Chủ đề</label>
+                <input id="id_subject" name="chu_de" value="{{ feedback_form.chu_de }}" placeholder="Ví dụ: Góp ý về dịch vụ tại cửa hàng">
+                {% if feedback_errors.chu_de %}<div class="error">{{ feedback_errors.chu_de }}</div>{% endif %}
+              </div>
+              <div class="field field-full">
+                <label for="id_content">Nội dung góp ý</label>
+                <textarea id="id_content" name="noi_dung" placeholder="Hãy mô tả chi tiết góp ý của bạn...">{{ feedback_form.noi_dung }}</textarea>
+                {% if feedback_errors.noi_dung %}<div class="error">{{ feedback_errors.noi_dung }}</div>{% endif %}
+              </div>
+            </div>
+            <div class="actions">
+              <button type="submit" class="submit-btn">Gửi góp ý</button>
+              <a href="{% url 'store:home' %}" class="ghost-btn">Quay lại trang chủ</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {% include 'shared/footer.html' %}
+</body>
+</html>

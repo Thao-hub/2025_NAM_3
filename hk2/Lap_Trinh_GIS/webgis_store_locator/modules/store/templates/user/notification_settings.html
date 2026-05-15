@@ -1,0 +1,42 @@
+﻿{% extends 'user/account_base.html' %}
+{% block extra_head %}
+.setting-section{padding:22px 24px;border-top:1px solid #eef2f7}.setting-section:first-child{border-top:0}.setting-head{display:flex;justify-content:space-between;gap:16px;align-items:start}.setting-title{margin:0;font-size:15px;font-weight:800;line-height:1.45;color:#0f172a}.setting-sub{margin:10px 0 0;color:#64748b;font-size:15px;line-height:1.55}.toggle{position:relative;width:62px;height:36px}.toggle input{position:absolute;opacity:0}.toggle span{display:block;width:100%;height:100%;border-radius:999px;background:#e5e7eb;position:relative;transition:.15s ease}.toggle span::after{content:'';position:absolute;left:3px;top:3px;width:30px;height:30px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);transition:.15s ease}.toggle input:checked + span{background:#14b8a6}.toggle input:checked + span::after{left:29px}.setting-row{display:flex;justify-content:space-between;gap:18px;align-items:center;padding-top:20px}.setting-row-title{font-size:15px;color:#0f172a;font-weight:700;line-height:1.45}.setting-row-sub{margin-top:6px;color:#64748b;font-size:15px;line-height:1.55}.save-row{padding:0 24px 24px}
+{% endblock %}
+{% block content %}
+<form method="post" class="panel">
+  {% csrf_token %}
+  <section class="setting-section">
+    <div class="setting-head">
+      <div>
+        <h1 class="setting-title">Email thông báo</h1>
+        <div class="setting-sub">Thông báo và nhắc nhở quan trọng về tài khoản sẽ không thể bị tắt</div>
+      </div>
+      <label class="toggle"><input type="checkbox" name="email_enabled" {% if settings_state.email_enabled %}checked{% endif %}><span></span></label>
+    </div>
+    <div class="setting-row"><div><div class="setting-row-title">Cập nhật đơn hàng</div><div class="setting-row-sub">Cập nhật về tình trạng vận chuyển của tất cả các đơn hàng</div></div><label class="toggle"><input type="checkbox" name="email_order" {% if settings_state.email_order %}checked{% endif %}><span></span></label></div>
+    <div class="setting-row"><div><div class="setting-row-title">Khuyến mãi</div><div class="setting-row-sub">Cập nhật về các ưu đãi và khuyến mãi sắp tới</div></div><label class="toggle"><input type="checkbox" name="email_promotion" {% if settings_state.email_promotion %}checked{% endif %}><span></span></label></div>
+    <div class="setting-row"><div><div class="setting-row-title">Khảo sát</div><div class="setting-row-sub">Đồng ý nhận khảo sát để cho chúng tôi được lắng nghe bạn</div></div><label class="toggle"><input type="checkbox" name="email_survey" {% if settings_state.email_survey %}checked{% endif %}><span></span></label></div>
+  </section>
+  <section class="setting-section">
+    <div class="setting-head">
+      <div>
+        <h2 class="setting-title">Thông báo SMS</h2>
+        <div class="setting-sub">Thông báo và nhắc nhở quan trọng về tài khoản sẽ không thể bị tắt</div>
+      </div>
+      <label class="toggle"><input type="checkbox" name="sms_enabled" {% if settings_state.sms_enabled %}checked{% endif %}><span></span></label>
+    </div>
+    <div class="setting-row"><div><div class="setting-row-title">Khuyến mãi</div><div class="setting-row-sub">Cập nhật về các ưu đãi và khuyến mãi sắp tới</div></div><label class="toggle"><input type="checkbox" name="sms_promotion" {% if settings_state.sms_promotion %}checked{% endif %}><span></span></label></div>
+  </section>
+  <section class="setting-section">
+    <div class="setting-head">
+      <div>
+        <h2 class="setting-title">Thông báo Zalo</h2>
+        <div class="setting-sub">Thông báo và nhắc nhở quan trọng về tài khoản sẽ không thể bị tắt</div>
+      </div>
+      <label class="toggle"><input type="checkbox" name="zalo_enabled" {% if settings_state.zalo_enabled %}checked{% endif %}><span></span></label>
+    </div>
+    <div class="setting-row"><div><div class="setting-row-title">Khuyến mãi (Shopee Việt Nam)</div><div class="setting-row-sub">Ưu đãi mới nhất từ hệ thống bán hàng</div></div><label class="toggle"><input type="checkbox" name="zalo_promotion" {% if settings_state.zalo_promotion %}checked{% endif %}><span></span></label></div>
+  </section>
+  <div class="save-row"><button class="action-btn" type="submit">Lưu thay đổi</button></div>
+</form>
+{% endblock %}

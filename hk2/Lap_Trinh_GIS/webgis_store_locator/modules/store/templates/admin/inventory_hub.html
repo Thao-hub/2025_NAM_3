@@ -1,0 +1,262 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ t.inventory_overview|default:"Tổng quan kho" }}{% endblock %}
+{% block page_title %}{{ t.inventory_overview|default:"Tổng quan kho" }}{% endblock %}
+{% block content %}
+  <style>
+    .inventory-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+    .inventory-badge.success {
+      background: rgba(16, 185, 129, .12);
+      color: #047857;
+      border-color: rgba(16, 185, 129, .2);
+    }
+    .inventory-badge.warning {
+      background: rgba(245, 158, 11, .12);
+      color: #b45309;
+      border-color: rgba(245, 158, 11, .2);
+    }
+    .inventory-badge.danger {
+      background: rgba(239, 68, 68, .12);
+      color: #b91c1c;
+      border-color: rgba(239, 68, 68, .2);
+    }
+  </style>
+  <section class="grid">
+    <article class="panel card">
+      <p class="stat-title">Tổng SKU</p>
+      <p class="stat-value">{{ inventory_stats.total_skus }}</p>
+      <div class="top-sub">Số lượng mã sản phẩm đang được quản lý trong kho.</div>
+    </article>
+    <article class="panel card">
+      <p class="stat-title">Tổng tồn toàn hệ thống</p>
+      <p class="stat-value">{{ inventory_stats.total_units }}</p>
+      <div class="top-sub">Tổng số lượng còn lại cộng gộp trên tất cả cửa hàng, không phải tồn của riêng một cửa hàng.</div>
+    </article>
+    <article class="panel card">
+      <p class="stat-title">Sắp hết / Hết hàng</p>
+      <p class="stat-value">{{ inventory_stats.low_stock_count }} / {{ inventory_stats.out_of_stock_count }}</p>
+      <div class="top-sub">Các mã cần ưu tiên nhập thêm hoặc kiểm tra lại chuỗi cung ứng.</div>
+    </article>
+    <article class="panel card">
+      <p class="stat-title">Nhập / Xuất 30 ngày</p>
+      <p class="stat-value">{{ inventory_stats.import_30d }} / {{ inventory_stats.export_30d }}</p>
+      <div class="top-sub">Dòng chảy kho trong 30 ngày gần nhất.</div>
+    </article>
+  </section>
+
+  <section class="grid" style="margin-top:14px;">
+    <article class="panel card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:24px;">{{ t.suggest_import|default:"Đề xuất nhập thêm" }}</h2>
+          <div class="top-sub">Ưu tiên các sản phẩm đã hết hoặc gần chạm ngưỡng tồn tối thiểu.</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn btn-primary" href="{% url 'store:admin_inventory_restock' %}">Nhập kho theo cửa hàng</a>
+          <a class="btn btn-light" href="{% url 'store:admin_list' 'giao-dich-kho' %}">{{ t.view_stock_movements|default:"Xem giao dịch kho" }}</a>
+          <a class="btn btn-light" href="{% url 'store:admin_inventory_report' %}">Báo cáo nhập/xuất</a>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:16px;">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Cửa hàng</th>
+              <th>Sản phẩm</th>
+              <th>Tồn cửa hàng</th>
+              <th>Cần nhập thêm</th>
+              <th>Tổng tồn hệ thống</th>
+              <th>Xuất 30 ngày</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in import_suggestions %}
+              <tr>
+                <td>
+                  <strong>{{ item.store_display }}</strong>
+                  <div class="top-sub">{{ item.chain_display }} | {{ item.cua_hang.quan_huyen|default:"-" }}</div>
+                </td>
+                <td>
+                  <strong>{{ item.product.ten }}</strong>
+                  <div class="top-sub">{{ item.product.nhom_san_pham|default:"-" }} | {{ item.product.thuong_hieu|default:"-" }}</div>
+                </td>
+                <td>{{ item.current_stock }}</td>
+                <td>{{ item.recommended_restock }}</td>
+                <td>
+                  {{ item.product_total_stock }}
+                  {% if item.product.stores_with_stock_count %}
+                    <div class="top-sub">TB {{ item.product_avg_store_stock_display }} | {{ item.product.stores_with_stock_count }} cửa hàng còn hàng</div>
+                  {% endif %}
+                </td>
+                <td>{{ item.product_export_30d }}</td>
+                <td>
+                  <span class="inventory-badge {% if item.current_stock <= 0 %}danger{% else %}warning{% endif %}">
+                    {{ item.status_label }}
+                  </span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7">{{ t.no_data|default:"Chưa có dữ liệu." }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:24px;">{{ t.suggest_export|default:"Đề xuất ưu tiên xuất" }}</h2>
+          <div class="top-sub">Những sản phẩm còn tồn cao để ưu tiên bán, trưng bày hoặc điều phối.</div>
+        </div>
+        <a class="btn btn-light" href="{% url 'store:admin_list' 'san-pham' %}">{{ t.view_all_products|default:"Xem toàn bộ sản phẩm" }}</a>
+      </div>
+
+      <div class="table-wrap" style="margin-top:16px;">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Tổng tồn hệ thống</th>
+              <th>TB / cửa hàng còn hàng</th>
+              <th>Xuất 30 ngày</th>
+              <th>Nhập 30 ngày</th>
+              <th>Gợi ý</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in export_suggestions %}
+              <tr>
+                <td>
+                  <strong>{{ product.ten }}</strong>
+                  <div class="top-sub">{{ product.nhom_san_pham|default:"-" }} | {{ product.thuong_hieu|default:"-" }}</div>
+                </td>
+                <td>{{ product.ton_kho }}</td>
+                <td>
+                  {{ product.avg_store_stock_display }}
+                  {% if product.stores_with_stock_count %}
+                    <div class="top-sub">{{ product.stores_with_stock_count }} cửa hàng còn hàng</div>
+                  {% endif %}
+                </td>
+                <td>{{ product.export_30d }}</td>
+                <td>{{ product.import_30d }}</td>
+                <td>
+                  {% if product.export_30d < product.import_30d %}
+                    <span class="inventory-badge warning">Tồn đang tăng</span>
+                  {% else %}
+                    <span class="inventory-badge success">Bán ổn định</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6">{{ t.no_data|default:"Chưa có dữ liệu." }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <section class="panel card" style="margin-top:14px;">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+      <div>
+        <h2 style="margin:0 0 6px;font-size:24px;">Tồn kho theo từng cửa hàng</h2>
+        <div class="top-sub">Theo dõi nhanh cửa hàng nào đang giữ hàng nhiều, cửa hàng nào sắp thiếu hàng.</div>
+      </div>
+      <a class="btn btn-light" href="{% url 'store:admin_list' 'ton-kho-cua-hang' %}">Mở bảng tồn kho cửa hàng</a>
+    </div>
+
+    <div class="table-wrap" style="margin-top:16px;">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Cửa hàng</th>
+            <th>Chuỗi</th>
+            <th>SKU còn hàng</th>
+            <th>Tồn hiện có</th>
+            <th>Sắp hết</th>
+            <th>Rỗng kho</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for store in store_stock_rows %}
+            <tr>
+              <td><strong>{{ store.ten }}</strong></td>
+              <td>{{ store.chuoi.ten }}</td>
+              <td>{{ store.sku_count }}</td>
+              <td>{{ store.total_units }}</td>
+              <td><span class="inventory-badge {% if store.low_stock_count %}warning{% else %}success{% endif %}">{{ store.low_stock_count }}</span></td>
+              <td><span class="inventory-badge {% if store.empty_stock_count %}danger{% else %}success{% endif %}">{{ store.empty_stock_count }}</span></td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6">{{ t.no_data|default:"Chưa có dữ liệu." }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel card" style="margin-top:14px;">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+      <div>
+        <h2 style="margin:0 0 6px;font-size:24px;">Giao dịch kho gần đây</h2>
+        <div class="top-sub">Theo dõi nhanh các phiếu nhập/xuất mới nhất để kiểm tra biến động tồn.</div>
+      </div>
+      <div class="inventory-badge {% if inventory_stats.overstock_count > 0 %}warning{% else %}success{% endif %}">
+        Tồn cao cần theo dõi: {{ inventory_stats.overstock_count }}
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:16px;">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Loại</th>
+            <th>Sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Tồn trước</th>
+            <th>Tồn sau</th>
+            <th>Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for movement in recent_stock_movements %}
+            <tr>
+              <td>{{ movement.created_at|date:"d/m/Y H:i" }}</td>
+              <td>
+                <span class="inventory-badge {% if movement.loai == 'import' %}success{% else %}warning{% endif %}">
+                  {{ movement.get_loai_display }}
+                </span>
+              </td>
+              <td>{{ movement.san_pham.ten }}</td>
+              <td>{{ movement.so_luong }}</td>
+              <td>{{ movement.ton_truoc }}</td>
+              <td>{{ movement.ton_sau }}</td>
+              <td>{{ movement.ghi_chu|default:"-" }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7">{{ t.no_data|default:"Chưa có dữ liệu." }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

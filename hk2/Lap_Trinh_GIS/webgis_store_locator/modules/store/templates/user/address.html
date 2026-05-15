@@ -1,0 +1,1164 @@
+﻿{% extends 'user/account_base.html' %}
+{% block extra_head %}
+.address-header{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.address-item{padding:18px 0;border-top:1px solid #eef2f7;display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:14px;align-items:start}
+.address-item:first-child{border-top:0;padding-top:0}
+.address-name{font-size:15px;font-weight:800;margin:0 0 4px;color:#0f172a}
+.address-phone{font-size:10px;color:#64748b}
+.address-body{margin-top:4px;color:#475569;font-size:10px;line-height:1.55}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border:1px solid #14b8a6;color:#0f766e;font-size:9px;margin-top:8px;border-radius:999px;background:#ecfeff;font-weight:700}
+.toolbox{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.tool-links{display:flex;gap:10px;flex-wrap:wrap}
+.tool-links a,.tool-links button{background:none;border:0;color:#0f766e;font-size:10px;cursor:pointer;padding:0;font-weight:700}
+.tool-links .danger{color:#ef4444}
+.account-main{position:relative}
+.address-modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:84px 16px 24px;background:rgba(15,23,42,.18);overflow:hidden}
+.address-modal::before,.address-modal::after{display:none !important;content:none !important}
+.form-card{margin:0;width:100%;max-width:620px;max-height:calc(100vh - 120px);display:flex;flex-direction:column;padding:0;border:1px solid rgba(15,23,42,.08);border-radius:20px;background:#fff;box-shadow:0 18px 40px rgba(15,23,42,.16);overflow:hidden}
+.form-card-head{position:static;padding:10px 18px 8px;border-bottom:1px solid #eef2f7;background:#fff}
+.form-card-title{margin:0;font-size:18px;font-weight:800;color:#1f2937;line-height:1.2}
+.form-card-sub{margin-top:6px;color:#64748b;font-size:11px;line-height:1.5}
+.form-card-body{flex:1;overflow:auto;padding:12px 18px 18px;background:#fff}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.form-grid .full{grid-column:1/-1}
+.field{position:relative}
+.field.region-field{z-index:90}
+.field.detail-field{z-index:10}
+.field-label{display:block;margin:0 0 6px;color:#475569;font-size:12px;font-weight:700}
+.form-grid input,.form-grid textarea,.form-grid select{width:100%;min-height:42px;border:1px solid #d8dee8;padding:0 12px;font-size:13px;border-radius:12px;background:#fff;transition:border-color .18s ease, box-shadow .18s ease}
+.form-grid textarea{padding:10px 12px;min-height:78px;resize:vertical}
+.form-grid input:focus,.form-grid textarea:focus,.form-grid select:focus,.selector-display:focus{outline:none;border-color:#f59e8b;box-shadow:0 0 0 4px rgba(238,77,45,.1)}
+.section-card{padding:12px 14px;border:1px solid #edf2f7;border-radius:16px;background:#fcfcfd}
+.section-title{margin:0 0 10px;font-size:13px;font-weight:800;color:#1f2937}
+.radio-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.radio-title{font-size:15px;font-weight:600;color:#475569}
+.radio-row{display:flex;gap:10px;flex-wrap:wrap}
+.type-chip{position:relative}
+.type-chip input{position:absolute;opacity:0;pointer-events:none}
+.type-chip span{display:inline-flex;align-items:center;justify-content:center;min-width:94px;min-height:40px;padding:0 14px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;color:#475569;font-weight:600;font-size:13px;cursor:pointer;transition:.18s ease}
+.type-chip input:checked+span{border-color:#ee4d2d;background:#fff4f1;color:#ee4d2d;box-shadow:0 12px 28px rgba(238,77,45,.12)}
+.selector-shell{position:relative;z-index:30;border:1px solid #d8dee8;border-radius:14px;background:#fff;overflow:visible}
+.selector-display{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:42px;width:100%;padding:0 12px;border:0;font-size:13px;color:#1f2937;cursor:pointer;background:#fff}
+.selector-display .placeholder{color:#94a3b8}
+.selector-panel{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:160;border:1px solid #eef2f7;border-radius:18px;background:#fff;box-shadow:0 24px 48px rgba(15,23,42,.16);overflow:hidden}
+.selector-search{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #eef2f7;background:#fff}
+.selector-search input{flex:1;min-height:38px;border:1px solid #d8dee8;border-radius:12px;padding:0 12px;font-size:13px}
+.selector-search button{border:0;background:none;color:#94a3b8;font-size:18px;cursor:pointer}
+.selector-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid #eef2f7;background:#fff}
+.selector-tab{min-height:42px;border:0;background:#fff;color:#475569;font-size:13px;font-weight:500;cursor:pointer}
+.selector-tab.active{color:#ee4d2d;border-bottom:2px solid #ee4d2d}
+.selector-list{max-height:180px;overflow:auto}
+.selector-item{width:100%;padding:10px 12px;border:0;background:#fff;text-align:left;font-size:13px;color:#1f2937;cursor:pointer}
+.selector-item:hover,.selector-item.active{background:#fff7f4}
+.selector-item-hint{display:none}
+.selector-item-title{display:block;font-size:13px;color:#1f2937}
+.selector-item.active .selector-item-title{color:#ee4d2d;font-weight:700}
+.search-shell{position:relative;z-index:40}
+.search-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.search-hint{display:block;margin-top:8px;color:#64748b;font-size:12px;line-height:1.5}
+.search-suggestions{position:absolute;left:0;right:0;top:calc(100% - 1px);z-index:180;border:1px solid #d8dee8;border-top:0;border-radius:0 0 14px 14px;background:#fff;box-shadow:0 18px 34px rgba(15,23,42,.12);max-height:220px;overflow:auto}
+.search-suggestion{padding:10px 12px;border:0;border-top:1px solid #eef2f7;width:100%;text-align:left;background:#fff;color:#1f2937;font-size:13px;cursor:pointer}
+.search-suggestion:first-child{border-top:0}
+.search-suggestion:hover,.search-suggestion.active{background:#fff7f4}
+.search-suggestion-title{display:block;font-size:12px;font-weight:600;color:#1f2937;line-height:1.45}
+.search-suggestion-sub{display:block;margin-top:2px;font-size:11px;color:#94a3b8;line-height:1.35}
+.search-empty{padding:10px 12px;color:#64748b;font-size:12px;line-height:1.6}
+.mini-map-card{border:1px solid #eceff3;padding:10px 12px;border-radius:16px;background:linear-gradient(180deg,#fff,#fafafa)}
+.mini-map-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap;margin-bottom:8px}
+.mini-map-head strong{display:block;font-size:14px;color:#1f2937}
+.mini-map-head span{display:none}
+.map-tools{display:flex;gap:8px;flex-wrap:wrap}
+.mini-map-box{position:relative;z-index:1;height:96px;border-radius:14px;overflow:hidden;border:1px solid #e5e7eb}
+.map-note{display:none}
+.empty{padding:30px 0;color:#888;text-align:center}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;align-items:center}
+.actions.main{justify-content:space-between}
+.coord-status{margin-top:6px;font-size:10px;color:#64748b}
+.helper-btn{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 10px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;color:#475569;font-weight:600;font-size:12px;cursor:pointer}
+.helper-btn.primary{border-color:#fed7d1;background:#fff4f1;color:#ee4d2d}
+.secondary-btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 18px;border-radius:10px;border:1px solid transparent;background:#fff;color:#6b7280;font-weight:600;font-size:13px}
+.primary-btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 18px;border-radius:10px;border:1px solid #ee4d2d;background:#ee4d2d;color:#fff;font-weight:700;font-size:13px;box-shadow:0 12px 22px rgba(238,77,45,.18)}
+.form-actions{position:static;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;margin-top:18px;padding-top:6px;background:#fff}
+.form-action-buttons{display:flex;gap:12px;flex-wrap:wrap}
+.default-check{display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px}
+.default-check input{width:18px;height:18px;accent-color:#ee4d2d}
+.coord-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.coord-pill{padding:8px 10px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;color:#475569;font-size:11px}
+.map-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:30px 18px;background:rgba(15,23,42,.66);backdrop-filter:blur(8px)}
+.map-modal.is-open{display:flex}
+.map-modal-card{width:min(100%,880px);background:#fff;border-radius:24px;box-shadow:0 26px 70px rgba(15,23,42,.28);overflow:hidden}
+.map-modal-head{padding:22px 28px 16px}
+.map-modal-title{display:flex;align-items:flex-start;gap:14px}
+.map-back-btn{border:0;background:none;color:#9ca3af;font-size:30px;line-height:1;cursor:pointer}
+.map-modal-title strong{display:block;font-size:18px;color:#1f2937}
+.map-modal-title span{display:block;margin-top:4px;color:#6b7280;font-size:14px;line-height:1.5;word-break:break-word}
+.map-modal-search{margin-top:14px;position:relative}
+.map-modal-search input{width:100%;min-height:44px;border:1px solid #d8dee8;border-radius:12px;padding:0 14px;font-size:14px}
+.map-modal-search-help{margin-top:8px;color:#64748b;font-size:12px}
+.map-modal-suggestions{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:90;border:1px solid #e2e8f0;border-radius:14px;background:#fff;box-shadow:0 18px 34px rgba(15,23,42,.12);max-height:220px;overflow:auto}
+.map-modal-body{padding:0 28px 18px}
+.map-modal-box{height:480px;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb}
+.map-modal-coords{margin-top:12px;font-size:13px;color:#64748b}
+.map-modal-foot{display:flex;justify-content:flex-end;gap:12px;align-items:center;padding:18px 28px;background:#fff}
+@media (max-width:900px){.address-item{grid-template-columns:1fr}.toolbox{align-items:flex-start}.form-grid{grid-template-columns:1fr}.form-card{width:100%;max-height:calc(100vh - 96px);border-radius:18px}.form-card-body,.form-card-head{padding-left:14px;padding-right:14px}.address-modal{padding:72px 12px 18px}.mini-map-head{align-items:stretch}.map-tools{width:100%}.map-tools .helper-btn{flex:1 1 0}.search-actions{align-items:stretch}.search-actions .helper-btn{width:100%}.form-actions{align-items:flex-start}.form-action-buttons{width:100%;justify-content:flex-start}.type-chip span{min-width:88px}.coord-preview{grid-template-columns:1fr}.map-modal-body{padding:0 14px 16px}.map-modal-head,.map-modal-foot{padding-left:14px;padding-right:14px}.map-modal-box{height:360px}}
+{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header address-header">
+    <div>
+      <h1 class="panel-title">Địa chỉ của tôi</h1>
+    </div>
+    <a class="action-btn" href="{% url 'store:user_address' %}?new=1">＋ Thêm địa chỉ</a>
+  </div>
+  <div class="panel-body">
+    {% for address in addresses %}
+      <article class="address-item">
+        <div>
+          <h2 class="address-name">{{ address.ho_ten_nguoi_nhan }} <span class="address-phone">{{ address.so_dien_thoai }}</span></h2>
+          <div class="address-body">{{ address.dia_chi_day_du }}</div>
+          {% if address.mac_dinh %}<div class="badge">Mặc định</div>{% endif %}
+          {% if address.has_coordinates %}<div class="badge">Đã lưu vị trí giao hàng</div>{% endif %}
+        </div>
+        <div class="toolbox">
+          <div class="tool-links">
+            <a href="{% url 'store:user_address' %}?edit={{ address.pk }}">Cập nhật</a>
+            {% if not address.mac_dinh %}
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="delete"><input type="hidden" name="address_id" value="{{ address.pk }}"><button class="danger" type="submit">Xóa</button></form>
+            {% endif %}
+          </div>
+          {% if address.mac_dinh %}
+            <span class="small-btn">Thiết lập mặc định</span>
+          {% else %}
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="set_default"><input type="hidden" name="address_id" value="{{ address.pk }}"><button class="small-btn" type="submit">Thiết lập mặc định</button></form>
+          {% endif %}
+        </div>
+      </article>
+    {% empty %}
+      <div class="empty">Bạn chưa có địa chỉ nào.</div>
+    {% endfor %}
+  </div>
+</section>
+{% if show_form %}
+<div class="address-modal">
+  <div class="form-card">
+    <div class="form-card-head">
+      <h2 class="form-card-title">{% if editing_address %}Cập nhật địa chỉ{% else %}Thêm địa chỉ mới{% endif %}</h2>
+    </div>
+    <div class="form-card-body">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="{% if editing_address %}update{% else %}create{% endif %}">
+        <input type="hidden" name="address_id" value="{{ form_state.pk }}">
+        <input type="hidden" name="vi_do" id="address-lat" value="{{ form_state.vi_do }}">
+        <input type="hidden" name="kinh_do" id="address-lng" value="{{ form_state.kinh_do }}">
+        <div class="section-card">
+          <h3 class="section-title">Thông tin nhận hàng</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label class="field-label" for="recipient-name-input">Họ và tên</label>
+              <input id="recipient-name-input" type="text" name="ho_ten_nguoi_nhan" value="{{ form_state.ho_ten_nguoi_nhan }}">
+            </div>
+            <div class="field">
+              <label class="field-label" for="recipient-phone-input">Số điện thoại</label>
+              <input id="recipient-phone-input" type="text" name="so_dien_thoai" value="{{ form_state.so_dien_thoai }}">
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card" style="margin-top:16px">
+          <h3 class="section-title">Địa chỉ giao hàng</h3>
+          <div class="form-grid">
+            <div class="field full region-field">
+              <label class="field-label">Tỉnh/Thành phố, Quận/Huyện, Khu vực</label>
+              <div class="selector-shell">
+                <button type="button" class="selector-display" id="region-selector-trigger">
+                  <span id="region-display-text" class="{% if not form_state.tinh_thanh and not form_state.quan_huyen and not form_state.phuong_xa %}placeholder{% endif %}">
+                    {% if form_state.tinh_thanh or form_state.quan_huyen or form_state.phuong_xa %}
+                      {{ form_state.tinh_thanh }}{% if form_state.quan_huyen %}, {{ form_state.quan_huyen }}{% endif %}{% if form_state.phuong_xa %}, {{ form_state.phuong_xa }}{% endif %}
+                    {% else %}
+                      Chọn Tỉnh/Thành phố, Quận/Huyện, Khu vực
+                    {% endif %}
+                  </span>
+                  <span>▾</span>
+                </button>
+                <div class="selector-panel" id="region-selector-panel" hidden>
+                  <div class="selector-search">
+                    <input type="text" id="region-search-input" placeholder="Nhập để tìm hoặc tự thêm">
+                    <button type="button" id="region-search-clear">×</button>
+                  </div>
+                  <div class="selector-tabs">
+                    <button type="button" class="selector-tab active" data-region-tab="city">Tỉnh/Thành phố</button>
+                    <button type="button" class="selector-tab" data-region-tab="district">Quận/Huyện</button>
+                    <button type="button" class="selector-tab" data-region-tab="ward">Khu vực</button>
+                  </div>
+                  <div class="selector-list" id="region-option-list"></div>
+                </div>
+              </div>
+              <input type="hidden" name="tinh_thanh" id="city-input" value="{{ form_state.tinh_thanh }}">
+              <input type="hidden" name="quan_huyen" id="district-input" value="{{ form_state.quan_huyen }}">
+              <input type="hidden" name="phuong_xa" id="ward-input" value="{{ form_state.phuong_xa }}">
+            </div>
+            <div class="field full detail-field">
+              <label class="field-label" for="detail-address-input">Địa chỉ cụ thể</label>
+              <div class="search-shell">
+                <textarea name="dia_chi_cu_the" id="detail-address-input" placeholder="Ví dụ: 53 Đường Đức Hiền">{{ form_state.dia_chi_cu_the }}</textarea>
+                <div class="search-suggestions" id="detail-address-suggestions" hidden></div>
+              </div>
+              <div class="search-actions">
+                <button type="button" class="helper-btn primary" id="detail-address-search-btn">Tìm trên bản đồ</button>
+                <button type="button" class="helper-btn" id="detail-address-clear-btn">Xóa gợi ý</button>
+              </div>
+              <div class="search-hint">Gõ số nhà kèm tên đường hoặc tên hẻm, rồi bấm <strong>Tìm trên bản đồ</strong> để chọn đúng vị trí.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card" style="margin-top:16px">
+          <div class="mini-map-card">
+            <div class="mini-map-head">
+              <div>
+                <strong>Vị trí giao hàng</strong>
+              </div>
+              <div class="map-tools">
+                <button class="helper-btn primary" type="button" id="open-map-modal-btn">Sửa trên bản đồ</button>
+              </div>
+            </div>
+            <div id="addressPickerMap" class="mini-map-box"></div>
+            <div class="coord-status" id="coord-status">Chưa ghim vị trí trên bản đồ.</div>
+            <div class="coord-preview">
+              <div class="coord-pill">Vĩ độ: <strong id="coord-lat-text">{% if form_state.vi_do %}{{ form_state.vi_do }}{% else %}-{% endif %}</strong></div>
+              <div class="coord-pill">Kinh độ: <strong id="coord-lng-text">{% if form_state.kinh_do %}{{ form_state.kinh_do }}{% else %}-{% endif %}</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card" style="margin-top:16px">
+          <div class="radio-wrap">
+            <div class="radio-title">Loại địa chỉ:</div>
+            <div class="radio-row">
+              <label class="type-chip"><input type="radio" name="loai_dia_chi" value="home" {% if form_state.loai_dia_chi == 'home' %}checked{% endif %}><span>Nhà riêng</span></label>
+              <label class="type-chip"><input type="radio" name="loai_dia_chi" value="office" {% if form_state.loai_dia_chi == 'office' %}checked{% endif %}><span>Văn phòng</span></label>
+              <label class="type-chip"><input type="radio" name="loai_dia_chi" value="other" {% if form_state.loai_dia_chi == 'other' %}checked{% endif %}><span>Khác</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <label class="default-check"><input type="checkbox" name="mac_dinh" {% if form_state.mac_dinh %}checked{% endif %}> Đặt làm địa chỉ mặc định</label>
+          <div class="form-action-buttons">
+            <a class="secondary-btn" href="{% url 'store:user_address' %}">Trở lại</a>
+            <button class="primary-btn" type="submit">Hoàn thành</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="map-modal" id="map-modal">
+  <div class="map-modal-card">
+    <div class="map-modal-head">
+      <div class="map-modal-title">
+        <button type="button" class="map-back-btn" id="close-map-modal-btn">‹</button>
+        <div>
+          <strong>Sửa vị trí</strong>
+          <span id="map-modal-address-label">{{ form_state.dia_chi_cu_the }}</span>
+        </div>
+      </div>
+      <div class="map-modal-search">
+        <input type="text" id="map-modal-search-input" placeholder="Gõ số nhà, tên hẻm, tên đường rồi chọn đúng gợi ý">
+        <div class="search-suggestions map-modal-suggestions" id="map-modal-suggestions" hidden></div>
+        <div class="map-modal-search-help">Map chỉ nhảy khi bạn chọn đúng một gợi ý, không tự ghim bừa khi đang gõ.</div>
+      </div>
+    </div>
+    <div class="map-modal-body">
+      <div class="map-modal-box" id="addressModalMap"></div>
+      <div class="map-modal-coords" id="map-modal-coords">Tọa độ đang chọn: -</div>
+    </div>
+    <div class="map-modal-foot">
+      <button type="button" class="secondary-btn" id="cancel-map-modal-btn">Trở lại</button>
+      <button type="button" class="primary-btn" id="confirm-map-modal-btn">Đồng ý</button>
+    </div>
+  </div>
+</div>
+{% endif %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  const mapEl = document.getElementById("addressPickerMap");
+  if (!mapEl || typeof L === "undefined") return;
+  const latInput = document.getElementById("address-lat");
+  const lngInput = document.getElementById("address-lng");
+  const statusEl = document.getElementById("coord-status");
+  const latText = document.getElementById("coord-lat-text");
+  const lngText = document.getElementById("coord-lng-text");
+  const detailInput = document.getElementById("detail-address-input");
+  const wardInput = document.getElementById("ward-input");
+  const districtInput = document.getElementById("district-input");
+  const cityInput = document.getElementById("city-input");
+  const regionTrigger = document.getElementById("region-selector-trigger");
+  const regionPanel = document.getElementById("region-selector-panel");
+  const regionDisplay = document.getElementById("region-display-text");
+  const regionList = document.getElementById("region-option-list");
+  const regionSearchInput = document.getElementById("region-search-input");
+  const regionSearchClear = document.getElementById("region-search-clear");
+  const regionTabs = Array.from(document.querySelectorAll("[data-region-tab]"));
+  const suggestionBox = document.getElementById("detail-address-suggestions");
+  const openMapModalBtn = document.getElementById("open-map-modal-btn");
+  const mapModal = document.getElementById("map-modal");
+  const closeMapModalBtn = document.getElementById("close-map-modal-btn");
+  const cancelMapModalBtn = document.getElementById("cancel-map-modal-btn");
+  const confirmMapModalBtn = document.getElementById("confirm-map-modal-btn");
+  const mapModalLabel = document.getElementById("map-modal-address-label");
+  const mapModalCoords = document.getElementById("map-modal-coords");
+  const mapModalSearchInput = document.getElementById("map-modal-search-input");
+  const mapModalSuggestions = document.getElementById("map-modal-suggestions");
+  const detailSearchBtn = document.getElementById("detail-address-search-btn");
+  const detailClearBtn = document.getElementById("detail-address-clear-btn");
+  const GEOCODE_API_URL = "{% url 'store:geocode_address_api' %}";
+  const REGION_PROVINCES_API_URL = "{% url 'store:region_provinces_api' %}";
+  const initialLat = Number(latInput?.value || 10.79);
+  const initialLng = Number(lngInput?.value || 106.63);
+  const hasInitialCoord = latInput?.value && lngInput?.value;
+  const map = L.map("addressPickerMap").setView([initialLat, initialLng], hasInitialCoord ? 16 : 13);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(map);
+  let marker = null;
+  let modalMap = null;
+  let modalMarker = null;
+  let modalDraft = null;
+  let activeRegionTab = "city";
+  let suggestTimer = null;
+  const regionState = {
+    cityCode: null,
+    districtCode: null,
+    provinces: null,
+    districtsByCity: {},
+    wardsByDistrict: {},
+  };
+
+  const buildAddressParts = function () {
+    return [
+      detailInput?.value || "",
+      wardInput?.value || "",
+      districtInput?.value || "",
+      cityInput?.value || "",
+    ].map((value) => value.trim()).filter(Boolean);
+  };
+
+  const buildFullAddressQuery = function () {
+    return buildAddressParts().join(", ").trim();
+  };
+
+  const hasPickedCoordinates = function () {
+    return Boolean(latInput?.value && lngInput?.value);
+  };
+
+  const normalizeText = function (value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D")
+      .toLowerCase()
+      .trim();
+  };
+
+  const buildSearchVariants = function (detailOverride = "") {
+    const detail = (detailOverride || detailInput?.value || "").trim();
+    const ward = (wardInput?.value || "").trim();
+    const district = (districtInput?.value || "").trim();
+    const city = (cityInput?.value || "").trim();
+    const variants = [];
+    const pushVariant = function (parts) {
+      const joined = parts.filter(Boolean).join(", ").trim();
+      if (!joined || variants.includes(joined)) return;
+      variants.push(joined);
+    };
+
+    const streetOnly = detail.replace(/^\s*\d+\s*[\/\-]?\s*/u, "").trim();
+
+    pushVariant([detail, ward, district, city, "Viet Nam"]);
+    pushVariant([detail, district, city, "Viet Nam"]);
+    pushVariant([detail, ward, city, "Viet Nam"]);
+    pushVariant([detail, city, "Viet Nam"]);
+    pushVariant([detail, district, "Viet Nam"]);
+    pushVariant([detail, "Viet Nam"]);
+
+    if (streetOnly && streetOnly !== detail) {
+      pushVariant([streetOnly, ward, district, city, "Viet Nam"]);
+      pushVariant([streetOnly, district, city, "Viet Nam"]);
+      pushVariant([streetOnly, ward, city, "Viet Nam"]);
+      pushVariant([streetOnly, city, "Viet Nam"]);
+      pushVariant([streetOnly, district, "Viet Nam"]);
+      pushVariant([streetOnly, "Viet Nam"]);
+    }
+
+    return variants;
+  };
+
+  const parseCoordinateInput = function (rawValue) {
+    const text = String(rawValue || "").trim();
+    if (!text) return null;
+
+    const googleAtMatch = text.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+    if (googleAtMatch) {
+      return { lat: Number(googleAtMatch[1]), lng: Number(googleAtMatch[2]) };
+    }
+
+    const googleQueryMatch = text.match(/[?&](?:q|query|ll|destination)=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
+    if (googleQueryMatch) {
+      return { lat: Number(googleQueryMatch[1]), lng: Number(googleQueryMatch[2]) };
+    }
+
+    const plainCoordMatch = text.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+    if (plainCoordMatch) {
+      return { lat: Number(plainCoordMatch[1]), lng: Number(plainCoordMatch[2]) };
+    }
+
+    return null;
+  };
+
+  const escapeHtml = function (value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
+
+  const shortDisplayName = function (value) {
+    return String(value || "")
+      .replace(/,\s*Việt Nam$/i, "")
+      .replace(/,\s*Viet Nam$/i, "")
+      .trim();
+  };
+
+  const splitSuggestionLabel = function (item) {
+    const fullText = shortDisplayName(item?.display_name || "");
+    const parts = fullText.split(",").map((part) => part.trim()).filter(Boolean);
+    const title = parts.slice(0, 2).join(", ") || fullText;
+    const subtitle = parts.slice(2).join(", ");
+    return { title, subtitle };
+  };
+
+  const showSuggestionMessage = function (message) {
+    if (!suggestionBox) return;
+    suggestionBox.innerHTML = `<div class="search-empty">${escapeHtml(message)}</div>`;
+    suggestionBox.hidden = false;
+  };
+
+  const showSuggestionMessageIn = function (box, message) {
+    if (!box) return;
+    box.innerHTML = `<div class="search-empty">${escapeHtml(message)}</div>`;
+    box.hidden = false;
+  };
+
+  const clearSuggestionBox = function (box) {
+    if (!box) return;
+    box.hidden = true;
+    box.innerHTML = "";
+  };
+
+  const syncFieldsFromAddressParts = function (address) {
+    if (!address) return;
+    const suburb = address.suburb || address.neighbourhood || address.quarter || address.hamlet || "";
+    const district = address.city_district || address.town || address.county || address.state_district || "";
+    const city = address.city || address.state || address.province || "";
+    if (cityInput && city) cityInput.value = city;
+    if (districtInput && district) districtInput.value = district;
+    if (wardInput && suburb) wardInput.value = suburb;
+    updateRegionDisplay();
+    syncRegionCodesFromCurrentValue();
+  };
+
+  const bringMapIntoView = function () {
+    if (!mapEl) return;
+    mapEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => map.invalidateSize(), 180);
+  };
+
+  const focusSuggestedLocation = function (item, updateInput = false) {
+    if (!item) return;
+    const lat = Number(item.lat);
+    const lng = Number(item.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    setMarker(lat, lng, true);
+    bringMapIntoView();
+    updateStatus(lat, lng, "Đã nhảy đến vị trí tìm thấy từ địa chỉ.");
+    syncFieldsFromAddressParts(item.address || {});
+    if (updateInput && detailInput) {
+      detailInput.value = (item.display_name || "").split(", Việt Nam")[0] || detailInput.value;
+    }
+  };
+
+  const renderSuggestionResults = function (results, options = {}) {
+    const targetBox = options.targetBox || suggestionBox;
+    const onPick = typeof options.onPick === "function" ? options.onPick : null;
+    if (!targetBox) return;
+    targetBox.innerHTML = results.map((item, index) => {
+      const label = splitSuggestionLabel(item);
+      return `<button type="button" class="search-suggestion${index === 0 ? " active" : ""}" data-lat="${item.lat}" data-lng="${item.lon}" data-name="${escapeHtml(item.display_name || "")}"><span class="search-suggestion-title">${escapeHtml(label.title)}</span>${label.subtitle ? `<span class="search-suggestion-sub">${escapeHtml(label.subtitle)}</span>` : ""}</button>`;
+    }).join("");
+    targetBox.hidden = false;
+    Array.from(targetBox.querySelectorAll(".search-suggestion")).forEach((button) => {
+      button.addEventListener("click", function () {
+        const matchedItem = results.find((item) => String(item.lat) === button.dataset.lat && String(item.lon) === button.dataset.lng && String(item.display_name || "") === (button.dataset.name || ""));
+        if (onPick && matchedItem) {
+          onPick(matchedItem);
+          return;
+        }
+        if (detailInput) {
+          const fullName = button.dataset.name || "";
+          detailInput.value = splitSuggestionLabel({ display_name: fullName }).title || detailInput.value;
+        }
+        if (matchedItem) {
+          syncFieldsFromAddressParts(matchedItem.address || {});
+        }
+        setMarker(Number(button.dataset.lat), Number(button.dataset.lng));
+        bringMapIntoView();
+        updateStatus(Number(button.dataset.lat), Number(button.dataset.lng), "Đã nhảy đến vị trí bạn vừa chọn.");
+        targetBox.hidden = true;
+      });
+    });
+  };
+
+  const scoreSuggestion = function (item, detailSource = "") {
+    const detail = normalizeText(detailSource || detailInput?.value || "");
+    const district = normalizeText(districtInput?.value || "");
+    const ward = normalizeText(wardInput?.value || "");
+    const city = normalizeText(cityInput?.value || "");
+    const display = normalizeText(item.display_name || "");
+    const road = normalizeText(item?.address?.road || item?.address?.pedestrian || item?.address?.residential || "");
+    const houseNumber = normalizeText(item?.address?.house_number || "");
+    const detailParts = detail.split(/\s+/).filter(Boolean);
+    const typedHouseNumber = detailParts.find((part) => /^\d+[a-zA-Z0-9/-]*$/.test(part)) || "";
+    const typedStreet = normalizeText(
+      detail
+        .replace(/^\s*\d+[a-zA-Z0-9/-]*\s*/u, "")
+        .replace(/\b(phuong|phường|quan|quận|thanh pho|thành phố|tp\.?|hcm|ho chi minh)\b/giu, "")
+        .trim()
+    );
+    let score = 0;
+
+    if (detail && display.includes(detail)) score += 8;
+    if (typedStreet && road && road.includes(typedStreet)) score += 22;
+    if (typedStreet && display.includes(typedStreet)) score += 14;
+    if (typedHouseNumber && houseNumber && typedHouseNumber === houseNumber) score += 18;
+    if (typedHouseNumber && display.includes(typedHouseNumber)) score += 6;
+    if (ward && display.includes(ward)) score += 3;
+    if (district && display.includes(district)) score += 8;
+    if (city && display.includes(city)) score += 6;
+    if (/\d/.test(detail) && /\d/.test(display)) score += 2;
+
+    return score;
+  };
+
+  const queryAddressSources = async function (limit = 5, detailOverride = "") {
+    const variants = buildSearchVariants(detailOverride);
+    const merged = [];
+    const seen = new Set();
+
+    for (const variant of variants) {
+      const query = encodeURIComponent(variant);
+      const response = await fetch(`${GEOCODE_API_URL}?limit=${limit}&q=${query}`, {
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) continue;
+      const payload = await response.json();
+      const results = Array.isArray(payload?.results) ? payload.results : [];
+      if (!results.length) continue;
+
+      for (const item of results) {
+        const key = `${item.lat}|${item.lon}|${item.display_name}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        merged.push(item);
+      }
+    }
+
+    return merged
+      .map((item) => ({ ...item, _score: scoreSuggestion(item, detailOverride) }))
+      .sort((a, b) => b._score - a._score)
+      .slice(0, limit);
+  };
+
+  const updateStatus = function (lat, lng, message) {
+    if (!statusEl) return;
+    if (latText) latText.textContent = Number.isFinite(lat) ? lat.toFixed(6) : "-";
+    if (lngText) lngText.textContent = Number.isFinite(lng) ? lng.toFixed(6) : "-";
+    if (message) {
+      statusEl.textContent = message;
+      return;
+    }
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      statusEl.textContent = `Đã ghim vị trí: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    } else {
+      statusEl.textContent = "Chưa ghim vị trí trên bản đồ.";
+    }
+  };
+
+  const updateModalDraftLabel = function (lat, lng) {
+    if (!mapModalCoords) return;
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      mapModalCoords.textContent = `Tọa độ đang chọn: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    } else {
+      mapModalCoords.textContent = "Tọa độ đang chọn: -";
+    }
+  };
+
+  const setMarker = function (lat, lng, shouldCenter = true) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    const latlng = [lat, lng];
+    if (!marker) {
+      marker = L.marker(latlng).addTo(map);
+    } else {
+      marker.setLatLng(latlng);
+    }
+    if (latInput) latInput.value = String(lat);
+    if (lngInput) lngInput.value = String(lng);
+    if (shouldCenter) map.setView(latlng, 16);
+    updateStatus(lat, lng);
+  };
+
+  const applyPickedCoordinates = async function (lat, lng, options = {}) {
+    const keepAddress = options.keepAddress === true;
+    setMarker(lat, lng, true);
+    if (keepAddress) {
+      return;
+    }
+    try {
+      updateStatus(lat, lng, "Dang cap nhat dia chi tu vi tri da ghim...");
+      await reverseGeocodeCoords(lat, lng);
+      updateStatus(lat, lng);
+    } catch (_error) {
+      updateStatus(lat, lng, "Da ghim vi tri thanh cong. Ban co the luu ngay hoac nhap lai dia chi cu the.");
+    }
+  };
+
+  const applyReverseGeocodeResult = function (result) {
+    const address = result?.address || {};
+    const displayName = (result?.display_name || "").split(", Việt Nam")[0];
+    const houseNumber = address.house_number || "";
+    const road = address.road || address.pedestrian || address.residential || "";
+    const suburb = address.suburb || address.neighbourhood || address.quarter || "";
+    const district = address.city_district || address.town || address.county || "";
+    const city = address.city || address.state || address.province || "";
+
+    if (cityInput && city) cityInput.value = city;
+    if (districtInput && district) districtInput.value = district;
+    if (wardInput && suburb) wardInput.value = suburb;
+    updateRegionDisplay();
+    syncRegionCodesFromCurrentValue();
+
+    if (detailInput) {
+      const shortAddress = [houseNumber, road].filter(Boolean).join(" ").trim();
+      detailInput.value = shortAddress || displayName || detailInput.value;
+    }
+  };
+
+  const reverseGeocodeCoords = async function (lat, lng) {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${lat}&lon=${lng}`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) {
+      throw new Error("Khong reverse geocode duoc");
+    }
+    const payload = await response.json();
+    if (payload) {
+      applyReverseGeocodeResult(payload);
+    }
+    return payload;
+  };
+
+  const tryApplyDirectCoordinates = function () {
+    const parsed = parseCoordinateInput(detailInput?.value || "");
+    if (!parsed) return false;
+    setMarker(parsed.lat, parsed.lng);
+    updateStatus(parsed.lat, parsed.lng, "Da nhan toa do tu link Google Maps / chuoi toa do.");
+    if (suggestionBox) {
+      suggestionBox.hidden = true;
+      suggestionBox.innerHTML = "";
+    }
+    return true;
+  };
+
+  const currentRegionLabel = function () {
+    return [cityInput?.value, districtInput?.value, wardInput?.value].filter(Boolean).join(", ");
+  };
+
+  const updateRegionDisplay = function () {
+    const label = currentRegionLabel();
+    if (!regionDisplay) return;
+    regionDisplay.textContent = label || "Chọn Tỉnh/Thành phố, Quận/Huyện, Khu vực";
+    regionDisplay.classList.toggle("placeholder", !label);
+  };
+
+  const setRegionSearchPlaceholder = function () {
+    if (!regionSearchInput) return;
+    if (activeRegionTab === "city") {
+      regionSearchInput.placeholder = "Tìm Tỉnh/Thành phố";
+    } else if (activeRegionTab === "district") {
+      regionSearchInput.placeholder = cityInput?.value ? `Tìm Quận/Huyện của ${cityInput.value}` : "Chọn Tỉnh/Thành phố trước";
+    } else {
+      regionSearchInput.placeholder = districtInput?.value ? `Tìm Khu vực của ${districtInput.value}` : "Chọn Quận/Huyện trước";
+    }
+  };
+
+  const fetchRegionJson = async function (url) {
+    const response = await fetch(url, { headers: { Accept: "application/json" } });
+    if (!response.ok) {
+      throw new Error("Khong tai du lieu khu vuc");
+    }
+    return response.json();
+  };
+
+  const ensureProvinceData = async function () {
+    if (regionState.provinces) return regionState.provinces;
+    const data = await fetchRegionJson(REGION_PROVINCES_API_URL);
+    regionState.provinces = Array.isArray(data?.items) ? data.items : [];
+    return regionState.provinces;
+  };
+
+  const ensureDistrictData = async function (cityCode) {
+    if (!cityCode) return [];
+    if (regionState.districtsByCity[cityCode]) return regionState.districtsByCity[cityCode];
+    const data = await fetchRegionJson(`/api/regions/provinces/${cityCode}/districts/`);
+    regionState.districtsByCity[cityCode] = Array.isArray(data?.items) ? data.items : [];
+    return regionState.districtsByCity[cityCode];
+  };
+
+  const ensureWardData = async function (districtCode) {
+    if (!districtCode) return [];
+    if (regionState.wardsByDistrict[districtCode]) return regionState.wardsByDistrict[districtCode];
+    const data = await fetchRegionJson(`/api/regions/districts/${districtCode}/wards/`);
+    regionState.wardsByDistrict[districtCode] = Array.isArray(data?.items) ? data.items : [];
+    return regionState.wardsByDistrict[districtCode];
+  };
+
+  const syncRegionCodesFromCurrentValue = async function () {
+    const provinces = await ensureProvinceData();
+    const cityName = normalizeText(cityInput?.value || "");
+    const districtName = normalizeText(districtInput?.value || "");
+
+    const cityMatch = provinces.find((item) => normalizeText(item.name) === cityName) || null;
+    regionState.cityCode = cityMatch ? cityMatch.code : null;
+
+    if (regionState.cityCode && districtName) {
+      const districts = await ensureDistrictData(regionState.cityCode);
+      const districtMatch = districts.find((item) => normalizeText(item.name) === districtName) || null;
+      regionState.districtCode = districtMatch ? districtMatch.code : null;
+    } else {
+      regionState.districtCode = null;
+    }
+  };
+
+  const renderRegionOptions = async function () {
+    if (!regionList) return;
+    setRegionSearchPlaceholder();
+    const keyword = normalizeText(regionSearchInput?.value || "");
+    const matchKeyword = function (value) {
+      return !keyword || normalizeText(value).includes(keyword);
+    };
+
+    let options = [];
+    if (activeRegionTab === "city") {
+      const provinces = await ensureProvinceData();
+      options = provinces
+        .filter((item) => matchKeyword(item.name))
+        .map((item) => ({ value: item.name, code: item.code, hint: "Chọn Tỉnh/Thành phố" }));
+    } else if (activeRegionTab === "district") {
+      if (!regionState.cityCode) {
+        regionList.innerHTML = `<div class="empty">Chọn Tỉnh/Thành phố trước để xem Quận/Huyện.</div>`;
+        return;
+      }
+      const districts = await ensureDistrictData(regionState.cityCode);
+      options = districts
+        .filter((item) => matchKeyword(item.name))
+        .map((item) => ({ value: item.name, code: item.code, hint: cityInput?.value || "Quận/Huyện" }));
+    } else {
+      if (!regionState.districtCode) {
+        regionList.innerHTML = `<div class="empty">Chọn Quận/Huyện trước để xem Khu vực.</div>`;
+        return;
+      }
+      const wards = await ensureWardData(regionState.districtCode);
+      options = wards
+        .filter((item) => matchKeyword(item.name))
+        .map((item) => ({ value: item.name, code: item.code, hint: districtInput?.value || "Khu vực" }));
+    }
+
+    if (!options.length) {
+      regionList.innerHTML = `<div class="empty">Không có kết quả phù hợp.</div>`;
+      return;
+    }
+    const selectedValue = activeRegionTab === "city"
+      ? (cityInput?.value || "")
+      : activeRegionTab === "district"
+        ? (districtInput?.value || "")
+        : (wardInput?.value || "");
+    const normalizedSelectedValue = normalizeText(selectedValue);
+    regionList.innerHTML = options.map((option) => {
+      const isActive = normalizedSelectedValue && normalizeText(option.value) === normalizedSelectedValue;
+      return `<button type="button" class="selector-item${isActive ? " active" : ""}" data-region-value="${escapeHtml(option.value)}" data-region-code="${escapeHtml(option.code || "")}"><span class="selector-item-title">${escapeHtml(option.value)}</span>${option.hint ? `<span class="selector-item-hint">${escapeHtml(option.hint)}</span>` : ""}</button>`;
+    }).join("");
+
+    Array.from(regionList.querySelectorAll(".selector-item")).forEach((button) => {
+      button.addEventListener("click", function () {
+        const value = button.dataset.regionValue || "";
+        const code = button.dataset.regionCode || "";
+        if (activeRegionTab === "city" && cityInput) {
+          cityInput.value = value;
+          regionState.cityCode = code || null;
+          if (districtInput) districtInput.value = "";
+          if (wardInput) wardInput.value = "";
+          regionState.districtCode = null;
+          activeRegionTab = "district";
+        } else if (activeRegionTab === "district" && districtInput) {
+          districtInput.value = value;
+          regionState.districtCode = code || null;
+          if (wardInput) wardInput.value = "";
+          activeRegionTab = "ward";
+        } else if (activeRegionTab === "ward" && wardInput) {
+          wardInput.value = value;
+          if (regionPanel) regionPanel.hidden = true;
+        }
+        if (regionSearchInput) regionSearchInput.value = "";
+        regionTabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.regionTab === activeRegionTab));
+        updateRegionDisplay();
+        renderRegionOptions();
+      });
+    });
+  };
+
+  const fetchSuggestions = async function (options = {}) {
+    const autoFocusTopResult = options.autoFocusTopResult === true;
+    const updateInputOnAutoFocus = options.updateInputOnAutoFocus === true;
+    const detail = String(options.detailValue || detailInput?.value || "").trim();
+    const targetBox = options.targetBox || suggestionBox;
+    if (!detail || detail.length < 1 || !targetBox) {
+      targetBox.hidden = true;
+      targetBox.innerHTML = "";
+      return;
+    }
+    if (!options.detailValue && tryApplyDirectCoordinates()) {
+      return;
+    }
+    try {
+      const results = await queryAddressSources(5, detail);
+      if (!results.length) {
+        showSuggestionMessageIn(targetBox, "Chưa tìm thấy địa chỉ phù hợp.");
+        return;
+      }
+      renderSuggestionResults(results, { targetBox, onPick: options.onPick });
+      if (autoFocusTopResult) {
+        focusSuggestedLocation(results[0], updateInputOnAutoFocus);
+      }
+    } catch (_error) {
+      showSuggestionMessageIn(targetBox, "Chưa lấy được gợi ý địa chỉ.");
+    }
+  };
+
+  regionTabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      activeRegionTab = tab.dataset.regionTab || "city";
+      regionTabs.forEach((item) => item.classList.toggle("active", item === tab));
+      renderRegionOptions();
+    });
+  });
+
+  if (regionTrigger) {
+    regionTrigger.addEventListener("click", async function () {
+      if (!regionPanel) return;
+      regionPanel.hidden = !regionPanel.hidden;
+      if (!regionPanel.hidden) {
+        try {
+          await syncRegionCodesFromCurrentValue();
+          await renderRegionOptions();
+        } catch (_error) {
+          regionList.innerHTML = `<div class="empty">Chưa tải được dữ liệu khu vực. Vui lòng thử lại.</div>`;
+        }
+        if (regionSearchInput) regionSearchInput.focus();
+      }
+    });
+  }
+
+  if (regionSearchInput) {
+    regionSearchInput.addEventListener("input", function () {
+      renderRegionOptions().catch(function () {
+        regionList.innerHTML = `<div class="empty">Chưa tải được dữ liệu khu vực. Vui lòng thử lại.</div>`;
+      });
+    });
+  }
+
+  if (regionSearchClear) {
+    regionSearchClear.addEventListener("click", function () {
+      if (!regionSearchInput) return;
+      regionSearchInput.value = "";
+      renderRegionOptions().catch(function () {
+        regionList.innerHTML = `<div class="empty">Chưa tải được dữ liệu khu vực. Vui lòng thử lại.</div>`;
+      });
+      regionSearchInput.focus();
+    });
+  }
+
+  document.addEventListener("click", function (event) {
+    if (regionPanel && regionTrigger && !regionPanel.hidden && !regionPanel.contains(event.target) && !regionTrigger.contains(event.target)) {
+      regionPanel.hidden = true;
+    }
+  });
+
+  updateRegionDisplay();
+  syncRegionCodesFromCurrentValue();
+
+  if (detailInput) {
+    detailInput.addEventListener("input", function () {
+      clearTimeout(suggestTimer);
+      suggestTimer = setTimeout(function () {
+        fetchSuggestions({ autoFocusTopResult: false, updateInputOnAutoFocus: false });
+      }, 220);
+    });
+    detailInput.addEventListener("focus", function () {
+      if ((detailInput.value || "").trim().length >= 1) {
+        clearTimeout(suggestTimer);
+        suggestTimer = setTimeout(function () {
+          fetchSuggestions({ autoFocusTopResult: false, updateInputOnAutoFocus: false });
+        }, 120);
+      }
+    });
+    detailInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        clearTimeout(suggestTimer);
+        fetchSuggestions({ autoFocusTopResult: false, updateInputOnAutoFocus: false });
+      }
+    });
+  }
+
+  if (detailSearchBtn) {
+    detailSearchBtn.addEventListener("click", function () {
+      searchOnMap();
+    });
+  }
+
+  if (detailClearBtn) {
+    detailClearBtn.addEventListener("click", function () {
+      clearSuggestionBox(suggestionBox);
+      if (detailInput) detailInput.focus();
+    });
+  }
+
+  document.addEventListener("click", function (event) {
+    if (suggestionBox && detailInput && !suggestionBox.hidden && !suggestionBox.contains(event.target) && event.target !== detailInput) {
+      clearSuggestionBox(suggestionBox);
+    }
+  });
+
+  if (hasInitialCoord) {
+    setMarker(Number(latInput.value), Number(lngInput.value), false);
+  } else {
+    updateStatus(null, null);
+  }
+
+  map.on("click", function (e) {
+    applyPickedCoordinates(e.latlng.lat, e.latlng.lng);
+  });
+
+  const geocodeFromAddress = async function (silent = false) {
+      if (tryApplyDirectCoordinates()) {
+        return true;
+      }
+      const addressParts = buildAddressParts();
+      if (!addressParts.length) {
+        if (!silent) {
+          updateStatus(null, null, "Nhập địa chỉ cụ thể trước.");
+        }
+        return false;
+      }
+      updateStatus(null, null, "Đang tìm tọa độ từ địa chỉ...");
+      try {
+        const results = await queryAddressSources(1);
+        const first = Array.isArray(results) ? results[0] : null;
+        if (!first) {
+          if (!silent) {
+            updateStatus(null, null, "Không tìm thấy địa chỉ phù hợp.");
+          }
+          return false;
+        }
+        focusSuggestedLocation(first, false);
+        if (suggestionBox) {
+          suggestionBox.hidden = true;
+          suggestionBox.innerHTML = "";
+        }
+        return true;
+      } catch (error) {
+        if (!silent) {
+          updateStatus(null, null, "Không lấy được tọa độ tự động, bạn hãy ghim trực tiếp trên bản đồ.");
+        }
+        return false;
+      }
+  };
+
+  const searchOnMap = function () {
+    const fullQuery = buildFullAddressQuery();
+    if (!fullQuery) {
+      updateStatus(null, null, "Nhập địa chỉ cụ thể trước khi tìm trên bản đồ.");
+      if (detailInput) detailInput.focus();
+      return;
+    }
+    openMapModal();
+    if (mapModalSearchInput) {
+      mapModalSearchInput.value = fullQuery;
+    }
+    fetchSuggestions({
+      detailValue: fullQuery,
+      targetBox: mapModalSuggestions,
+      autoFocusTopResult: false,
+      onPick: function (item) {
+        const lat = Number(item.lat);
+        const lng = Number(item.lon);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+        modalDraft = { lat, lng };
+        syncFieldsFromAddressParts(item.address || {});
+        if (detailInput) {
+          detailInput.value = splitSuggestionLabel(item).title || detailInput.value;
+        }
+        if (!modalMarker) {
+          modalMarker = L.marker([lat, lng], { draggable: true }).addTo(modalMap);
+        } else {
+          modalMarker.setLatLng([lat, lng]);
+        }
+        modalMap.setView([lat, lng], 18);
+        updateModalDraftLabel(lat, lng);
+        clearSuggestionBox(mapModalSuggestions);
+      },
+    });
+  };
+
+  const ensureModalMap = function () {
+    if (modalMap || typeof L === "undefined") return;
+    modalMap = L.map("addressModalMap").setView([initialLat, initialLng], hasInitialCoord ? 16 : 13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(modalMap);
+    modalMap.on("click", function (e) {
+      modalDraft = { lat: e.latlng.lat, lng: e.latlng.lng };
+      if (!modalMarker) {
+        modalMarker = L.marker(e.latlng, { draggable: true }).addTo(modalMap);
+        modalMarker.on("dragend", function (dragEvent) {
+          const dragged = dragEvent.target.getLatLng();
+          modalDraft = { lat: dragged.lat, lng: dragged.lng };
+          updateModalDraftLabel(dragged.lat, dragged.lng);
+        });
+      } else {
+        modalMarker.setLatLng(e.latlng);
+      }
+      updateModalDraftLabel(e.latlng.lat, e.latlng.lng);
+    });
+  };
+
+  const openMapModal = function () {
+    if (!mapModal) return;
+    ensureModalMap();
+    mapModal.classList.add("is-open");
+    if (hasPickedCoordinates()) {
+      const currentLat = Number(latInput.value);
+      const currentLng = Number(lngInput.value);
+      modalDraft = { lat: currentLat, lng: currentLng };
+      if (!modalMarker) {
+        modalMarker = L.marker([currentLat, currentLng], { draggable: true }).addTo(modalMap);
+        modalMarker.on("dragend", function (dragEvent) {
+          const dragged = dragEvent.target.getLatLng();
+          modalDraft = { lat: dragged.lat, lng: dragged.lng };
+          updateModalDraftLabel(dragged.lat, dragged.lng);
+        });
+      } else {
+        modalMarker.setLatLng([currentLat, currentLng]);
+      }
+      updateModalDraftLabel(currentLat, currentLng);
+      modalMap.setView([currentLat, currentLng], 17);
+    } else {
+      modalDraft = null;
+      if (modalMarker) {
+        modalMap.removeLayer(modalMarker);
+        modalMarker = null;
+      }
+      updateModalDraftLabel(null, null);
+      modalMap.setView([initialLat, initialLng], 14);
+    }
+    if (mapModalLabel) {
+      mapModalLabel.textContent = (detailInput?.value || "").trim() || currentRegionLabel() || "Địa chỉ đang chỉnh sửa";
+    }
+    setTimeout(() => modalMap.invalidateSize(), 100);
+  };
+
+  const closeMapModal = function () {
+    if (!mapModal) return;
+    mapModal.classList.remove("is-open");
+  };
+
+  if (openMapModalBtn) openMapModalBtn.addEventListener("click", openMapModal);
+  if (closeMapModalBtn) closeMapModalBtn.addEventListener("click", closeMapModal);
+  if (cancelMapModalBtn) cancelMapModalBtn.addEventListener("click", closeMapModal);
+  if (confirmMapModalBtn) {
+    confirmMapModalBtn.addEventListener("click", async function () {
+      if (modalDraft) {
+        await applyPickedCoordinates(modalDraft.lat, modalDraft.lng);
+      }
+      closeMapModal();
+    });
+  }
+
+  if (mapModal) {
+    mapModal.addEventListener("click", function (event) {
+      if (event.target === mapModal) closeMapModal();
+    });
+  }
+
+  if (mapModalSearchInput) {
+    mapModalSearchInput.addEventListener("input", function () {
+      clearTimeout(suggestTimer);
+      suggestTimer = setTimeout(function () {
+        fetchSuggestions({
+          detailValue: mapModalSearchInput.value,
+          targetBox: mapModalSuggestions,
+          autoFocusTopResult: false,
+          onPick: function (item) {
+            const lat = Number(item.lat);
+            const lng = Number(item.lon);
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+            modalDraft = { lat, lng };
+            syncFieldsFromAddressParts(item.address || {});
+            if (detailInput) {
+              detailInput.value = splitSuggestionLabel(item).title || detailInput.value;
+            }
+            if (!modalMarker) {
+              modalMarker = L.marker([lat, lng], { draggable: true }).addTo(modalMap);
+            } else {
+              modalMarker.setLatLng([lat, lng]);
+            }
+            modalMap.setView([lat, lng], 18);
+            updateModalDraftLabel(lat, lng);
+            clearSuggestionBox(mapModalSuggestions);
+          },
+        });
+      }, 180);
+    });
+    mapModalSearchInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+      }
+    });
+  }
+
+  document.addEventListener("click", function (event) {
+    if (mapModalSuggestions && mapModalSearchInput && !mapModalSuggestions.hidden && !mapModalSuggestions.contains(event.target) && event.target !== mapModalSearchInput) {
+      clearSuggestionBox(mapModalSuggestions);
+    }
+  });
+
+  setTimeout(() => map.invalidateSize(), 100);
+})();
+</script>
+{% endblock %}

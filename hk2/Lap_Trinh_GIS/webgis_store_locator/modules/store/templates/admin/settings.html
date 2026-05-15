@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ t.system_settings }}{% endblock %}
+{% block page_title %}{{ t.system_settings }}{% endblock %}
+{% block content %}
+  <section class="panel card" style="max-width:820px;">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <label>{{ t.language }}</label>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <label><input type="radio" name="language" value="vi" {% if admin_lang == 'vi' %}checked{% endif %}> {{ t.vietnamese }}</label>
+          <label><input type="radio" name="language" value="en" {% if admin_lang == 'en' %}checked{% endif %}> {{ t.english }}</label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>{{ t.theme }}</label>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <label><input type="radio" name="theme" value="light" {% if admin_theme == 'light' %}checked{% endif %}> {{ t.light_theme }}</label>
+          <label><input type="radio" name="theme" value="dark" {% if admin_theme == 'dark' %}checked{% endif %}> {{ t.dark_theme }}</label>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit">{{ t.save_settings }}</button>
+    </form>
+  </section>
+{% endblock %}
+
+

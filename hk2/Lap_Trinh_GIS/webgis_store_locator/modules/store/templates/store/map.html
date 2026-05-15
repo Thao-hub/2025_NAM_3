@@ -1,0 +1,2644 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Circle K & GS25 - Tìm cửa hàng</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --border:rgba(15, 23, 42, 0.09);
+      --ink:#1f2937;
+      --muted:#5b6472;
+      --shadow:0 22px 55px rgba(17,24,39,.12);
+      --red:#0f766e;
+      --red2:#14b8a6;
+      --yellow:#f59e0b;
+      --yellow2:#f97316;
+      --blue:#123545;
+      --green:#16a34a;
+      --soft-red:#ecfeff;
+      --soft-blue:#eff6ff;
+      --cream:#fff7ed;
+      --container:1320px;
+    }
+
+    *{box-sizing:border-box}
+    html, body, button, input, select, textarea, option, label, small, span, div, p, strong, b {
+      font-family:"IBM Plex Sans","Segoe UI",Arial,Helvetica,sans-serif;
+    }
+    body{
+      margin:0;
+      font-family:"IBM Plex Sans","Segoe UI",Arial,Helvetica,sans-serif;
+      background:
+        radial-gradient(1100px 420px at 10% -10%, rgba(197,245,234,.38) 0%, transparent 55%),
+        radial-gradient(900px 340px at 92% 0%, rgba(255,232,213,.34) 0%, transparent 58%),
+        linear-gradient(160deg,#f8fafb,#f1f6f4);
+      color:var(--ink);
+      min-height:100vh;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    a{text-decoration:none;color:inherit}
+
+    .top-header{
+      background:
+        linear-gradient(135deg,var(--red) 0%,var(--red2) 100%);
+      position:sticky;
+      top:0;
+      z-index:5000;
+      box-shadow:0 14px 32px rgba(8,47,44,.18);
+      overflow:hidden;
+    }
+    .top-header::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0;
+      height:4px;
+      background:linear-gradient(90deg,rgba(255,255,255,.18) 0%, #fff4df 20%, #ffd7a8 42%, #fff 66%, rgba(255,255,255,.18) 100%);
+      opacity:.95;
+    }
+    .top-wrap{
+      width:min(100%,var(--container));
+      margin:auto;
+      padding:16px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:16px;
+    }
+    .top-logo{
+      font-size:32px;
+      font-weight:900;
+      letter-spacing:.8px;
+      color:#fff;
+      line-height:1;
+      text-transform:uppercase;
+      text-shadow:0 4px 14px rgba(0,0,0,.16);
+      font-family:"IBM Plex Sans","Segoe UI",Arial,Helvetica,sans-serif;
+    }
+    .top-logo span{color:#ffd7a8}
+    .top-nav{display:flex;gap:32px}
+    .top-nav a{
+      color:#fff;
+      font-weight:800;
+      font-size:15px;
+      opacity:.92;
+      position:relative;
+      padding-bottom:4px;
+    }
+    .top-nav a:hover{opacity:1}
+    .top-nav a::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:2px;
+      border-radius:999px;
+      background:rgba(255,255,255,.88);
+      transform:scaleX(0);
+      transform-origin:center;
+      transition:transform .16s ease;
+    }
+    .top-nav a:hover::after{transform:scaleX(1)}
+    .top-actions{display:flex;gap:10px;align-items:center}
+    .top-btn-find,.top-btn-admin{
+      height:48px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 22px;
+      border-radius:999px;
+      font-size:15px;
+      font-weight:900;
+    }
+    .top-btn-find{
+      background:linear-gradient(135deg,var(--yellow),var(--yellow2));
+      color:#fff;
+      box-shadow:0 10px 24px rgba(249,115,22,.28);
+    }
+    .top-btn-admin{
+      background:rgba(255,255,255,.92);
+      color:#123545;
+      border:1px solid rgba(255,255,255,.45);
+    }
+    .page-hero{
+      width:min(100%,var(--container));
+      margin:0 auto;
+      padding:22px 16px 0;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      align-items:start;
+    }
+    .hero-copy{
+      padding:6px 4px 0;
+    }
+    .hero-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height:32px;
+      padding:0 14px;
+      border-radius:999px;
+      background:linear-gradient(180deg,#fff,#eefcf9);
+      border:1px solid rgba(20,184,166,.24);
+      color:var(--red);
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 8px 24px rgba(15,23,42,.06);
+    }
+    .hero-copy h1{
+      margin:14px 0 10px;
+      font-size:clamp(28px,3.4vw,42px);
+      line-height:1.08;
+      letter-spacing:-1px;
+      max-width:700px;
+      font-family:"IBM Plex Sans","Segoe UI",Arial,Helvetica,sans-serif;
+      font-weight:900;
+    }
+    .hero-copy p{
+      margin:0;
+      max-width:660px;
+      color:#475569;
+      font-size:14px;
+      line-height:1.65;
+      font-weight:700;
+    }
+    .hero-stats{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .hero-stat{
+      background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(244,248,250,.92));
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(219,228,255,.9);
+      border-radius:22px;
+      padding:14px 16px 14px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-stat::before{
+      content:"";
+      position:absolute;
+      inset:0 auto 0 0;
+      width:5px;
+      background:linear-gradient(180deg,var(--red),var(--yellow2));
+    }
+    .hero-stat b{
+      display:block;
+      font-size:18px;
+      line-height:1;
+      margin-bottom:6px;
+    }
+    .hero-stat span{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:900;
+      line-height:1.45;
+    }
+
+    .locator-shell{
+      width:min(100%,var(--container));
+      margin:0 auto;
+      padding:20px 16px 20px;
+      display:grid;
+      grid-template-columns:320px minmax(0, 1fr) 360px;
+      gap:22px;
+      min-height:calc(100vh - 86px);
+      align-items:start;
+    }
+    .sidebar{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      position:sticky;
+      top:96px;
+    }
+    .results-column{
+      position:sticky;
+      top:96px;
+      min-width:0;
+    }
+    .panel{
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(14px);
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .topbar{
+      background:
+        radial-gradient(circle at top right, rgba(249,115,22,.18), transparent 28%),
+        linear-gradient(180deg,var(--red),var(--red2));
+      color:#fff;
+      padding:14px 16px 10px;
+      position:relative;
+    }
+    .topbar::after{
+      content:"";
+      position:absolute;
+      left:22px;
+      right:22px;
+      bottom:0;
+      height:3px;
+      border-radius:999px;
+      background:linear-gradient(90deg,rgba(255,255,255,.08),rgba(255,244,223,.92),rgba(255,255,255,.08));
+    }
+    .topbar-inner{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .brandPill,.tab{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      min-width:0;
+      padding:0 16px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.12);
+      font-size:16px;
+      font-weight:900;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .tab{
+      background:linear-gradient(180deg,#fff,#eefcf9);
+      color:var(--blue);
+      border-color:rgba(20,184,166,.18);
+      box-shadow:0 10px 20px rgba(0,0,0,.10);
+    }
+    .topbar-note{
+      margin-top:10px;
+      color:rgba(255,255,255,.86);
+      font-size:11px;
+      line-height:1.45;
+      font-weight:800;
+      max-width:300px;
+    }
+    .cardHead{
+      padding:12px 16px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:linear-gradient(180deg,#ffffff,#f6fbfa);
+      font-weight:1000;
+      font-size:16px;
+      position:relative;
+    }
+    .cardHead::before{
+      content:"";
+      position:absolute;
+      left:22px;
+      bottom:0;
+      width:72px;
+      height:3px;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--red),var(--yellow2));
+    }
+    .cardBody{padding:10px 16px 14px}
+    .status{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size:13px;
+      font-weight:900;
+      color:var(--muted);
+    }
+    .dot{
+      width:12px;
+      height:12px;
+      border-radius:999px;
+      background:var(--green);
+    }
+    .dot.bad{background:#ef4444}
+    .searchBox{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:14px 16px;
+      background:#fff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+      position:relative;
+    }
+    .pin{
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      background:rgba(37,99,235,.12);
+      border:1px solid rgba(37,99,235,.25);
+      color:var(--blue);
+      font-weight:1000;
+      flex:0 0 auto;
+      font-size:18px;
+    }
+    .searchBox input{
+      width:100%;
+      border:none;
+      outline:none;
+      background:transparent;
+      font-size:14px;
+      font-weight:900;
+      color:var(--ink);
+    }
+    .btn{
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      padding:12px 18px;
+      font-weight:1000;
+      white-space:nowrap;
+      font-size:14px;
+      transition:transform .12s ease, box-shadow .18s ease, background .18s ease;
+      font-family:inherit;
+    }
+    .btn:hover,.btnGhost:hover,.chip:hover,.item:hover{transform:translateY(-1px)}
+    .btnPrimary{
+      background:linear-gradient(135deg,var(--red),var(--red2));
+      color:#fff;
+      box-shadow:0 10px 20px rgba(20,184,166,.24);
+    }
+    .btnPrimary:hover{
+      box-shadow:0 14px 24px rgba(20,184,166,.3);
+    }
+    .btnWhite{
+      background:#fff;
+      color:#111827;
+      border:1px solid var(--border);
+      box-shadow:0 6px 14px rgba(15,23,42,.04);
+    }
+    .controls{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
+      gap:10px;
+      align-items:stretch;
+    }
+    select,.chip{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:14px;
+      color:var(--ink);
+      font-weight:800;
+      min-height:40px;
+      box-shadow:0 8px 18px rgba(15,23,42,.04);
+      font-family:inherit;
+    }
+    .chip{cursor:pointer;user-select:none}
+    .chip:hover,.btnWhite:hover,.btnGhost:hover{
+      border-color:rgba(20,184,166,.28);
+      box-shadow:0 10px 22px rgba(15,23,42,.08);
+    }
+    .hint{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.45;
+      font-weight:900;
+    }
+    .row {
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
+      gap:12px;
+      align-items:stretch;
+    }
+    .field {
+      flex:1;
+      min-width:150px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:8px 10px;
+      background:linear-gradient(180deg,#fff,#fcfdff);
+      box-shadow:0 8px 18px rgba(15,23,42,.04);
+    }
+    .field label {
+      display:block;
+      font-size:10px;
+      color:var(--muted);
+      font-weight:800;
+      margin-bottom:6px;
+    }
+    .field select,
+    .field input{
+      width:100%;
+      min-width:0;
+      border:none;
+      outline:none;
+      background:transparent;
+      border-radius:0;
+      padding:0;
+      min-height:0;
+      box-shadow:none;
+      color:var(--ink);
+      font-size:14px;
+      font-weight:900;
+      font-family:inherit;
+    }
+    .field select{
+      appearance:none;
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      padding-right:20px;
+    }
+    .field input::placeholder{
+      color:#94a3b8;
+      font-weight:700;
+    }
+    .toggleRow {
+      margin-top:8px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:10px;
+      flex-wrap:wrap;
+      font-weight:900;
+    }
+    .toggleRow label {
+      display:inline-flex !important;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      white-space:nowrap;
+    }
+    .toggleRow input[type="checkbox"] {
+      width:auto !important;
+      min-width:16px;
+      height:16px;
+      margin:0;
+    }
+    .list {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height:45vh;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .item {
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:11px 12px;
+      cursor:pointer;
+      background:linear-gradient(180deg,#ffffff,#fdfdff);
+      transition:transform .08s ease, box-shadow .12s ease;
+    }
+    .item:hover {
+      box-shadow:0 16px 28px rgba(15,23,42,.10);
+      transform:translateY(-1px);
+    }
+    .item b { display:block; font-size:13px; }
+    .item small { display:block; color:var(--muted); margin-top:5px; line-height:1.4; font-weight:700; font-size:12px; }
+    .actions { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+    .mini { padding:6px 10px; border-radius:999px; font-size:11px; }
+    .actions .btn{
+      font-size:11px;
+      min-height:36px;
+      padding:8px 10px;
+      width:100%;
+      justify-content:center;
+    }
+    .action-grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:8px;
+    }
+    .search-actions{
+      display:grid;
+      grid-template-columns:34px minmax(360px, 3.4fr) 52px 64px;
+      gap:8px;
+      align-items:center;
+    }
+    .search-actions .pin{
+      width:34px;
+      height:34px;
+      margin:0;
+      font-size:12px;
+    }
+    .search-actions .btn{
+      min-height:36px;
+      padding:0 6px;
+      justify-content:center;
+      font-size:12px;
+    }
+    .searchBox{
+      padding:0;
+      border:none;
+      background:transparent;
+      box-shadow:none;
+    }
+    .search-input-wrap{
+      display:flex;
+      align-items:center;
+      min-height:36px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:0 10px;
+      background:#fff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    .acWrap { position:relative; }
+    .acList {
+      position:absolute;
+      left:0;
+      right:0;
+      top:calc(100% + 6px);
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      z-index:50;
+      max-height:260px;
+      overflow:auto;
+      display:none;
+    }
+    .acItem {
+      padding:10px 12px;
+      border-bottom:1px solid var(--border);
+      cursor:pointer;
+      font-size:13px;
+      font-weight:800;
+      font-family:inherit;
+    }
+    .acItem:last-child { border-bottom:none; }
+    .acItem:hover { background:#f8fafc; }
+    .result-panel .cardBody{padding:14px 16px 16px}
+    .kv{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:6px 10px;
+      font-size:13px;
+    }
+    .k{color:var(--muted)}
+    .v{color:var(--ink);word-break:break-word}
+    .copy{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .btnGhost{
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--ink);
+      padding:10px 16px;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:13px;
+      font-weight:800;
+      box-shadow:0 8px 18px rgba(15,23,42,.04);
+      font-family:inherit;
+    }
+    .small{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:12px;
+      font-weight:900;
+    }
+    .review-panel{
+      margin-top:16px;
+      padding-top:14px;
+      border-top:1px solid var(--border);
+    }
+    .review-summary-card,
+    .review-card{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff,#f8fffd);
+      box-shadow:0 10px 22px rgba(15,23,42,.05);
+    }
+    .review-summary-card{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .review-summary-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .review-score{
+      display:flex;
+      align-items:flex-end;
+      gap:10px;
+    }
+    .review-score strong{
+      font-size:32px;
+      line-height:1;
+    }
+    .review-score-meta{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+    }
+    .review-stars{
+      color:#f59e0b;
+      letter-spacing:2px;
+      font-size:16px;
+      font-weight:900;
+    }
+    .review-chips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .review-chip{
+      padding:8px 12px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid var(--border);
+      font-size:11px;
+      font-weight:900;
+      color:var(--ink);
+    }
+    .review-form{
+      margin-top:14px;
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:linear-gradient(180deg,#fff,#fcfffe);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .review-form-title{
+      font-size:14px;
+      font-weight:1000;
+      color:var(--ink);
+    }
+    .star-picker{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .star-btn{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      font-size:20px;
+      color:#cbd5e1;
+      box-shadow:0 8px 18px rgba(15,23,42,.04);
+    }
+    .star-btn.is-active{
+      color:#f59e0b;
+      border-color:rgba(245,158,11,.32);
+      background:#fff7ed;
+    }
+    .review-form textarea{
+      width:100%;
+      min-height:110px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px 14px;
+      resize:vertical;
+      font:inherit;
+      font-size:14px;
+      color:var(--ink);
+      background:#fff;
+    }
+    .review-upload{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      border:1px dashed rgba(20,184,166,.35);
+      border-radius:16px;
+      padding:12px 14px;
+      background:#f0fdfa;
+      font-size:12px;
+      font-weight:900;
+      color:var(--blue);
+      cursor:pointer;
+    }
+    .review-upload input{
+      font:inherit;
+    }
+    .review-upload-list{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:8px;
+    }
+    .review-upload-item{
+      position:relative;
+      min-width:0;
+      min-height:110px;
+      border-radius:16px;
+      background:#fff;
+      border:1px solid var(--border);
+      overflow:hidden;
+      box-shadow:0 10px 22px rgba(15,23,42,.05);
+    }
+    .review-upload-item img,
+    .review-upload-item video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      background:#0f172a;
+    }
+    .review-upload-fallback{
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px;
+      text-align:center;
+      background:linear-gradient(135deg,#ccfbf1,#f0fdfa);
+      color:var(--blue);
+      font-size:12px;
+      font-weight:900;
+    }
+    .review-upload-remove{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:20px;
+      height:20px;
+      border:none;
+      border-radius:999px;
+      background:#fee2e2;
+      color:#b91c1c;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:1000;
+      line-height:1;
+      display:grid;
+      place-items:center;
+      padding:0;
+      box-shadow:0 4px 12px rgba(127,29,29,.18);
+    }
+    .review-list{
+      margin-top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:46vh;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .review-card{
+      padding:14px;
+    }
+    .review-card-head{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .review-author{
+      display:flex;
+      gap:10px;
+      min-width:0;
+    }
+    .review-avatar{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--red),var(--yellow2));
+      color:#fff;
+      display:grid;
+      place-items:center;
+      font-weight:1000;
+      flex:0 0 auto;
+      overflow:hidden;
+    }
+    .review-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .review-author-meta{
+      min-width:0;
+    }
+    .review-author-meta strong,
+    .review-author-meta span{
+      display:block;
+    }
+    .review-author-meta span{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:4px;
+      font-weight:800;
+    }
+    .review-card p{
+      margin:12px 0 0;
+      font-size:13px;
+      line-height:1.6;
+      color:var(--ink);
+      white-space:pre-wrap;
+    }
+    .review-media-grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:8px;
+    }
+    .review-media-item{
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+      min-height:120px;
+    }
+    .review-media-item img,
+    .review-media-item video{
+      width:100%;
+      height:100%;
+      max-height:180px;
+      object-fit:cover;
+      display:block;
+      background:#0f172a;
+    }
+    .review-login-note{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:16px;
+      background:#fff7ed;
+      border:1px solid rgba(249,115,22,.18);
+      color:#9a3412;
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .map-panel{
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(14px);
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:540px;
+    }
+    .map-head{
+      padding:14px 18px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      background:linear-gradient(180deg,#fff,#f6fbfa);
+      font-weight:1000;
+    }
+    .map-head-main{
+      flex:1;
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .map-title{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .map-title strong{
+      font-size:16px;
+      letter-spacing:-.4px;
+    }
+    .map-title span{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+    .map-badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
+    }
+    .map-search{
+      width:100%;
+      max-width:none;
+    }
+    .map-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height:32px;
+      padding:0 12px;
+      border-radius:999px;
+      background:#fff;
+      color:var(--blue);
+      border:1px solid rgba(20,184,166,.12);
+      font-size:11px;
+      font-weight:900;
+      box-shadow:0 8px 18px rgba(15,23,42,.06);
+      font-family:inherit;
+    }
+    button.map-badge{
+      cursor:pointer;
+      appearance:none;
+      transition:transform .12s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    button.map-badge:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 22px rgba(15,23,42,.10);
+      border-color:rgba(20,184,166,.28);
+    }
+    .map-badge.warm{
+      background:linear-gradient(180deg,#fff2df,#ffe4c7);
+      color:#c2410c;
+      border-color:rgba(249,115,22,.14);
+    }
+    .brand-ribbon{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+    .brand-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height:38px;
+      padding:0 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    #map{
+      width:100%;
+      height:100%;
+      min-height:460px;
+    }
+    #result {
+      display:none;
+      margin-top:16px;
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:#f8fafc;
+      color:var(--ink);
+      font-size:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    @media (max-width: 980px){
+      .page-hero{
+        grid-template-columns:1fr;
+      }
+      .hero-stats{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+      .locator-shell{
+        grid-template-columns:1fr;
+      }
+      .top-nav{gap:18px}
+      .brandPill,.tab{min-width:0}
+      .sidebar{
+        position:static;
+      }
+      .results-column{
+        position:static;
+      }
+      .controls{
+        grid-template-columns:1fr 1fr;
+      }
+      .action-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 640px){
+      .top-wrap{justify-content:center}
+      .top-nav{gap:14px}
+      .page-hero{
+        padding-top:20px;
+      }
+      .hero-stats{
+        grid-template-columns:1fr;
+      }
+      .locator-shell{padding-top:16px}
+      .search-actions{
+        grid-template-columns:1fr 1fr;
+      }
+      .search-actions .search-input-wrap{
+        grid-column:1 / -1;
+      }
+      .search-actions .pin{
+        display:none;
+      }
+      .controls{gap:8px}
+      .cardHead{font-size:16px}
+      .status{font-size:14px}
+      .map-head{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+      .map-head-main,
+      .map-search{
+        width:100%;
+        max-width:none;
+      }
+      .map-badges{
+        justify-content:flex-start;
+      }
+      .searchBox input,.btn,select,.chip,.btnGhost{font-size:14px}
+      .controls,
+      .row,
+      .action-grid{
+        grid-template-columns:1fr;
+      }
+    }
+    .site-footer{
+      margin-top:0;
+      background:
+        linear-gradient(180deg, rgba(15,118,110,.12) 0%, rgba(13,91,86,.82) 16%, #0f172a 50%);
+      color:#cbd5f5;
+    }
+    .site-footer .container{
+      width:min(100%,1320px);
+      margin:0 auto;
+      padding:0 20px;
+    }
+    .newsletter-section{
+      position:relative;
+      background:linear-gradient(135deg, rgba(13, 110, 104, .88) 0%, rgba(20, 160, 150, .9) 100%);
+      padding:38px 0 24px;
+    }
+    .newsletter-section::before{
+      content:"";
+      position:absolute;
+      inset:-54px 0 auto;
+      height:70px;
+      background:linear-gradient(180deg, transparent 0%, rgba(20,184,166,.08) 45%, rgba(13,110,104,.18) 100%);
+      pointer-events:none;
+    }
+    .newsletter-content{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .newsletter-content h3{
+      margin:0;
+      color:#f8fafc;
+      font-size:20px;
+      font-weight:900;
+      line-height:1.35;
+      text-shadow:0 2px 12px rgba(15, 23, 42, .12);
+    }
+    .newsletter-form{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .newsletter-form input{
+      min-width:280px;
+      border:none;
+      border-radius:999px;
+      padding:12px 16px;
+      background:#fff;
+      color:#0f172a;
+      font-weight:700;
+      box-shadow:0 10px 24px rgba(15, 23, 42, .08);
+    }
+    .newsletter-form button{
+      border:none;
+      border-radius:999px;
+      padding:12px 18px;
+      background:linear-gradient(135deg, #f59e0b, #f97316);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(249, 115, 22, .2);
+    }
+    .footer-info{padding:34px 0;}
+    .footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:24px;}
+    .footer-col h4{margin:0 0 12px;font-size:16px;color:#fff;font-weight:900;}
+    .footer-col p,.footer-col li,.footer-col a{color:#cbd5f5;font-size:14px;line-height:1.6;}
+    .footer-col ul{margin:0;padding:0;list-style:none;}
+    .footer-col li + li{margin-top:8px;}
+    .footer-col a:hover{color:#fff;}
+    .footer-bottom{border-top:1px solid rgba(203, 213, 245, 0.2);padding:14px 0;text-align:center;}
+    .footer-bottom p{margin:0;}
+
+    @media (max-width: 980px){
+      .page-hero{
+        grid-template-columns:1fr;
+      }
+      .hero-stats{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+      .locator-shell{
+        grid-template-columns:1fr;
+      }
+      .top-nav{gap:18px}
+      .brandPill,.tab{min-width:0}
+      .sidebar{
+        position:static;
+      }
+      .results-column{
+        position:static;
+      }
+      .controls{
+        grid-template-columns:1fr 1fr;
+      }
+      .action-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+      .footer-grid{
+        grid-template-columns:1fr;
+      }
+    }
+    @media (max-width: 640px){
+      .top-wrap{justify-content:center}
+      .top-nav{gap:14px}
+      .page-hero{
+        padding-top:20px;
+      }
+      .hero-stats{
+        grid-template-columns:1fr;
+      }
+      .locator-shell{padding-top:16px}
+      .search-actions{
+        grid-template-columns:1fr 1fr;
+      }
+      .search-actions .search-input-wrap{
+        grid-column:1 / -1;
+      }
+      .search-actions .pin{
+        display:none;
+      }
+      .controls{gap:8px}
+      .cardHead{font-size:16px}
+      .status{font-size:14px}
+      .map-head{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+      .map-head-main,
+      .map-search{
+        width:100%;
+        max-width:none;
+      }
+      .map-badges{
+        justify-content:flex-start;
+      }
+      .searchBox input,.btn,select,.chip,.btnGhost{font-size:14px}
+      .controls,
+      .row,
+      .action-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {% include 'shared/navbar.html' %}
+
+  <section class="page-hero">
+    <div class="hero-copy">
+      <div class="hero-kicker">Bản đồ cửa hàng thông minh</div>
+      <h1>Tìm cửa hàng gần bạn nhanh hơn, rõ hơn và đẹp hơn.</h1>
+      <p>Nhập địa chỉ, dùng GPS hoặc click trực tiếp lên bản đồ để xem cửa hàng Circle K và GS25 xung quanh, lọc kết quả theo khu vực và xuất dữ liệu khi cần.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <b>GPS + Map</b>
+        <span>Hỗ trợ chọn vị trí bằng GPS, gõ địa chỉ hoặc click trực tiếp trên bản đồ.</span>
+      </div>
+      <div class="hero-stat">
+        <b>CSV</b>
+        <span>Xuất nhanh danh sách cửa hàng đang hiển thị để kiểm tra hoặc chia sẻ.</span>
+      </div>
+      <div class="hero-stat">
+        <b>Reviews</b>
+        <span>Xem điểm trung bình, đọc bình luận thực tế và chia sẻ ảnh/video trải nghiệm tại cửa hàng.</span>
+      </div>
+      <div class="hero-stat">
+        <b>Route</b>
+        <span>Xem chỉ đường, khoảng cách gần nhất và làm việc tốt trên cả desktop lẫn mobile.</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="locator-shell">
+    <aside class="sidebar">
+      <section class="panel">
+        <div class="topbar">
+          <div class="topbar-inner">
+            <div class="brandPill">🗺️ Circle K &amp; GS25</div>
+          </div>
+          <div class="topbar-note">
+            Trung tâm điều khiển tìm cửa hàng. Bạn có thể đổi thương hiệu, bán kính tìm kiếm, lọc theo quận và xuất danh sách chỉ với vài thao tác.
+          </div>
+        </div>
+        <div class="cardHead">
+          <span>Điều khiển & Danh sách</span>
+          <span class="status"><span id="dot" class="dot"></span><span id="status">OK</span></span>
+        </div>
+        <div class="cardBody">
+          <div class="controls">
+            <select id="brand">
+              <option value="">Cả hai</option>
+              <option value="CIRCLEK">Circle K</option>
+              <option value="GS25">GS25</option>
+            </select>
+
+            <select id="radiusKm">
+              <option value="0.05">Tìm trong 50m</option>
+              <option value="0.1">Tìm trong 100m</option>
+              <option value="0.2" selected>Tìm trong 200m</option>
+              <option value="0.5">Tìm trong 500m</option>
+              <option value="1">Tìm trong 1km</option>
+              <option value="2">Tìm trong 2km</option>
+            </select>
+          </div>
+
+          <div class="hint">
+            Tip: Không muốn bật GPS 👉 click trực tiếp lên bản đồ để chọn vị trí.
+          </div>
+          <div class="toggleRow">
+            <label><input id="filterOpenNow" type="checkbox" /> Chỉ cửa hàng đang mở</label>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div class="field">
+              <label>Quận / huyện</label>
+              <select id="districtSel">
+                <option value="">Tất cả</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Lọc nhanh</label>
+              <input id="filterText" type="text" placeholder="Tên cửa hàng, địa chỉ..." />
+            </div>
+          </div>
+          <div class="actions action-grid">
+            <button class="btn btnWhite mini" id="btnLoadBounds">Tải trong khung</button>
+            <button class="btn btnWhite mini" id="btnSortNear">Gần nhất</button>
+            <button class="btn btnWhite mini" id="btnHistory">History</button>
+            <button class="btn btnWhite mini" id="btnToggleMarkers">Ẩn marker</button>
+            <button class="btn btnWhite mini" id="btnClearRoute">Xóa đường</button>
+            <button class="btn btnWhite mini" id="btnReset">Đặt lại</button>
+          </div>
+          <div class="hint" id="smartHint" style="display:none;"></div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="map-panel">
+      <div class="map-head">
+        <div class="map-head-main">
+          <div class="map-title">
+            <strong>Bản đồ cửa hàng</strong>
+            <span>Click map để chọn vị trí, click store để xem nhanh và chỉ đường.</span>
+          </div>
+          <div class="acWrap map-search">
+            <div class="searchBox">
+              <div class="search-actions">
+                <div class="pin">📍</div>
+                <div class="search-input-wrap">
+                  <input id="q" placeholder="Nhập địa chỉ hoặc tên cửa hàng..." autocomplete="off" />
+                </div>
+                <button class="btn btnPrimary" id="btnSearch">Tìm</button>
+                <button class="btn btnWhite" id="btnMyLoc">Vị trí tôi</button>
+              </div>
+            </div>
+            <div id="acList" class="acList"></div>
+          </div>
+        </div>
+        <div class="map-badges">
+          <button type="button" class="map-badge warm" id="mapQuickExport">Hỗ trợ xuất CSV</button>
+        </div>
+      </div>
+      <div id="map"></div>
+    </section>
+
+    <section class="panel result-panel results-column">
+      <div class="cardHead">
+        <span>Kết quả</span>
+      </div>
+      <div class="cardBody">
+        <div class="kv" id="kv"></div>
+        <div class="copy">
+          <button class="btnGhost" id="btnCopyCoord">Copy tọa độ</button>
+          <button class="btnGhost" id="btnCopyAddr">Copy địa chỉ</button>
+        </div>
+        <div class="small" id="dirBox" style="display:none;margin-top:12px">
+          <div style="font-size:14px;font-weight:1000;color:var(--ink);margin-bottom:8px">Chỉ đường</div>
+          <div id="dirSummary" style="color:var(--ink);margin-bottom:8px"></div>
+          <div id="dirSteps"></div>
+        </div>
+        <div class="small" style="margin-top:12px">Danh sách cửa hàng</div>
+        <div class="list" id="storeList"></div>
+        <div class="review-panel" id="reviewPanel" style="display:none;">
+          <div class="small">Đánh giá cửa hàng</div>
+          <div class="review-summary-card" id="reviewSummaryCard"></div>
+          <form id="reviewForm" class="review-form" enctype="multipart/form-data">
+            <div class="review-form-title">Gửi đánh giá của bạn</div>
+            <div class="star-picker" id="starPicker" aria-label="Chọn số sao"></div>
+            <input type="hidden" id="reviewStars" value="5" />
+            <textarea id="reviewComment" placeholder="Chia sẻ trải nghiệm của bạn tại cửa hàng này..."></textarea>
+            <label class="review-upload">
+              <span>Ảnh / video không giới hạn</span>
+              <input id="reviewMedia" type="file" accept="image/*,video/*" multiple />
+            </label>
+            <div class="review-upload-list" id="reviewMediaList"></div>
+            <button class="btn btnPrimary" type="submit" id="reviewSubmitBtn">Gửi đánh giá</button>
+            <div class="hint" id="reviewFormHint">Bạn có thể viết bình luận và tải lên nhiều ảnh/video trong một lần gửi.</div>
+          </form>
+          <div class="review-login-note" id="reviewLoginNote" style="display:none;"></div>
+          <div class="review-list" id="reviewList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/store/js/csv_export.js"></script>
+  <script>
+// ======================
+// DOM Elements
+// ======================
+const statusEl = document.getElementById('status');
+const dot = document.getElementById('dot');
+
+const qInput = document.getElementById('q');
+const acList = document.getElementById('acList');
+
+function ensureHiddenElement(id, tagName, attrs = {}) {
+  let el = document.getElementById(id);
+  if (el) return el;
+  el = document.createElement(tagName);
+  el.id = id;
+  Object.entries(attrs).forEach(([key, value]) => {
+    if (key === "text") {
+      el.textContent = value;
+    } else if (key === "checked") {
+      el.checked = value;
+    } else {
+      el.setAttribute(key, value);
+    }
+  });
+  el.style.display = "none";
+  document.body.appendChild(el);
+  return el;
+}
+
+const radiusSel = document.getElementById('radiusKm') || ensureHiddenElement('radiusKm', 'select');
+const districtSel = document.getElementById('districtSel') || ensureHiddenElement('districtSel', 'select');
+const filterText = document.getElementById('filterText') || ensureHiddenElement('filterText', 'input', { type: 'text' });
+const filterOpenNow = document.getElementById('filterOpenNow') || ensureHiddenElement('filterOpenNow', 'input', { type: 'checkbox' });
+const storeListEl = document.getElementById('storeList') || ensureHiddenElement('storeList', 'div');
+
+const dirBox = document.getElementById("dirBox") || ensureHiddenElement('dirBox', 'div');
+const dirSummary = document.getElementById("dirSummary") || ensureHiddenElement('dirSummary', 'span');
+const dirSteps = document.getElementById("dirSteps") || ensureHiddenElement('dirSteps', 'div');
+const reviewPanel = document.getElementById("reviewPanel");
+const reviewSummaryCard = document.getElementById("reviewSummaryCard");
+const reviewForm = document.getElementById("reviewForm");
+const reviewStarsInput = document.getElementById("reviewStars");
+const reviewCommentInput = document.getElementById("reviewComment");
+const reviewMediaInput = document.getElementById("reviewMedia");
+const reviewMediaList = document.getElementById("reviewMediaList");
+const reviewList = document.getElementById("reviewList");
+const reviewLoginNote = document.getElementById("reviewLoginNote");
+const reviewFormHint = document.getElementById("reviewFormHint");
+const starPicker = document.getElementById("starPicker");
+
+// ======================
+// State
+// ======================
+let ACTIVE_BRAND = "";
+let currentCenter = null; // {lat, lng, display?}
+let markersVisible = true;
+
+let STORES = [];
+let STORES_VIEW = [];
+let lastNearbyItems = [];
+let selectedStore = null;
+let selectedReviewFiles = [];
+
+let LIST_LIMIT = 60;
+
+let routingControl = null;
+let radiusCircle = null;
+const ROAD_PROFILE = "driving";
+const ROAD_TOP_N = 8;
+
+const LS_HIS = "webgis:history:v1";
+
+// ======================
+// Utils
+// ======================
+function setStatus(text, ok=true){
+  statusEl.textContent = text || '';
+  dot.className = ok ? "dot" : "dot bad";
+  statusEl.style.color = ok ? '#16a34a' : '#ef4444';
+}
+
+function showJSON(_obj){
+  // Debug output is intentionally hidden from end users.
+}
+
+
+function esc(s){
+  return (s??"").toString().replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function getCsrfToken(){
+  const cookie = document.cookie
+    .split(";")
+    .map((item) => item.trim())
+    .find((item) => item.startsWith("csrftoken="));
+  return cookie ? decodeURIComponent(cookie.split("=").slice(1).join("=")) : "";
+}
+
+function starString(value){
+  const stars = Math.max(0, Math.min(5, Number(value) || 0));
+  return "★".repeat(stars) + "☆".repeat(5 - stars);
+}
+
+function initialFromName(name){
+  const text = (name || "?").trim();
+  return text ? text.charAt(0).toUpperCase() : "?";
+}
+
+function debounce(fn, ms=250){
+  let t=null;
+  return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
+}
+
+function haversineKm(lat1,lng1,lat2,lng2){
+  const R=6371.0;
+  const toRad=x=>x*Math.PI/180;
+  const dlat=toRad(lat2-lat1);
+  const dlng=toRad(lng2-lng1);
+  const a=Math.sin(dlat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dlng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+
+function getRadiusKm(){ return Number(radiusSel.value || 0.5); }
+function getDistrict(){ return (districtSel.value||"").trim(); }
+function getActiveBrandParam(){ return (ACTIVE_BRAND || "").trim(); }
+function getActiveBrandLabel(){
+  return getActiveBrandParam() || "Cả hai";
+}
+
+function parseLatLng(text){
+  const m = (text||"").trim().match(/^\s*(-?\d+(?:\.\d+)?)\s*[,; ]\s*(-?\d+(?:\.\d+)?)\s*$/);
+  if(!m) return null;
+  const lat = Number(m[1]), lng = Number(m[2]);
+  if(Number.isFinite(lat) && Number.isFinite(lng) && lat>=-90 && lat<=90 && lng>=-180 && lng<=180){
+    return {lat, lng};
+  }
+  return null;
+}
+
+function openStatusText(s){
+  if(s?.is_24h) return "Mở 24/7";
+  if(s?.is_open_now === true) return "Đang mở";
+  if(s?.is_open_now === false) return "Đã đóng";
+  if(s?.business_hours) return `Giờ: ${s.business_hours}`;
+  return "Chưa có giờ hoạt động";
+}
+
+function distanceText(s){
+  if(Number.isFinite(s?.road_distance_km)){
+    const mins = Number.isFinite(s?.road_duration_min) ? ` ~ ${Number(s.road_duration_min).toFixed(0)} phút` : "";
+    return `Theo đường: ${Number(s.road_distance_km).toFixed(2)} km${mins}`;
+  }
+  const d = currentCenter ? haversineKm(currentCenter.lat, currentCenter.lng, s.lat, s.lng) : (s?.distance_km ?? null);
+  return d != null ? `Ước lượng: ${Number(d).toFixed(2)} km` : "";
+}
+
+async function fetchJSON(url){
+  try{
+    const res = await fetch(url);
+    const text = await res.text();
+    let data = null;
+    try{ data = JSON.parse(text); }
+    catch{ data = { ok:false, error:"Loading...", raw:text.slice(0,250) }; }
+    if(!res.ok || data.ok === false){
+      setStatus(data.error || `HTTP ${res.status}`, false);
+    }else{
+      setStatus(data.message || "OK ✅", true);
+    }
+    return {res, data};
+  }catch(e){
+    showJSON({ok:false, error:String(e)});
+    setStatus("Lỗi mạng/Fetch ❌", false);
+    return {res:null, data:null};
+  }
+}
+
+async function postJSON(url, body){
+  try{
+    const res = await fetch(url, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(body)
+    });
+    const text = await res.text();
+    let data = null;
+    try{ data = JSON.parse(text); }
+    catch{ data = { ok:false, error:"Response is not JSON", raw:text.slice(0,250) }; }
+    if(!res.ok || data.ok === false){
+      setStatus(data.error || `HTTP ${res.status}`, false);
+    }else{
+      setStatus(data.message || "OK ✅", true);
+    }
+    return {res, data};
+  }catch(e){
+    showJSON({ok:false, error:String(e)});
+    setStatus("Lỗi mạng/Fetch ❌", false);
+    return {res:null, data:null};
+  }
+}
+
+function showDirections(summaryText, stepsHtml){
+  dirBox.style.display = "block";
+  dirSummary.textContent = summaryText || "";
+  dirSteps.innerHTML = stepsHtml || "";
+}
+function hideDirections(){
+  dirBox.style.display = "none";
+  dirSummary.textContent = "";
+  dirSteps.innerHTML = "";
+}
+
+function renderStoreMeta(store){
+  const kv = document.getElementById("kv");
+  if(!kv || !store) return;
+  kv.innerHTML = `
+    <div class="k">Cửa hàng</div><div class="v"><b>${esc(store.name || "Cửa hàng")}</b></div>
+    <div class="k">Địa chỉ</div><div class="v">${esc(store.address_db || "")}</div>
+    <div class="k">Quận</div><div class="v">${esc(store.district || "")}</div>
+    <div class="k">Khoảng cách</div><div class="v">${esc(distanceText(store) || "-")}</div>
+    <div class="k">Hoạt động</div><div class="v">${esc(openStatusText(store))}</div>
+  `;
+}
+
+function renderReviewMediaSelection(){
+  if(!reviewMediaList) return;
+  reviewMediaList.innerHTML = selectedReviewFiles.map((item, index) => `
+    <span class="review-upload-item">
+      ${item.kind === "image"
+        ? `<img src="${esc(item.previewUrl)}" alt="${esc(item.file.name)}" loading="lazy" />`
+        : item.kind === "video"
+          ? `<video src="${esc(item.previewUrl)}" muted playsinline preload="metadata"></video>`
+          : `<div class="review-upload-fallback">${esc(item.file.name)}</div>`
+      }
+      <button type="button" class="review-upload-remove" data-review-remove="${index}" aria-label="Xóa file">×</button>
+    </span>
+  `).join("");
+  reviewMediaList.querySelectorAll("[data-review-remove]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.reviewRemove);
+      if(Number.isInteger(index)){
+        const removedItems = selectedReviewFiles.filter((_, itemIndex) => itemIndex === index);
+        removedItems.forEach((item) => {
+          if(item.previewUrl){
+            URL.revokeObjectURL(item.previewUrl);
+          }
+        });
+        selectedReviewFiles = selectedReviewFiles.filter((_, itemIndex) => itemIndex !== index);
+        renderReviewMediaSelection();
+      }
+    });
+  });
+}
+
+function mergeSelectedReviewFiles(fileList){
+  const incomingFiles = Array.from(fileList || []);
+  if(!incomingFiles.length) return;
+  const existingKeys = new Set(
+    selectedReviewFiles.map((item) => `${item.file.name}::${item.file.size}::${item.file.lastModified}::${item.file.type}`)
+  );
+  incomingFiles.forEach((file) => {
+    const key = `${file.name}::${file.size}::${file.lastModified}::${file.type}`;
+    if(!existingKeys.has(key)){
+      const kind = (file.type || "").startsWith("image/")
+        ? "image"
+        : (file.type || "").startsWith("video/")
+          ? "video"
+          : "file";
+      selectedReviewFiles.push({
+        file,
+        kind,
+        previewUrl: URL.createObjectURL(file),
+      });
+      existingKeys.add(key);
+    }
+  });
+}
+
+function clearSelectedReviewFiles(){
+  selectedReviewFiles.forEach((item) => {
+    if(item.previewUrl){
+      URL.revokeObjectURL(item.previewUrl);
+    }
+  });
+  selectedReviewFiles = [];
+}
+
+function setSelectedStars(value){
+  const next = Math.max(1, Math.min(5, Number(value) || 5));
+  reviewStarsInput.value = String(next);
+  if(!starPicker) return;
+  starPicker.querySelectorAll(".star-btn").forEach((button) => {
+    button.classList.toggle("is-active", Number(button.dataset.value) <= next);
+  });
+}
+
+function initStarPicker(){
+  if(!starPicker) return;
+  starPicker.innerHTML = Array.from({ length: 5 }, (_, index) => `
+    <button type="button" class="star-btn" data-value="${index + 1}" aria-label="${index + 1} sao">★</button>
+  `).join("");
+  starPicker.querySelectorAll(".star-btn").forEach((button) => {
+    button.addEventListener("click", () => setSelectedStars(button.dataset.value));
+  });
+  setSelectedStars(5);
+}
+
+function renderReviewPanel(payload){
+  if(!reviewPanel || !selectedStore) return;
+  reviewPanel.style.display = "block";
+  const summary = payload?.summary || {};
+  reviewSummaryCard.innerHTML = `
+    <div class="review-summary-head">
+      <div class="review-score">
+        <strong>${Number(summary.average_stars || 0).toFixed(1)}</strong>
+        <div>
+          <div class="review-stars">${esc(starString(Math.round(summary.average_stars || 0)))}</div>
+          <div class="review-score-meta">${Number(summary.total_reviews || 0)} đánh giá</div>
+        </div>
+      </div>
+      <div class="review-score-meta">${esc(selectedStore.brand || "")}</div>
+    </div>
+    <div class="review-chips">
+      <span class="review-chip">${Number(summary.total_reviews || 0)} lượt đánh giá</span>
+      <span class="review-chip">${Number(summary.total_media || 0)} ảnh/video</span>
+      <span class="review-chip">${esc(selectedStore.name || "")}</span>
+    </div>
+  `;
+
+  const canReview = !!payload?.can_review;
+  reviewForm.style.display = canReview ? "flex" : "none";
+  reviewLoginNote.style.display = canReview ? "none" : "block";
+  reviewLoginNote.innerHTML = canReview ? "" : `Bạn cần <a href="/user/login/?next=${encodeURIComponent(window.location.pathname)}">đăng nhập</a> bằng tài khoản người dùng để đánh giá cửa hàng này.`;
+  reviewFormHint.textContent = payload?.current_user_review
+    ? "Mỗi lần gửi sẽ tạo một đánh giá mới của bạn cho cửa hàng này."
+    : "Bạn có thể viết bình luận và tải lên nhiều ảnh/video trong một lần gửi.";
+
+  const reviews = Array.isArray(payload?.reviews) ? payload.reviews : [];
+  if(!reviews.length){
+    reviewList.innerHTML = `<div class="review-card"><b>Chưa có đánh giá nào.</b><p>Hãy là người đầu tiên chia sẻ trải nghiệm tại cửa hàng này.</p></div>`;
+    return;
+  }
+
+  reviewList.innerHTML = reviews.map((review) => {
+    const mediaHtml = Array.isArray(review.media) && review.media.length
+      ? `<div class="review-media-grid">${review.media.map((item) => `
+          <div class="review-media-item">
+            ${item.kind === "video"
+              ? `<video src="${esc(item.url)}" controls preload="metadata"></video>`
+              : `<img src="${esc(item.url)}" alt="${esc(item.name || 'review media')}" loading="lazy" />`
+            }
+          </div>
+        `).join("")}</div>`
+      : "";
+    const avatarHtml = review.avatar_url
+      ? `<img src="${esc(review.avatar_url)}" alt="${esc(review.author)}" loading="lazy" />`
+      : initialFromName(review.author);
+    return `
+      <div class="review-card">
+        <div class="review-card-head">
+          <div class="review-author">
+            <div class="review-avatar">${avatarHtml}</div>
+            <div class="review-author-meta">
+              <strong>${esc(review.author || "Người dùng")}</strong>
+              <span>${esc(review.created_at || "")}${review.is_owner ? " • Bạn" : ""}</span>
+            </div>
+          </div>
+          <div class="review-stars">${esc(starString(review.stars || 0))}</div>
+        </div>
+        <p>${esc(review.comment || "Không có bình luận.")}</p>
+        ${mediaHtml}
+      </div>
+    `;
+  }).join("");
+}
+
+async function loadStoreReviews(store){
+  if(!store || !store.id) return;
+  selectedStore = store;
+  renderStoreMeta(store);
+  reviewPanel.style.display = "block";
+  reviewSummaryCard.innerHTML = `<div class="review-score-meta">Đang tải đánh giá...</div>`;
+  reviewList.innerHTML = "";
+  const {res, data} = await fetchJSON(`/stores/${store.id}/reviews/`);
+  if(!res || !res.ok || !data.ok){
+    reviewSummaryCard.innerHTML = `<div class="review-score-meta">Không tải được đánh giá.</div>`;
+    return;
+  }
+  renderReviewPanel(data);
+}
+
+// ======================
+// Map Initialization
+// ======================
+const map = L.map("map").setView([10.7769, 106.7009], 12);
+const PICK_MODE = new URLSearchParams(window.location.search).get("pick_for") === "admin_cuahang";
+const params = new URLSearchParams(window.location.search);
+const centerLat = Number.parseFloat(params.get("center_lat"));
+const centerLon = Number.parseFloat(params.get("center_lon"));
+const initialQuery = (params.get("q") || "").trim();
+if (Number.isFinite(centerLat) && Number.isFinite(centerLon)) {
+  map.setView([centerLat, centerLon], 18);
+}
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap contributors | WebGIS Project – Thuan"
+}).addTo(map);
+
+const userIcon = L.divIcon({
+  className:"",
+  html:`<div style="width:16px;height:16px;border-radius:999px;background:#2563eb;border:3px solid #fff;box-shadow:0 10px 20px rgba(37,99,235,.35)"></div>`,
+  iconSize:[16,16], iconAnchor:[8,8]
+});
+const storeIcon = L.divIcon({
+  className:"",
+  html:`<div style="width:18px;height:18px;border-radius:7px;background:linear-gradient(180deg,#e31c23,#c3141a);border:2px solid #fff;box-shadow:0 12px 22px rgba(227,28,35,.35)"></div>`,
+  iconSize:[18,18], iconAnchor:[9,9]
+});
+
+const cluster = L.markerClusterGroup();
+map.addLayer(cluster);
+
+let userMarker = null;
+
+function clearRoute(){
+  if(routingControl){
+    map.removeControl(routingControl);
+    routingControl = null;
+  }
+  hideDirections();
+}
+
+function drawRadiusCircle(){
+  if(!currentCenter) return;
+  const m = getRadiusKm() * 1000;
+  if(radiusCircle) radiusCircle.remove();
+  radiusCircle = L.circle([currentCenter.lat, currentCenter.lng], {
+    radius: m,
+    weight: 2,
+    opacity: .9,
+    fillOpacity: .10
+  }).addTo(map);
+}
+
+function setUser(lat, lng, display=""){
+  currentCenter = {lat, lng, display};
+  if(userMarker) userMarker.remove();
+  userMarker = L.marker([lat, lng], {icon:userIcon}).addTo(map);
+  userMarker.bindPopup(`<b>Vị trí</b><br/>${esc(display || (lat.toFixed(6)+", "+lng.toFixed(6)))}`).openPopup();
+  map.setView([lat, lng], 16);
+  clearRoute();
+  drawRadiusCircle();
+}
+
+function renderMarkers(list){
+  cluster.clearLayers();
+  if(!markersVisible) return;
+  list.forEach(s=>{
+    const m = L.marker([s.lat, s.lng], {icon:storeIcon});
+    m.on("click", ()=> openStorePopup(s));
+    cluster.addLayer(m);
+  });
+}
+
+function openStorePopup(s){
+  loadStoreReviews(s);
+  const html = `
+    <b>${esc(s.name || "Cửa hàng")}</b><br/>
+    ${esc(s.address_db || "")}<br/>
+    <small style="color:#64748b">Quận: ${esc(s.district || "")}</small><br/>
+    <small style="color:#2563eb">${esc(openStatusText(s))}</small><br/>
+    <small style="color:#64748b">${esc(distanceText(s))}</small><br/>
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btnWhite mini" onclick="routeToStore(${s.lat},${s.lng},'${esc(s.name||"Store")}')">🧭 Chỉ đường</button>
+      <button class="btn btnWhite mini" onclick="focusReview(${s.id})">⭐ Đánh giá</button>
+    </div>
+  `;
+  L.popup({maxWidth:360})
+    .setLatLng([s.lat, s.lng])
+    .setContent(html)
+    .openOn(map);
+}
+
+window.focusReview = function(storeId){
+  const store = STORES.find((item) => item.id === storeId) || STORES_VIEW.find((item) => item.id === storeId);
+  if(store){
+    loadStoreReviews(store);
+  }
+};
+
+window.routeToStore = function(lat, lng, name){
+  if(!currentCenter){
+    setStatus("Chưa có vị trí. Click map hoặc bấm Vị trí tôi.", false);
+    return;
+  }
+  clearRoute();
+
+  routingControl = L.Routing.control({
+    waypoints: [
+      L.latLng(currentCenter.lat, currentCenter.lng),
+      L.latLng(lat, lng),
+    ],
+    addWaypoints:false,
+    draggableWaypoints:false,
+    routeWhileDragging:false,
+    show: false
+  }).addTo(map);
+
+  routingControl.on("routesfound", (e)=>{
+    const r = e.routes[0];
+    const km = (r.summary.totalDistance/1000).toFixed(2);
+    const min = (r.summary.totalTime/60).toFixed(0);
+    setStatus(`Tới ${name}: ${km} km ~ ${min} phút`, true);
+
+    const inst = (r.instructions || []).map((it, idx)=>{
+      const dkm = it.distance ? (it.distance/1000).toFixed(2)+" km" : "";
+      const txt = (it.text || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+      return `<div style="padding:8px 0;border-bottom:1px dashed #e5e7eb">
+                <b>${idx+1}.</b> ${txt}
+                <div style="color:#64748b;font-weight:800">${dkm}</div>
+              </div>`;
+    }).join("");
+
+    showDirections(`${km} km • ${min} phút`, inst || `<div style="color:#64748b;font-weight:900">Không có hướng dẫn chi tiết.</div>`);
+  });
+
+  routingControl.on("routingerror", ()=>{
+    setStatus("Không tìm được đường. Thử lại!", false);
+  });
+};
+
+// ======================
+// Map Events
+// ======================
+map.on("click", async (e)=>{
+  const lat = e.latlng.lat;
+  const lng = e.latlng.lng;
+  setUser(lat, lng, "Đang lấy địa chỉ...");
+
+  const {res, data} = await fetchJSON(`/tools/reverse-geo/?lat=${lat}&lon=${lng}`);
+  if(res && res.ok && data.ok && data.display_address){
+    setUser(lat, lng, data.display_address);
+    qInput.value = data.display_address;
+  }else{
+    setUser(lat, lng, "Không lấy được địa chỉ — dùng tọa độ");
+    qInput.value = `${lat},${lng}`;
+  }
+  if (PICK_MODE) {
+    emitCoordPick(lat, lng, (data && data.display_address) ? data.display_address : "", true);
+    return;
+  }
+  await loadNearby();
+});
+
+const loadBoundsDebounced = debounce(async ()=>{
+  return;
+}, 450);
+map.on("moveend", loadBoundsDebounced);
+
+// ======================
+// History
+// ======================
+function addHistory(item){
+  try{
+    const arr = JSON.parse(localStorage.getItem(LS_HIS) || "[]");
+    const next = [item, ...arr.filter(x=>x && x.text !== item.text)].slice(0, 20);
+    localStorage.setItem(LS_HIS, JSON.stringify(next));
+  }catch{}
+}
+
+// ======================
+// Render List
+// ======================
+function renderList(arr){
+  storeListEl.innerHTML = "";
+  if(!arr.length){
+    storeListEl.innerHTML = `<div style="color:#64748b;font-weight:900">Chưa có dữ liệu. Click map hoặc bấm Vị trí tôi để bắt đầu.</div>`;
+    return;
+  }
+
+  const slice = arr.slice(0, LIST_LIMIT);
+
+  slice.forEach(s=>{
+    const div = document.createElement("div");
+    div.className = "item";
+
+    const distTxt = distanceText(s);
+
+    div.innerHTML = `
+      <b>${esc(s.name || "Store")}</b>
+      <small>${esc(s.address_db || "")}</small>
+      <small>Quận: <b>${esc(s.district || "")}</b> • ${distTxt ? `<b>${esc(distTxt)}</b>` : ""}</small>
+      <small><b>${esc(openStatusText(s))}</b></small>
+      <div class="actions">
+        <button class="btn btnWhite mini" data-act="fly">📌 Xem</button>
+        <button class="btn btnWhite mini" data-act="route">🧭 Chỉ đường</button>
+        <button class="btn btnWhite mini" data-act="review">⭐ Đánh giá</button>
+      </div>
+    `;
+
+    div.querySelector('[data-act="fly"]').onclick = (ev)=>{
+      ev.stopPropagation();
+      map.setView([s.lat, s.lng], 18);
+      openStorePopup(s);
+    };
+    div.querySelector('[data-act="route"]').onclick = (ev)=>{
+      ev.stopPropagation();
+      map.setView([s.lat, s.lng], 18);
+      window.routeToStore(s.lat, s.lng, (s.name||"Store"));
+    };
+    div.querySelector('[data-act="review"]').onclick = (ev)=>{
+      ev.stopPropagation();
+      loadStoreReviews(s);
+    };
+
+    div.onclick = ()=>{
+      map.setView([s.lat, s.lng], 18);
+      openStorePopup(s);
+    };
+
+    storeListEl.appendChild(div);
+  });
+
+  if(arr.length > LIST_LIMIT){
+    const more = document.createElement("div");
+    more.className = "item";
+    more.style.textAlign = "center";
+    more.style.fontWeight = "1000";
+    more.style.color = "#2563eb";
+    more.innerHTML = `Xem thêm (${arr.length - LIST_LIMIT})`;
+    more.onclick = ()=>{
+      LIST_LIMIT += 60;
+      renderList(STORES_VIEW);
+    };
+    storeListEl.appendChild(more);
+  }
+}
+
+function applyFilter(){
+  LIST_LIMIT = 60;
+  const t = (filterText.value||"").trim().toLowerCase();
+  const d = getDistrict().toLowerCase();
+  const openOnly = !!(filterOpenNow && filterOpenNow.checked);
+
+  STORES_VIEW = STORES.filter(s=>{
+    const hay = ((s.name||"")+" "+(s.address_db||"")).toLowerCase();
+    const okText = !t || hay.includes(t);
+    const okDist = !d || ((s.district||"").toLowerCase() === d);
+    const okOpen = !openOnly || s.is_24h || s.is_open_now === true;
+    return okText && okDist && okOpen;
+  });
+
+  renderList(STORES_VIEW);
+  renderMarkers(STORES_VIEW);
+}
+
+function sortByNearest(){
+  if(!currentCenter){
+    setStatus("Chưa có vị trí để sắp xếp.", false);
+    return;
+  }
+  STORES_VIEW = [...STORES_VIEW].sort((a,b)=>{
+    const da = Number.isFinite(a.road_duration_min) ? a.road_duration_min : haversineKm(currentCenter.lat, currentCenter.lng, a.lat, a.lng);
+    const db = Number.isFinite(b.road_duration_min) ? b.road_duration_min : haversineKm(currentCenter.lat, currentCenter.lng, b.lat, b.lng);
+    return da - db;
+  });
+  renderList(STORES_VIEW);
+  setStatus("Đã sắp xếp gần nhất ✅", true);
+}
+
+async function enrichWithRoadMetrics(items){
+  if(!currentCenter || !Array.isArray(items) || !items.length) return;
+  const ranked = [...items].sort((a,b)=>{
+    const da = haversineKm(currentCenter.lat, currentCenter.lng, a.lat, a.lng);
+    const db = haversineKm(currentCenter.lat, currentCenter.lng, b.lat, b.lng);
+    return da - db;
+  });
+  const targets = ranked.slice(0, ROAD_TOP_N);
+  await Promise.all(targets.map(async (s)=>{
+    try{
+      const from = `${currentCenter.lat},${currentCenter.lng}`;
+      const to = `${s.lat},${s.lng}`;
+      const url = `/tools/route-osrm/?profile=${ROAD_PROFILE}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&alternatives=0`;
+      const res = await fetch(url);
+      if(!res.ok) return;
+      const data = await res.json();
+      if(!data?.ok || !Array.isArray(data.routes) || !data.routes.length) return;
+      const r = data.routes[0];
+      s.road_distance_km = Number((r.summary.totalDistance/1000).toFixed(3));
+      s.road_duration_min = Number((r.summary.totalTime/60).toFixed(1));
+    }catch(_e){}
+  }));
+}
+
+// ======================
+// API Calls
+// ======================
+async function refreshDistricts(){
+  const {res, data} = await fetchJSON(`/tools/districts/?brand=${encodeURIComponent(getActiveBrandParam())}`);
+  if(!res || !res.ok || !data.ok) return;
+  const items = data.districts || [];
+  districtSel.innerHTML = `<option value="">Tất cả</option>` + items.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+}
+
+async function loadNearby(){
+  if(!currentCenter){
+    setStatus("Chưa có vị trí. Click map hoặc bấm Vị trí tôi.", false);
+    return;
+  }
+  const radius = getRadiusKm();
+  const district = getDistrict();
+  const url = `/tools/stores-in-radius/?lat=${currentCenter.lat}&lon=${currentCenter.lng}&radius_km=${radius}&brand=${encodeURIComponent(getActiveBrandParam())}&district=${encodeURIComponent(district)}`;
+  const {res, data} = await fetchJSON(url);
+  if(!res || !res.ok || !data.ok) return;
+
+  STORES = (data.stores || []).map(x=>({
+    id:x.id, name:x.name, brand:x.brand,
+    address_db:x.address_db||"",
+    district:x.district||"",
+    lat:Number(x.lat),
+    lng:Number(x.lon),
+    distance_km:x.distance_km,
+    open_time:x.open_time || null,
+    close_time:x.close_time || null,
+    is_24h:!!x.is_24h,
+    is_open_now:(x.is_open_now === true ? true : (x.is_open_now === false ? false : null)),
+    business_hours:x.business_hours || "",
+    coord_source:x.coord_source || "db",
+  }));
+  await enrichWithRoadMetrics(STORES);
+  lastNearbyItems = STORES;
+
+  drawRadiusCircle();
+  applyFilter();
+  sortByNearest();
+  setStatus(`Tìm thấy ${STORES.length} cửa hàng quanh bạn `, true);
+}
+
+async function loadInBounds(){
+  const district = getDistrict();
+  const b = map.getBounds();
+  const url = `/tools/stores-in-bounds/?brand=${encodeURIComponent(getActiveBrandParam())}&district=${encodeURIComponent(district)}&south=${b.getSouth()}&west=${b.getWest()}&north=${b.getNorth()}&east=${b.getEast()}`;
+  const {res, data} = await fetchJSON(url);
+  if(!res || !res.ok || !data.ok) return;
+
+  STORES = (data.stores || []).map(x=>({
+    id:x.id, name:x.name, brand:x.brand,
+    address_db:x.address_db||"",
+    district:x.district||"",
+    lat:Number(x.lat),
+    lng:Number(x.lon),
+    open_time:x.open_time || null,
+    close_time:x.close_time || null,
+    is_24h:!!x.is_24h,
+    is_open_now:(x.is_open_now === true ? true : (x.is_open_now === false ? false : null)),
+    business_hours:x.business_hours || "",
+    coord_source:x.coord_source || "db",
+  }));
+  await enrichWithRoadMetrics(STORES);
+  lastNearbyItems = [];
+  applyFilter();
+  setStatus(`Đã tải ${STORES.length} cửa hàng trong khung bản đồ ✅`, true);
+}
+
+async function searchStoreDBFirst(){
+  const q = (qInput.value || "").trim();
+  if(q.length < 2) return false;
+
+  const district = getDistrict();
+  setStatus("Đang tìm trong DB...");
+  const {res, data} = await fetchJSON(`/tools/search-stores/?brand=${encodeURIComponent(getActiveBrandParam())}&q=${encodeURIComponent(q)}&district=${encodeURIComponent(district)}&limit=200`);
+  if(!res || !res.ok || !data.ok) return false;
+
+  const items = (data.stores || []).map(x=>({
+    id:x.id, name:x.name, brand:x.brand,
+    address_db:x.address_db||"",
+    district:x.district||"",
+    lat:Number(x.lat),
+    lng:Number(x.lon),
+    open_time:x.open_time || null,
+    close_time:x.close_time || null,
+    is_24h:!!x.is_24h,
+    is_open_now:(x.is_open_now === true ? true : (x.is_open_now === false ? false : null)),
+    business_hours:x.business_hours || "",
+    coord_source:x.coord_source || "db",
+  }));
+
+  if(!items.length) return false;
+
+  STORES = items;
+  await enrichWithRoadMetrics(STORES);
+  applyFilter();
+
+  const bounds = L.latLngBounds(items.map(s=>[s.lat, s.lng]));
+  map.fitBounds(bounds.pad(0.25));
+
+  setStatus(`Tìm DB: ${items.length} kết quả ✅`, true);
+  return true;
+}
+
+async function smartSearch(){
+  const q = (qInput.value||"").trim();
+  if(!q){
+    setStatus("Nhập địa chỉ hoặc tên cửa hàng.", false);
+    return;
+  }
+  addHistory({type:"search", text:q, ts:Date.now()});
+
+  const ll = parseLatLng(q);
+
+  const body = {
+    ten: getActiveBrandParam(),
+    brand: getActiveBrandParam(),
+    dia_chi: q,
+    lat: ll ? ll.lat : null,
+    lng: ll ? ll.lng : null,
+    max_km: getRadiusKm()
+  };
+
+  setStatus("Đang tìm địa chỉ (Nominatim)...");
+  const {res, data} = await postJSON("/tools/smart-search/", body);
+  if(!res || !res.ok || !data.location) return;
+
+  setUser(Number(data.location.lat), Number(data.location.lon), data.location.display_address || q);
+  await loadNearby();
+}
+
+function emitCoordPick(lat, lon, address, autoClose = false){
+  if (!PICK_MODE) return;
+  const payload = {
+    type: "admin_coord_pick",
+    lat: Number(lat),
+    lon: Number(lon),
+    address: address || "",
+    ts: Date.now(),
+  };
+  try {
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage(payload, window.location.origin);
+    }
+    localStorage.setItem("admin_coord_pick", JSON.stringify(payload));
+    setStatus("Đã gửi tọa độ về form admin.", true);
+    if (autoClose) {
+      try { window.close(); } catch (_e) {}
+    }
+  } catch (_e) {
+    setStatus("Không gửi được tọa độ về admin.", false);
+  }
+}
+
+async function locateOnlyForPickMode(queryText){
+  const q = (queryText || "").trim();
+  if(!q) return false;
+
+  const ll = parseLatLng(q);
+  if(ll){
+    setUser(ll.lat, ll.lng, q);
+    map.setView([ll.lat, ll.lng], 18);
+    emitCoordPick(ll.lat, ll.lng, q, false);
+    setStatus("Đã định vị theo tọa độ.", true);
+    return true;
+  }
+
+  // 1) Prefer dedicated geocode endpoint (more stable for free-text addresses)
+  const g = await fetchJSON(`/tools/geocode/?q=${encodeURIComponent(q)}`);
+  if (g.res && g.res.ok && g.data && g.data.ok && g.data.location) {
+    const lat = Number(g.data.location.lat);
+    const lon = Number(g.data.location.lon);
+    if (Number.isFinite(lat) && Number.isFinite(lon)) {
+      const display = g.data.location.display || q;
+      setUser(lat, lon, display);
+      map.setView([lat, lon], 18);
+      emitCoordPick(lat, lon, display, false);
+      setStatus("Đã định vị theo địa chỉ.", true);
+      return true;
+    }
+  }
+
+  // 2) Fallback to suggest endpoint
+  const {res, data} = await fetchJSON(`/tools/suggest/?q=${encodeURIComponent(q)}`);
+  if(res && res.ok && data && data.ok && Array.isArray(data.items) && data.items.length){
+    const it = data.items[0];
+    const lat = Number(it.lat);
+    const lon = Number(it.lon);
+    if(Number.isFinite(lat) && Number.isFinite(lon)){
+      setUser(lat, lon, it.display || q);
+      map.setView([lat, lon], 18);
+      emitCoordPick(lat, lon, it.display || q, false);
+      setStatus("Đã định vị theo địa chỉ.", true);
+      return true;
+    }
+  }
+  setStatus("Không định vị được địa chỉ/tọa độ. Hãy thử nhập tọa độ lat,lon.", false);
+  return false;
+}
+
+// ======================
+// Autocomplete
+// ======================
+function hideAC(){ acList.style.display="none"; acList.innerHTML=""; }
+function showAC(items){
+  if(!items || !items.length){ hideAC(); return; }
+  acList.innerHTML = items.map((it, idx)=>`
+    <div class="acItem" data-idx="${idx}">
+      ${esc(it.display || "")}
+    </div>
+  `).join("");
+  acList.style.display="block";
+
+  acList.querySelectorAll(".acItem").forEach(el=>{
+    el.onclick = ()=>{
+      const i = Number(el.dataset.idx);
+      const it = items[i];
+      if(!it) return;
+      hideAC();
+      const lat = Number(it.lat);
+      const lon = Number(it.lon);
+      qInput.value = it.display || "";
+      setUser(lat, lon, it.display || "");
+      addHistory({type:"suggest", text: it.display || "", ts: Date.now()});
+      loadNearby();
+    };
+  });
+}
+
+const suggestDebounced = debounce(async ()=>{
+  const q = (qInput.value||"").trim();
+  if(q.length < 3){ hideAC(); return; }
+
+  const {res, data} = await fetchJSON(`/tools/suggest/?q=${encodeURIComponent(q)}`);
+  if(!res || !res.ok || !data.ok){ hideAC(); return; }
+  showAC(data.items || []);
+}, 280);
+
+qInput.addEventListener("input", suggestDebounced);
+document.addEventListener("click", (e)=>{
+  if(!acList.contains(e.target) && e.target !== qInput) hideAC();
+});
+
+qInput.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    document.getElementById("btnSearch").click();
+    hideAC();
+  }
+});
+
+if(reviewMediaInput){
+  reviewMediaInput.addEventListener("change", () => {
+    mergeSelectedReviewFiles(reviewMediaInput.files);
+    reviewMediaInput.value = "";
+    renderReviewMediaSelection();
+  });
+}
+
+if(reviewForm){
+  reviewForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if(!selectedStore || !selectedStore.id){
+      setStatus("Hãy chọn một cửa hàng trước khi gửi đánh giá.", false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("stars", reviewStarsInput.value || "5");
+    formData.append("comment", reviewCommentInput.value || "");
+    selectedReviewFiles.forEach((item) => formData.append("media", item.file));
+
+    const submitBtn = document.getElementById("reviewSubmitBtn");
+    if(submitBtn) submitBtn.disabled = true;
+    setStatus("Đang gửi đánh giá...", true);
+
+    try{
+      const res = await fetch(`/stores/${selectedStore.id}/reviews/create/`, {
+        method: "POST",
+        headers: { "X-CSRFToken": getCsrfToken() },
+        body: formData,
+      });
+      const data = await res.json();
+      if(!res.ok || !data.ok){
+        setStatus(data.error || "Không gửi được đánh giá.", false);
+        return;
+      }
+      reviewCommentInput.value = "";
+      reviewMediaInput.value = "";
+      clearSelectedReviewFiles();
+      renderReviewMediaSelection();
+      setSelectedStars(5);
+      renderReviewPanel(data);
+      setStatus(data.message || "Đã gửi đánh giá.", true);
+    }catch(_error){
+      setStatus("Không gửi được đánh giá.", false);
+    }finally{
+      if(submitBtn) submitBtn.disabled = false;
+    }
+  });
+}
+
+// ======================
+// Button Handlers
+// ======================
+document.getElementById("btnSearch").onclick = async ()=>{
+  if(PICK_MODE){
+    await locateOnlyForPickMode(qInput.value);
+    return;
+  }
+  const okDB = await searchStoreDBFirst();
+  if(okDB) return;
+  await smartSearch();
+};
+
+document.getElementById("btnMyLoc").onclick = ()=>{
+  if(!navigator.geolocation){
+    setStatus("Trình duyệt không hỗ trợ Geolocation ❌", false);
+    return;
+  }
+  setStatus("Đang truy cập vị trí...");
+  navigator.geolocation.getCurrentPosition(
+    async (pos)=>{
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      setUser(lat, lng, "Vị trí hiện tại");
+
+      const {res, data} = await fetchJSON(`/tools/reverse-geo/?lat=${lat}&lon=${lng}`);
+      if(res && res.ok && data.ok && data.display_address){
+        setUser(lat, lng, data.display_address);
+        qInput.value = data.display_address;
+      }else{
+        qInput.value = `${lat},${lng}`;
+      }
+
+      addHistory({type:"gps", text:"My location", ts:Date.now()});
+      await loadNearby();
+    },
+    (err)=>{
+      let msg = "Không lấy được vị trí.";
+      if(err.code === 1) msg = "Bạn đã từ chối quyền vị trí.";
+      else if(err.code === 2) msg = "Không xác định được vị trí.";
+      else if(err.code === 3) msg = "Lấy vị trí bị timeout.";
+      setStatus("❌ " + msg + " (Bạn có thể click bản đồ để chọn vị trí)", false);
+    },
+    {enableHighAccuracy:true, timeout:10000, maximumAge:0}
+  );
+};
+
+document.getElementById("brand").addEventListener("change", (e)=>{
+  ACTIVE_BRAND = (e.target.value || "").trim();
+  setStatus(`Đã chọn ${getActiveBrandLabel()}.`, true);
+  refreshDistricts();
+  if(currentCenter) loadNearby();
+});
+
+const btnNearby = document.getElementById("btnNearby");
+if(btnNearby) btnNearby.onclick = loadNearby;
+
+const btnLoadBounds = document.getElementById("btnLoadBounds");
+if(btnLoadBounds) btnLoadBounds.onclick = loadInBounds;
+
+document.getElementById("btnToggleMarkers").onclick = ()=>{
+  markersVisible = !markersVisible;
+  document.getElementById("btnToggleMarkers").textContent = markersVisible ? "Ẩn marker" : "Hiện marker";
+  renderMarkers(STORES_VIEW);
+};
+
+document.getElementById("btnClearRoute").onclick = ()=>{
+  clearRoute();
+  setStatus("Đã xóa đường.", true);
+};
+
+document.getElementById("btnReset").onclick = ()=>{
+  qInput.value = "";
+  hideAC();
+  currentCenter = null;
+  selectedStore = null;
+  clearSelectedReviewFiles();
+  clearRoute();
+  if(userMarker){ userMarker.remove(); userMarker=null; }
+  if(radiusCircle){ radiusCircle.remove(); radiusCircle=null; }
+  cluster.clearLayers();
+  STORES = []; STORES_VIEW = []; lastNearbyItems = [];
+  renderList([]);
+  renderMarkers([]);
+  const kv = document.getElementById("kv");
+  if(kv) kv.innerHTML = "";
+  if(reviewPanel) reviewPanel.style.display = "none";
+  if(reviewSummaryCard) reviewSummaryCard.innerHTML = "";
+  if(reviewList) reviewList.innerHTML = "";
+  if(reviewMediaInput) reviewMediaInput.value = "";
+  renderReviewMediaSelection();
+  hideDirections();
+  map.setView([10.7769, 106.7009], 12);
+  setStatus("Đã reset. Click map hoặc bấm Vị trí tôi để bắt đầu.", true);
+};
+
+document.getElementById("btnSortNear").onclick = sortByNearest;
+
+function handleExportCsv(){
+  const items = (STORES_VIEW && STORES_VIEW.length) ? STORES_VIEW : STORES;
+  if(!items.length){ setStatus("Không có dữ liệu để export.", false); return; }
+  if(!window.StoreCsvExporter || typeof window.StoreCsvExporter.exportCsv !== "function"){
+    setStatus("Tính năng export CSV chưa sẵn sàng.", false);
+    return;
+  }
+
+  const columns = [
+    { key: "id", label: "id" },
+    { key: "brand", label: "brand" },
+    { key: "name", label: "name" },
+    { key: "district", label: "district" },
+    { key: "address_db", label: "address" },
+    { key: "lat", label: "lat" },
+    { key: "lng", label: "lng" },
+    { key: "distance_km", label: "distance_km_estimate" },
+    { key: "road_distance_km", label: "distance_road_km" },
+    { key: "road_duration_min", label: "duration_min" },
+    { key: "open_time", label: "open_time" },
+    { key: "close_time", label: "close_time" },
+    { key: "is_24h", label: "is_24h" },
+    { key: "is_open_now", label: "is_open_now" },
+    { key: "business_hours", label: "business_hours" },
+    { key: "coord_source", label: "coord_source" }
+  ];
+  const normalizedItems = items.map((s) => ({
+    ...s,
+    address_db: s.address_db ?? "",
+    coord_source: s.coord_source ?? "db",
+  }));
+  window.StoreCsvExporter.exportCsv({
+    items: normalizedItems,
+    columns,
+    activeBrand: getActiveBrandParam() || "ALL",
+    filename: window.StoreCsvExporter.buildFilename("stores_export", getActiveBrandParam() || "ALL"),
+  });
+  setStatus(`Đã export ${normalizedItems.length} dòng CSV ✅`, true);
+}
+
+const btnExport = document.getElementById("btnExport");
+if(btnExport) btnExport.onclick = handleExportCsv;
+
+document.getElementById("btnHistory").onclick = ()=>{
+  try{
+    const arr = JSON.parse(localStorage.getItem(LS_HIS) || "[]");
+    if(!arr.length){ setStatus("Chưa có lịch sử.", false); return; }
+    storeListEl.innerHTML = arr.map((item, idx)=>`
+      <div class="item">
+        <b>${idx + 1}. ${esc(item.type || "history")}</b>
+        <small>${esc(item.text || "")}</small>
+      </div>
+    `).join("");
+    setStatus(`Đã mở lịch sử (${arr.length}).`, true);
+  }catch{
+    setStatus("Không đọc được lịch sử.", false);
+  }
+};
+
+const mapQuickNearby = document.getElementById("mapQuickNearby");
+if(mapQuickNearby){
+  mapQuickNearby.onclick = ()=> document.getElementById("btnNearby").click();
+}
+
+const mapQuickExport = document.getElementById("mapQuickExport");
+if(mapQuickExport){
+  mapQuickExport.onclick = handleExportCsv;
+}
+
+document.getElementById("btnCopyCoord").onclick = async ()=>{
+  if(!currentCenter){
+    setStatus("Chưa có tọa độ để copy.", false);
+    return;
+  }
+  const value = `${currentCenter.lat},${currentCenter.lng}`;
+  try{
+    await navigator.clipboard.writeText(value);
+    setStatus("Đã copy tọa độ.", true);
+  }catch{
+    setStatus("Không copy được tọa độ.", false);
+  }
+};
+
+document.getElementById("btnCopyAddr").onclick = async ()=>{
+  const value = currentCenter?.display || qInput.value || "";
+  if(!value){
+    setStatus("Chưa có địa chỉ để copy.", false);
+    return;
+  }
+  try{
+    await navigator.clipboard.writeText(value);
+    setStatus("Đã copy địa chỉ.", true);
+  }catch{
+    setStatus("Không copy được địa chỉ.", false);
+  }
+};
+
+if(filterText){
+  filterText.addEventListener("input", debounce(applyFilter, 200));
+}
+if(filterOpenNow){
+  filterOpenNow.addEventListener("change", applyFilter);
+}
+
+if(districtSel){
+  districtSel.addEventListener("change", ()=>{
+    applyFilter();
+    if(currentCenter) loadNearby();
+  });
+}
+
+if(radiusSel){
+  radiusSel.addEventListener("change", ()=>{
+    drawRadiusCircle();
+    if(currentCenter) loadNearby();
+  });
+}
+
+// ======================
+// Brand Tabs
+// ======================
+document.querySelectorAll(".tab").forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    ACTIVE_BRAND = t.dataset.brand;
+    const brandSelect = document.getElementById("brand");
+    if(brandSelect) brandSelect.value = ACTIVE_BRAND;
+    setStatus(`Đã chọn ${getActiveBrandLabel()}.`, true);
+    refreshDistricts();
+    if(currentCenter) loadNearby();
+  };
+});
+
+// ======================
+// Initialization
+// ======================
+renderList([]);
+initStarPicker();
+renderReviewMediaSelection();
+refreshDistricts();
+setStatus("Sẵn sàng. Click map để chọn vị trí.", true);
+if (PICK_MODE) {
+  setStatus("Chế độ chọn tọa độ cho admin: click 1 điểm trên bản đồ.", true);
+}
+if (initialQuery) {
+  qInput.value = initialQuery;
+  setTimeout(() => {
+    if (PICK_MODE) {
+      locateOnlyForPickMode(initialQuery);
+    } else {
+      smartSearch();
+    }
+  }, 100);
+}
+</script>
+{% include 'shared/footer.html' %}
+</body>
+</html>

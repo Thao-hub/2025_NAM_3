@@ -1,0 +1,339 @@
+{% extends 'user/account_base.html' %}
+
+{% block extra_head %}
+<style>
+  .order-page-panel{
+    padding:0;
+    overflow:hidden;
+  }
+  .order-tabs{
+    display:flex;
+    align-items:center;
+    gap:0;
+    overflow:auto;
+    border-bottom:1px solid #eef1f5;
+    scrollbar-width:none;
+  }
+  .order-tabs::-webkit-scrollbar{display:none}
+  .order-tabs a{
+    flex:0 0 auto;
+    padding:18px 28px 16px;
+    color:#475569;
+    text-decoration:none;
+    font-size:15px;
+    font-weight:600;
+    border-bottom:2px solid transparent;
+    white-space:nowrap;
+  }
+  .order-tabs a.is-active{
+    color:#0f766e;
+    border-bottom-color:#14b8a6;
+  }
+  .order-page-body{
+    padding:18px 18px 26px;
+  }
+  .order-search{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+    padding:12px 16px;
+    border:1px solid #e8edf3;
+    background:#f8fafc;
+    border-radius:16px;
+  }
+  .order-search::before{
+    content:"";
+    width:18px;
+    height:18px;
+    border:2px solid #94a3b8;
+    border-radius:50%;
+    display:inline-block;
+    position:relative;
+    box-sizing:border-box;
+    transform:translateY(-1px);
+    box-shadow:8px 8px 0 -6px #94a3b8;
+  }
+  .order-search input{
+    width:100%;
+    border:0;
+    outline:none;
+    background:transparent;
+    color:#334155;
+    font-size:15px;
+  }
+  .order-card{
+    border:1px solid #edf1f5;
+    border-radius:20px;
+    overflow:hidden;
+    background:#fff;
+    box-shadow:0 12px 30px rgba(15, 23, 42, .05);
+    margin-bottom:18px;
+  }
+  .order-card-header{
+    display:flex;
+    justify-content:space-between;
+    gap:18px;
+    padding:16px 18px;
+    border-bottom:1px solid #eef1f5;
+  }
+  .order-card-head-left{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+  .order-store-tag{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:72px;
+    height:28px;
+    padding:0 10px;
+    border-radius:8px;
+    background:#ffefe9;
+    color:#f97316;
+    font-size:14px;
+    font-weight:700;
+  }
+  .order-store-tag.mall{
+    background:#e6fbf8;
+    color:#0f766e;
+  }
+  .order-store-name{
+    font-size:15px;
+    font-weight:700;
+    color:#0f172a;
+  }
+  .order-head-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    height:34px;
+    padding:0 14px;
+    border-radius:10px;
+    border:1px solid #d9e2ec;
+    background:#fff;
+    color:#475569;
+    text-decoration:none;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .order-card-head-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    text-align:right;
+  }
+  .order-shipping-note{
+    color:#0f766e;
+    font-size:15px;
+    font-weight:600;
+  }
+  .order-status{
+    color:#f97316;
+    font-size:15px;
+    font-weight:700;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .order-items{
+    padding:0 18px;
+  }
+  .order-item{
+    display:grid;
+    grid-template-columns:94px minmax(0,1fr) auto;
+    gap:16px;
+    align-items:start;
+    padding:16px 0;
+    border-bottom:1px solid #f0f4f8;
+  }
+  .order-item:last-child{border-bottom:0}
+  .order-thumb{
+    width:94px;
+    height:94px;
+    border-radius:16px;
+    overflow:hidden;
+    background:#f8fafc;
+    border:1px solid #eef1f5;
+  }
+  .order-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .order-item-name{
+    margin:0 0 6px;
+    font-size:15px;
+    line-height:1.45;
+    color:#0f172a;
+    font-weight:700;
+  }
+  .order-item-meta,
+  .order-item-qty{
+    font-size:15px;
+    line-height:1.5;
+    color:#64748b;
+  }
+  .order-item-price{
+    font-size:15px;
+    color:#334155;
+    font-weight:600;
+    text-align:right;
+    white-space:nowrap;
+  }
+  .order-card-footer{
+    border-top:1px solid #eef1f5;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .order-card-note{
+    color:#64748b;
+    font-size:15px;
+    line-height:1.5;
+  }
+  .order-card-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .order-total{
+    font-size:15px;
+    color:#334155;
+  }
+  .order-total strong{
+    color:#0f766e;
+    font-size:15px;
+    font-weight:800;
+  }
+  .order-action-group{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .order-action-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:146px;
+    height:44px;
+    padding:0 18px;
+    border-radius:12px;
+    border:1px solid #d9e2ec;
+    background:#fff;
+    color:#475569;
+    text-decoration:none;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .order-action-btn.primary{
+    background:#fff7ed;
+    border-color:#fdba74;
+    color:#ea580c;
+  }
+  .order-empty{
+    padding:36px 18px;
+    color:#64748b;
+    text-align:center;
+    font-size:15px;
+  }
+@media (max-width: 1100px){
+    .order-card-header,
+    .order-card-bottom{flex-direction:column;align-items:flex-start}
+    .order-card-head-right,
+    .order-action-group{justify-content:flex-start;text-align:left}
+  }
+  @media (max-width: 900px){
+    .order-item{grid-template-columns:1fr}
+    .order-item-price{text-align:left}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="panel order-page-panel">
+  <div class="order-tabs">
+    {% for tab in status_tabs %}
+      <a href="?status={{ tab.key }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}" class="{% if status_filter == tab.key %}is-active{% endif %}">{{ tab.label }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="order-page-body">
+    <div class="order-search">
+      <form method="get" style="width:100%;">
+        <input type="hidden" name="status" value="{{ status_filter }}">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Bạn có thể tìm kiếm theo tên Shop, ID đơn hàng hoặc Tên Sản phẩm">
+      </form>
+    </div>
+
+    {% for order in orders %}
+      {% with first_item=order.items.all.0 %}
+      <article class="order-card">
+        <div class="order-card-header">
+          <div class="order-card-head-left">
+            <span class="order-store-tag {% if order.cua_hang_xu_ly_id %}mall{% endif %}">
+              {% if order.cua_hang_xu_ly_id %}Mall{% else %}Yêu thích{% endif %}
+            </span>
+            <strong class="order-store-name">{{ order.display_store_name }}</strong>
+            <a class="order-head-btn" href="{% if order.cua_hang_xu_ly_id %}{% url 'store:store_detail_page' order.cua_hang_xu_ly_id %}{% else %}#{% endif %}">Xem Shop</a>
+          </div>
+          <div class="order-card-head-right">
+            <div class="order-shipping-note">Đơn hàng đang được xử lý tại cửa hàng</div>
+            <div class="order-status">{{ order.status_ui }}</div>
+          </div>
+        </div>
+
+        <div class="order-items">
+          {% for item in order.items.all %}
+            <div class="order-item">
+              <div class="order-thumb">
+                {% if item.san_pham_id and item.san_pham.hinh_anh %}
+                  <img src="{{ item.san_pham.hinh_anh.url }}" alt="{{ item.san_pham.ten }}">
+                {% endif %}
+              </div>
+              <div>
+                <h3 class="order-item-name">{% if item.san_pham_id %}{{ item.san_pham.ten }}{% else %}Sản phẩm đã xóa{% endif %}</h3>
+                <div class="order-item-meta">Phân loại hàng: mặc định</div>
+                <div class="order-item-qty">x{{ item.so_luong }}</div>
+              </div>
+              <div class="order-item-price">{{ order.display_total_amount }}</div>
+            </div>
+          {% empty %}
+            <div class="order-item">
+              <div class="order-thumb"></div>
+              <div>
+                <h3 class="order-item-name">Đơn hàng #{{ order.pk }}</h3>
+                <div class="order-item-meta">Không có dữ liệu sản phẩm.</div>
+              </div>
+              <div class="order-item-price">{{ order.display_total_amount }}</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="order-card-footer">
+          <div class="order-card-note">Theo dõi trạng thái đơn hàng trong mục này và xem chi tiết khi cần.</div>
+          <div class="order-card-bottom">
+            <div class="order-total">Thành tiền: <strong>{{ order.display_total_amount }}</strong></div>
+            <div class="order-action-group">
+              <a class="order-action-btn" href="{% url 'store:order_detail' order.pk %}">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      {% endwith %}
+    {% empty %}
+      <div class="order-empty">Không có đơn hàng phù hợp.</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

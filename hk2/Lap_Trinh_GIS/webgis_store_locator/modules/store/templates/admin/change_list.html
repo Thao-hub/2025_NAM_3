@@ -1,0 +1,544 @@
+{% extends "admin/base.html" %}
+{% load l10n %}
+{% block title %}{{ model_name }}{% endblock %}
+{% block page_title %}{{ t.manage|default:"Quản lý" }} {{ model_name }}{% endblock %}
+{% block content %}
+  {% if model_slug == 'chi-tiet-don-hang' and order_summary %}
+    <section class="panel card" style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+        <div style="min-width:240px;">
+          <div class="top-sub" style="text-transform:uppercase; letter-spacing:.08em;">Thông tin đơn hàng</div>
+          <h2 style="margin:6px 0 6px; font-size:26px;">Mã đơn: {{ order_summary.pk }}</h2>
+          <div class="top-sub">{{ order_summary.created_at|date:"d/m/Y H:i" }}</div>
+          <div style="margin-top:8px;">
+            <span class="chip chip-warn" style="margin-right:6px; font-weight:700;">{{ order_summary.get_trang_thai_display }}</span>
+            <span class="chip chip-review" style="font-weight:700;">{{ order_summary.get_trang_thai_thanh_toan_display }}</span>
+          </div>
+        </div>
+        <div style="min-width:220px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:12px 14px;">
+          <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:6px;">
+            <span class="top-sub">Tạm tính</span>
+            <strong>{{ order_summary.tong_tien_truoc_giam|default:"0" }} đ</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:6px;">
+            <span class="top-sub">Giảm giá</span>
+            <strong>{{ order_summary.giam_gia|default:"0" }} đ</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; gap:10px; padding-top:8px; border-top:1px solid #e2e8f0;">
+            <span>Tổng tiền</span>
+            <strong style="font-size:18px; color:#0f766e;">{{ order_summary.tong_tien|default:"0" }} đ</strong>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; margin-top:14px;">
+        <div class="panel card" style="padding:10px 12px; background:#ffffff; min-height:78px;">
+          <div class="top-sub">Khách hàng</div>
+          <div><strong>{{ order_summary.khach_hang.username }}</strong></div>
+          <div class="top-sub" style="margin-top:2px;">Email: {{ order_summary.khach_hang.email|default:"-" }}</div>
+        </div>
+        <div class="panel card" style="padding:10px 12px; background:#ffffff; min-height:78px;">
+          <div class="top-sub">Người nhận</div>
+          <div><strong>{{ order_summary.ho_ten_nguoi_nhan }}</strong></div>
+          <div class="top-sub" style="margin-top:2px;">SĐT: {{ order_summary.so_dien_thoai }}</div>
+        </div>
+        <div class="panel card" style="padding:10px 12px; background:#ffffff; min-height:78px;">
+          <div class="top-sub">Địa chỉ giao hàng</div>
+          <div><strong>{{ order_summary.dia_chi_giao_hang }}</strong></div>
+          {% url 'store:map_page' as project_map_url %}
+          {% if order_summary.vi_do_giao_hang and order_summary.kinh_do_giao_hang %}
+            <a style="display:inline-block; margin-top:4px;" href="{{ project_map_url }}?center_lat={{ order_summary.vi_do_giao_hang|unlocalize }}&amp;center_lon={{ order_summary.kinh_do_giao_hang|unlocalize }}&amp;q={{ order_summary.dia_chi_giao_hang|urlencode }}">Mở bản đồ trong hệ thống</a>
+          {% elif order_summary.dia_chi_giao_hang %}
+            <a style="display:inline-block; margin-top:4px;" href="{{ project_map_url }}?q={{ order_summary.dia_chi_giao_hang|urlencode }}">Mở bản đồ trong hệ thống</a>
+          {% endif %}
+        </div>
+        <div class="panel card" style="padding:10px 12px; background:#ffffff; min-height:78px;">
+          <div class="top-sub">Thanh toán</div>
+          <div>
+            <span class="chip chip-info" style="font-weight:700;">{{ order_summary.get_phuong_thuc_thanh_toan_display }}</span>
+          </div>
+          <div class="top-sub" style="margin-top:4px;">{{ order_summary.get_trang_thai_thanh_toan_display }}</div>
+        </div>
+        <div class="panel card" style="padding:10px 12px; background:#ffffff; min-height:78px;">
+          <div class="top-sub">Xử lý</div>
+          <div><strong>{{ order_summary.cua_hang_xu_ly|default:"-" }}</strong></div>
+          <div class="top-sub" style="margin-top:2px;">Tổng SL: {{ order_summary.tong_so_luong }}</div>
+        </div>
+        <div class="panel card" style="padding:10px 12px; background:#ffffff; min-height:78px;">
+          <div class="top-sub">Voucher</div>
+          <div><strong>{{ order_summary.ma_voucher_ap_dung|default:"-" }}</strong></div>
+          <div class="top-sub" style="margin-top:2px;">Mã GD: {{ order_summary.ma_giao_dich_thanh_toan|default:"-" }}</div>
+        </div>
+        <div class="panel card" style="padding:10px 12px; background:#ffffff; min-height:78px;">
+          <div class="top-sub">Ghi chú</div>
+          <div class="top-sub" style="margin-top:2px;">{{ order_summary.ghi_chu|default:"-" }}</div>
+        </div>
+        <div class="panel card" style="padding:10px 12px; background:#ffffff; min-height:78px;">
+          <div class="top-sub">Biên lai</div>
+          <div class="top-sub" style="margin-top:2px;">{% if order_summary.thoi_gian_gui_bien_lai %}{{ order_summary.thoi_gian_gui_bien_lai|date:"d/m/Y H:i" }}{% else %}-{% endif %}</div>
+          <div style="margin-top:4px;">
+            {% if order_summary.anh_bien_lai %}
+              <a href="{{ order_summary.anh_bien_lai.url }}" target="_blank" rel="noopener">Xem biên lai</a>
+            {% else %}
+              -
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+  <section class="panel card toolbar-card" style="margin-bottom:14px; display:flex; gap:10px; flex-wrap:nowrap; align-items:center; justify-content:flex-start;">
+    <form method="get" class="search-box" id="admin-list-filter-form" style="flex:1; min-width:220px; margin:0; display:flex; gap:{% if model_slug == 'danh-gia-cua-hang' %}8px{% else %}10px{% endif %}; flex-wrap:nowrap; align-items:center;">
+      {% if model_slug != 'danh-gia-cua-hang' %}
+        <input type="text" name="q" value="{{ query }}" placeholder="{{ t.search_placeholder|default:'Tìm theo nội dung...' }}" style="flex:1; min-width:220px; height:44px;">
+      {% endif %}
+
+      {% if model_slug == order_module_slug %}
+        <div class="dd dd-filter" data-filter-dropdown style="width:260px;">
+          <button class="dd-trigger" type="button">
+            {% if status_filters %}
+              {{ t.order_status|default:"Trạng thái đơn" }}
+              <span class="dd-count">{{ status_filters|length }}</span>
+            {% else %}
+              {{ t.order_status|default:"Trạng thái đơn" }}
+            {% endif %}
+          </button>
+          <div class="dd-menu">
+            <div class="dd-search">
+              <input type="text" placeholder="Tìm trong danh sách..." data-dd-search>
+            </div>
+            <div class="dd-list" data-dd-list>
+              <label class="dd-option">
+                <input type="checkbox" data-clear-status {% if not status_filters %}checked{% endif %}>
+                <span>{{ t.all_statuses|default:"Tất cả trạng thái" }}</span>
+              </label>
+              <label class="dd-option">
+                <input type="checkbox" name="status" value="pending" {% if 'pending' in status_filters %}checked{% endif %}>
+                <span>Chờ xử lý</span>
+              </label>
+              <label class="dd-option">
+                <input type="checkbox" name="status" value="confirmed" {% if 'confirmed' in status_filters %}checked{% endif %}>
+                <span>Đã xác nhận</span>
+              </label>
+              <label class="dd-option">
+                <input type="checkbox" name="status" value="shipping" {% if 'shipping' in status_filters %}checked{% endif %}>
+                <span>Đang giao</span>
+              </label>
+              <label class="dd-option">
+                <input type="checkbox" name="status" value="delivered" {% if 'delivered' in status_filters %}checked{% endif %}>
+                <span>Đã giao</span>
+              </label>
+              <label class="dd-option">
+                <input type="checkbox" name="status" value="done" {% if 'done' in status_filters %}checked{% endif %}>
+                <span>Hoàn tất</span>
+              </label>
+              <label class="dd-option">
+                <input type="checkbox" name="status" value="cancelled" {% if 'cancelled' in status_filters %}checked{% endif %}>
+                <span>Đã hủy</span>
+              </label>
+            </div>
+            <div class="dd-actions">
+              <button type="submit" class="btn btn-primary">Áp dụng</button>
+              <a class="btn btn-light" href="{% url 'store:admin_list' model_slug %}{% if query %}?q={{ query|urlencode }}{% endif %}">Xóa lọc</a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if model_slug != 'danh-gia-cua-hang' %}
+        <button class="btn btn-light" type="submit" style="height:44px; min-width:64px; padding:0 16px;">L&#7885;c</button>
+      {% endif %}
+
+      {% for facet in facet_filters %}
+        {% if facet.type == "date_range" %}
+          <div style="display:flex; align-items:center; gap:8px; min-width:{% if model_slug == 'danh-gia-cua-hang' %}350px{% else %}360px{% endif %}; padding:0 2px;">
+            <span class="top-sub" style="white-space:nowrap; min-width:{% if model_slug == 'danh-gia-cua-hang' %}46px{% else %}auto{% endif %}; font-weight:700; color:#334155;">
+              {% if model_slug == 'danh-gia-cua-hang' %}Ng&#224;y{% else %}{{ facet.label }}{% endif %}
+              {% if facet.selected_count %}<span class="dd-count" style="margin-left:6px;">{{ facet.selected_count }}</span>{% endif %}
+            </span>
+            <input type="date" name="{{ facet.from_name }}" value="{{ facet.from_value }}" aria-label="Tu ngay" {% if model_slug == 'danh-gia-cua-hang' %}data-auto-submit-date{% endif %} style="height:44px; min-width:132px; flex:0 0 132px; border-radius:16px; border:1px solid #d8e3f0; padding:0 12px;">
+            <span class="top-sub" style="font-weight:700;">&#8594;</span>
+            <input type="date" name="{{ facet.to_name }}" value="{{ facet.to_value }}" aria-label="Den ngay" {% if model_slug == 'danh-gia-cua-hang' %}data-auto-submit-date{% endif %} style="height:44px; min-width:132px; flex:0 0 132px; border-radius:16px; border:1px solid #d8e3f0; padding:0 12px;">
+            <a class="btn btn-light" href="{% url 'store:admin_list' model_slug %}" style="height:44px; min-width:58px; padding:0 12px; display:inline-flex; align-items:center; justify-content:center;">X&#243;a</a>
+          </div>
+        {% else %}
+        <div class="dd dd-filter" data-filter-dropdown style="width:{% if model_slug == 'danh-gia-cua-hang' and facet.param == 'user' %}210px{% elif model_slug == 'danh-gia-cua-hang' %}170px{% else %}260px{% endif %};">
+          <button class="dd-trigger" type="button" style="{% if model_slug == 'danh-gia-cua-hang' %}height:44px; padding:0 16px;{% endif %}">
+            {% if model_slug == 'danh-gia-cua-hang' and facet.param == 'store' %}
+              C&#7917;a h&#224;ng
+            {% elif model_slug == 'danh-gia-cua-hang' and facet.param == 'stars' %}
+              S&#7889; sao
+            {% elif model_slug == 'danh-gia-cua-hang' and facet.param == 'user' %}
+              Ng&#432;&#7901;i d&#249;ng
+            {% else %}
+              {{ facet.label }}
+            {% endif %}
+            {% if facet.selected_count %}<span class="dd-count">{{ facet.selected_count }}</span>{% endif %}
+          </button>
+          <div class="dd-menu" style="{% if model_slug == 'danh-gia-cua-hang' %}width:220px; padding:12px;{% endif %}">
+            <div class="dd-search">
+              <input type="text" placeholder="T&#236;m..." data-dd-search style="{% if model_slug == 'danh-gia-cua-hang' %}height:38px; padding:0 12px; border-radius:14px;{% endif %}">
+            </div>
+            <div class="dd-list" data-dd-list>
+              {% for option in facet.options %}
+                <label class="dd-option">
+                  <input type="checkbox" name="{{ facet.param }}" value="{{ option.value }}" {% if option.selected %}checked{% endif %}>
+                  <span>{{ option.label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+            <div class="dd-actions" style="{% if model_slug == 'danh-gia-cua-hang' %}gap:8px;{% endif %}">
+              <button type="submit" class="btn btn-primary" style="{% if model_slug == 'danh-gia-cua-hang' %}height:38px; padding:0 14px; border-radius:14px;{% endif %}">&#193;p d&#7909;ng</button>
+              <a class="btn btn-light" href="{% url 'store:admin_list' model_slug %}" style="{% if model_slug == 'danh-gia-cua-hang' %}height:38px; padding:0 14px; border-radius:14px; display:inline-flex; align-items:center; justify-content:center;{% endif %}">X&#243;a</a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+
+      {% if model_slug != order_module_slug and status_filter %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+    </form>
+    {% if show_create|default:True and model_slug != 'danh-gia-cua-hang' %}
+      <a class="btn btn-primary" href="{% url 'store:admin_create' model_slug %}">
+     {{ t.add_new|default:"Thêm mới" }}
+     </a>
+    {% endif %}
+
+    {% if model_slug == "giao-dich-kho" %}
+     <a href="/admin/giao-dich-kho/excel/" class="btn btn-success">
+       📥 Import
+      </a>
+
+      <a href="/admin/giao-dich-kho/excel/export/" class="btn btn-info">
+        📤 Export
+      </a>
+    {% endif %}
+  </section>
+
+  <section class="panel card table-wrap {% if model_slug == order_module_slug %}order-table-wrap{% elif model_slug == 'chi-tiet-don-hang' %}order-item-table-wrap{% elif model_slug == 'giao-dich-kho' %}inventory-table-wrap{% elif model_slug == 'khuyen-mai' %}promo-table-wrap{% elif model_slug == 'san-pham' %}product-table-wrap{% endif %}">
+    <table class="table table-striped table-hover {% if model_slug == order_module_slug %}order-table{% elif model_slug == 'chi-tiet-don-hang' %}order-item-table{% elif model_slug == 'giao-dich-kho' %}inventory-table{% elif model_slug == 'khuyen-mai' %}promo-table{% elif model_slug == 'san-pham' %}product-table{% endif %}">
+      <thead>
+        <tr>
+          <th>ID</th>
+          {% for field in display_fields %}
+            <th>{{ field.verbose_name }}</th>
+          {% endfor %}
+          <th class="action-col-head"><span class="action-head-inner">{{ t.actions|default:"Thao tác" }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>{{ row.object.pk }}</td>
+            {% for value in row.values %}
+              <td class="{% if value.type == 'bool' %}bool-col{% endif %} {% if value.type == 'status' %}status-col{% endif %} {% if value.type == 'money' %}money-col{% endif %}">
+                {% if value.type == "image" %}
+                  <a href="{{ value.url }}" target="_blank" rel="noopener">
+                    <img class="avatar" src="{{ value.url }}" alt="{{ value.text }}">
+                  </a>
+                {% elif value.type == "signature" %}
+                  <a href="{{ value.url }}" target="_blank" rel="noopener">
+                    <img
+                      src="{{ value.url }}"
+                      alt="Chữ ký"
+                      style="width:120px;height:52px;object-fit:contain;background:#fff;border:1px solid #dbe4f0;border-radius:10px;padding:6px;"
+                    >
+                  </a>
+                {% elif value.type == "bool" %}
+                  <span class="bool-cell">
+                    {% if value.value %}
+                      <span class="bool-badge is-true" title="Có">✓</span>
+                    {% else %}
+                      <span class="bool-badge is-false" title="Không">✕</span>
+                    {% endif %}
+                  </span>
+                {% elif value.type == "toggle_24h" %}
+                  {% if row.can_edit %}
+                    <form method="post" action="{% url 'store:admin_store_toggle_24h' row.object.pk %}" class="toggle-24h-form">
+                      {% csrf_token %}
+                      <input type="hidden" name="return_query" value="{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ page_obj.number }}">
+                      <button class="toggle-24h {% if value.value %}is-on{% endif %}" type="submit" aria-label="{% if value.value %}Tắt 24h{% else %}Bật 24h{% endif %}">
+                        <span class="toggle-24h-track"></span>
+                        <span class="toggle-24h-thumb"></span>
+                      </button>
+                    </form>
+                  {% else %}
+                    <span class="bool-cell">
+                      {% if value.value %}
+                        <span class="bool-badge is-true" title="Có">✓</span>
+                      {% else %}
+                        <span class="bool-badge is-false" title="Không">✕</span>
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                {% elif value.type == "money" %}
+                  <strong>{{ value.text }}</strong>
+                {% elif value.type == "stock" %}
+                  <span class="chip {% if value.level == 'out' %}chip-danger{% elif value.level == 'low' %}chip-warn{% else %}chip-success{% endif %}">{{ value.text }}</span>
+                {% elif value.type == "stock_move" %}
+                  <span class="chip {% if value.level == 'import' %}chip-success{% else %}chip-info{% endif %}">{{ value.text }}</span>
+                {% elif value.type == "status" %}
+                  <span class="chip {% if value.value == 'pending' %}chip-warn{% elif value.value == 'confirmed' %}chip-info{% elif value.value == 'shipping' %}chip-progress{% elif value.value == 'delivered' or value.value == 'done' or value.value == 'pay_paid' or value.value == 'feedback_done' %}chip-success{% elif value.value == 'cancelled' or value.value == 'pay_refunded' %}chip-danger{% elif value.value == 'pay_awaiting_confirmation' %}chip-review{% elif value.value == 'feedback_pending' %}chip-warn{% elif value.value == 'pay_unpaid' %}chip-muted{% else %}chip-info{% endif %}">{{ value.text }}</span>
+                {% else %}
+                  <span class="table-ellipsis {% if model_slug == order_module_slug or model_slug == 'chi-tiet-don-hang' %}order-ellipsis{% elif model_slug == 'san-pham' %}product-ellipsis{% endif %}" title="{{ value.text }}">{% if model_slug == order_module_slug or model_slug == 'chi-tiet-don-hang' %}{{ value.text|truncatechars:60 }}{% else %}{{ value.text|truncatechars:100 }}{% endif %}</span>
+                {% endif %}
+              </td>
+            {% endfor %}
+            <td class="action-col">
+              <div class="action-buttons">
+                {% if model_slug == 'trash' %}
+                  <a class="btn btn-primary" href="{{ row.restore_url }}">{{ t.restore|default:"Khôi phục" }}</a>
+                  <a class="btn btn-danger" href="{{ row.delete_url }}">{{ t.delete_permanently|default:"Xóa hẳn" }}</a>
+                {% else %}
+                  {% if row.order_items_url %}
+                    <a class="btn btn-light" href="{{ row.order_items_url }}">Chi tiết</a>
+                  {% endif %}
+                  {% if compact_detail_mode and not row.order_items_url %}
+                    <button class="btn btn-light" type="button" data-detail-toggle="{{ row.object.pk }}" aria-expanded="false">Chi tiết</button>
+                  {% endif %}
+                  {% if row.can_change_status and row.status_actions %}
+                    {% for action in row.status_actions %}
+                      <form method="post" action="{% url 'store:admin_order_status_action' row.object.pk action.value %}" style="display:inline-flex;">
+                        {% csrf_token %}
+                        <input type="hidden" name="return_query" value="{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ page_obj.number }}">
+                        <button class="btn btn-light" type="submit">{{ action.label }}</button>
+                      </form>
+                    {% endfor %}
+                  {% endif %}
+                  {% if row.can_change_payment_status and row.payment_actions %}
+                    {% for action in row.payment_actions %}
+                      <form method="post" action="{% url 'store:admin_order_payment_status_action' row.object.pk action.value %}" style="display:inline-flex;">
+                        {% csrf_token %}
+                        <input type="hidden" name="return_query" value="{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ page_obj.number }}">
+                        <button class="btn btn-light" type="submit">{{ action.label }}</button>
+                      </form>
+                    {% endfor %}
+                  {% endif %}
+                  {% if row.can_review_receipt and row.receipt_actions %}
+                    {% if row.receipt_preview_url %}
+                      <a class="btn btn-light" href="{{ row.receipt_preview_url }}" target="_blank" rel="noopener">Xem biên lai</a>
+                    {% endif %}
+                    {% for action in row.receipt_actions %}
+                      <form method="post" action="{% url 'store:admin_order_receipt_review_action' row.object.pk action.value %}" style="display:inline-flex;" {% if action.value == 'reject' %}data-receipt-reject-form{% endif %}>
+                        {% csrf_token %}
+                        <input type="hidden" name="return_query" value="{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ page_obj.number }}">
+                        {% if action.value == 'reject' %}
+                          <input type="hidden" name="rejection_note" value="" data-receipt-reject-note>
+                        {% endif %}
+                        <button class="btn {% if action.value == 'approve' %}btn-primary{% else %}btn-danger{% endif %}" type="submit">{{ action.label }}</button>
+                      </form>
+                    {% endfor %}
+                  {% endif %}
+                  {% if false %}
+                    <form method="post" action="{% url 'store:admin_store_toggle_24h' row.object.pk %}" style="display:inline-flex;">
+                      {% csrf_token %}
+                      <input type="hidden" name="return_query" value="{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ page_obj.number }}">
+                      <button class="btn {% if row.object.hoat_dong_24h %}btn-light{% else %}btn-primary{% endif %}" type="submit">
+                        {% if row.object.hoat_dong_24h %}Tắt 24h{% else %}Bật 24h{% endif %}
+                      </button>
+                    </form>
+                  {% endif %}
+                  {% if row.print_url %}
+                    <a class="btn btn-light" href="{{ row.print_url }}" target="_blank" rel="noopener">In</a>
+                  {% endif %}
+                  {% if row.pdf_url %}
+                    <a class="btn btn-primary" href="{{ row.pdf_url }}">PDF</a>
+                  {% endif %}
+                  {% if row.can_edit %}
+                    <a class="btn btn-ghost btn-icon"
+                         href="{% url 'store:admin_update' model_slug row.object.pk %}"
+                         title="Sửa">
+                       <svg viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L19.81 7.94l-3.75-3.75L3 17.25Z"/>
+                       </svg>
+                    </a>
+                    
+                  {% endif %}
+                  {% if row.can_delete %}
+                    <a class="btn btn-danger btn-icon" href="{% url 'store:admin_delete' model_slug row.object.pk %}" title="{{ t.delete|default:'Xóa' }}" aria-label="{{ t.delete|default:'Xóa' }}">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 6h2v9h-2V9Zm4 0h2v9h-2V9ZM7 9h2v9H7V9Z"/></svg>
+                    </a>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% if compact_detail_mode %}
+            <tr data-detail-row="{{ row.object.pk }}" hidden>
+              <td colspan="{{ display_fields|length|add:"2" }}" style="background:#f7fafc;">
+                <div style="padding:12px 14px; border:1px solid #dbe4f0; border-radius:12px; background:#ffffff;">
+                  <div style="font-weight:700; margin-bottom:8px;">{{ row.title_text|default:"Chi tiết" }}</div>
+                  <div style="{% if model_slug == 'danh-gia-cua-hang' %}display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,320px); gap:12px; align-items:start;{% else %}display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:8px 12px;{% endif %}">
+                    {% for detail in row.detail_values %}
+                      <div style="min-width:0; padding:6px 10px; border:1px dashed #e2e8f0; border-radius:10px; {% if model_slug == 'danh-gia-cua-hang' and detail.type == 'media_gallery' %}grid-column:2; grid-row:1 / span 2;{% elif model_slug == 'danh-gia-cua-hang' %}grid-column:1;{% endif %}">
+                        <div style="font-size:12px; color:#64748b; margin-bottom:2px;">{{ detail.label }}</div>
+                        <div style="min-width:0; font-weight:600; color:#0f172a; word-break:break-word; overflow-wrap:anywhere; {% if model_slug == 'danh-gia-cua-hang' and detail.field_name == 'binh_luan' %}white-space:normal; line-height:1.7;{% endif %}">
+                          {% if detail.type == "image" or detail.type == "signature" %}
+                            {% if detail.url %}
+                              <a href="{{ detail.url }}" target="_blank" rel="noopener">Xem tệp đính kèm</a>
+                            {% else %}
+                              -
+                            {% endif %}
+                          {% elif detail.type == "media_gallery" and detail.items %}
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;">
+                              {% for media in detail.items %}
+                                <a href="{{ media.url }}" target="_blank" rel="noopener" style="display:block;border:1px solid #dbe4f0;border-radius:12px;overflow:hidden;background:#fff;text-decoration:none;">
+                                  {% if media.kind == "video" %}
+                                    <video src="{{ media.url }}" controls preload="metadata" style="width:100%;height:110px;object-fit:cover;display:block;background:#0f172a;"></video>
+                                  {% else %}
+                                    <img src="{{ media.url }}" alt="{{ media.name }}" style="width:100%;height:110px;object-fit:cover;display:block;background:#f8fafc;">
+                                  {% endif %}
+                                  <div style="padding:6px 8px;font-size:11px;color:#475569;">{{ media.kind|upper }}</div>
+                                </a>
+                              {% endfor %}
+                            </div>
+                          {% else %}
+                            {{ detail.text|default:"-" }}
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% empty %}
+                      <div style="color:#64748b;">Không có thông tin bổ sung.</div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          {% endif %}
+        {% empty %}
+          <tr>
+            <td colspan="99">{{ t.no_data|default:"Chưa có dữ liệu." }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  {% if paginator.num_pages > 1 %}
+    <section class="panel card pagination">
+      <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?{% if persisted_query %}{{ persisted_query }}&{% endif %}page=1{% else %}#{% endif %}" aria-label="First">«</a>
+      <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ page_obj.previous_page_number }}{% else %}#{% endif %}" aria-label="Previous">‹</a>
+
+      {% for p in paginator.page_range %}
+        {% if p == 1 or p == paginator.num_pages %}
+          <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ p }}">{{ p }}</a>
+        {% elif p >= page_obj.number|add:"-2" and p <= page_obj.number|add:"2" %}
+          <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ p }}">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+
+      <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ page_obj.next_page_number }}{% else %}#{% endif %}" aria-label="Next">›</a>
+      <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?{% if persisted_query %}{{ persisted_query }}&{% endif %}page={{ paginator.num_pages }}{% else %}#{% endif %}" aria-label="Last">»</a>
+    </section>
+  {% endif %}
+{% endblock %}
+{% block extra_js %}
+  {{ block.super }}
+  {% if model_slug == order_module_slug %}
+    <script>
+      (function () {
+        const form = document.getElementById("admin-list-filter-form");
+        if (!form) return;
+        const clearStatus = form.querySelector("[data-clear-status]");
+        const statusInputs = Array.from(form.querySelectorAll('input[name="status"]'));
+        if (!clearStatus || !statusInputs.length) return;
+
+        const syncClearStatus = function () {
+          clearStatus.checked = !statusInputs.some((input) => input.checked);
+        };
+
+        clearStatus.addEventListener("change", function () {
+          if (!clearStatus.checked) return;
+          statusInputs.forEach((input) => {
+            input.checked = false;
+          });
+        });
+
+        statusInputs.forEach((input) => {
+          input.addEventListener("change", function () {
+            if (input.checked) {
+              clearStatus.checked = false;
+            } else {
+              syncClearStatus();
+            }
+          });
+        });
+
+        syncClearStatus();
+      })();
+      (function () {
+        document.querySelectorAll("[data-receipt-reject-form]").forEach((form) => {
+          form.addEventListener("submit", function (event) {
+            const noteInput = form.querySelector("[data-receipt-reject-note]");
+            if (!noteInput) return;
+            const note = window.prompt("Nhập ghi chú từ chối biên lai:", noteInput.value || "");
+            if (note === null) {
+              event.preventDefault();
+              return;
+            }
+            if (!note.trim()) {
+              event.preventDefault();
+              window.alert("Cần nhập ghi chú từ chối biên lai.");
+              return;
+            }
+            noteInput.value = note.trim();
+          });
+        });
+      })();
+    </script>
+  {% endif %}
+  <script>
+    (function () {
+      const form = document.getElementById("admin-list-filter-form");
+      const dateInputs = Array.from(document.querySelectorAll("[data-auto-submit-date]"));
+      if (!form || !dateInputs.length) return;
+      dateInputs.forEach((input) => {
+        input.addEventListener("change", function () {
+          window.setTimeout(function () {
+            if (typeof form.requestSubmit === "function") {
+              form.requestSubmit();
+            } else {
+              form.submit();
+            }
+          }, 80);
+        });
+      });
+    })();
+  </script>
+  {% if compact_detail_mode %}
+    <script>
+      (function () {
+        const toggles = Array.from(document.querySelectorAll("[data-detail-toggle]"));
+        if (!toggles.length) return;
+        toggles.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const rowId = btn.getAttribute("data-detail-toggle");
+            const detailRow = document.querySelector('[data-detail-row="' + rowId + '"]');
+            if (!detailRow) return;
+            const isOpen = !detailRow.hasAttribute("hidden");
+            if (isOpen) {
+              detailRow.setAttribute("hidden", "hidden");
+              btn.setAttribute("aria-expanded", "false");
+              btn.textContent = "Chi tiết";
+            } else {
+              detailRow.removeAttribute("hidden");
+              btn.setAttribute("aria-expanded", "true");
+              btn.textContent = "Thu gọn";
+            }
+          });
+        });
+        const focusReview = new URLSearchParams(window.location.search).get("focus_review");
+        if (focusReview && "{{ model_slug }}" === "danh-gia-cua-hang") {
+          const targetBtn = document.querySelector('[data-detail-toggle="' + focusReview + '"]');
+          const targetRow = document.querySelector('[data-detail-row="' + focusReview + '"]');
+          if (targetBtn && targetRow && targetRow.hasAttribute("hidden")) {
+            targetRow.removeAttribute("hidden");
+            targetBtn.setAttribute("aria-expanded", "true");
+            targetBtn.textContent = "Thu gọn";
+            targetRow.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+      })();
+    </script>
+  {% endif %}
+{% endblock %}

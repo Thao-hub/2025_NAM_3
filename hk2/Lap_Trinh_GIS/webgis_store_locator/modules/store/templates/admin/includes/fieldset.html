@@ -1,0 +1,107 @@
+{% load i18n admin_modify %}
+
+{# Django sẽ truyền vào biến "fieldset" #}
+<fieldset class="mb-4">
+    {% if fieldset.name %}
+    <legend class="mb-3" style="font-weight:600;">{{ fieldset.name }}</legend>
+    {% endif %}
+
+    {% if fieldset.description %}
+    <p class="text-muted">{{ fieldset.description|safe }}</p>
+    {% endif %}
+
+    {% for line in fieldset %}
+    <div class="form-group">
+        {% for field in line %}
+        <div class="{% if line.fields|length > 1 %}mb-3{% endif %}">
+            {% if field.is_checkbox %}
+            <div class="form-check">
+                {{ field.field }}
+                <label class="form-check-label" for="{{ field.field.id_for_label }}">
+                    {{ field.field.label }}
+                </label>
+            </div>
+            {% else %}
+            {% if field.field.label %}
+            <label for="{{ field.field.id_for_label }}">
+                {{ field.field.label }}{% if field.field.field.required %}<span class="text-danger"> *</span>{% endif %}
+            </label>
+            {% endif %}
+
+            {# input/widget #}
+            {{ field.field }}
+
+            {% if field.field.help_text %}
+            <small class="form-text text-muted">{{ field.field.help_text|safe }}</small>
+            {% endif %}
+
+            {% if field.field.errors %}
+            <div class="text-danger mt-1">
+                {{ field.field.errors }}
+            </div>
+            {% endif %}
+            {% endif %}
+
+            {% if field.field.is_hidden %}
+            {{ field.field }}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</fieldset>
+
+{# Auto add Bootstrap-like classes to inputs (không phá widget) #}
+<script>
+    (function () {
+        const root = document.currentScript?.parentElement || document;
+        const inputs = root.querySelectorAll('input[type="text"], input[type="number"], input[type="email"], input[type="url"], input[type="password"], input[type="date"], input[type="datetime-local"], input[type="time"], textarea, select');
+        inputs.forEach(el => {
+            // Tránh đụng checkbox/radio
+            if (el.type === 'checkbox' || el.type === 'radio') return;
+            el.classList.add('form-control');
+        });
+
+        // file input
+        const fileInputs = root.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(el => el.classList.add('form-control'));
+
+        // checkbox
+        const checks = root.querySelectorAll('input[type="checkbox"]');
+        checks.forEach(el => el.classList.add('form-check-input'));
+
+        // Multi-select UX: click to toggle without holding Ctrl/Cmd.
+        // Shift + click: select a range.
+        const multiSelects = root.querySelectorAll('select[multiple]');
+        multiSelects.forEach(selectEl => {
+            if (selectEl.dataset.multiClickBound === "1") return;
+            selectEl.dataset.multiClickBound = "1";
+
+            let lastIndex = null;
+
+            selectEl.addEventListener("mousedown", (e) => {
+                const option = e.target;
+                if (!(option instanceof HTMLOptionElement)) return;
+
+                e.preventDefault();
+                selectEl.focus();
+
+                const currentIndex = Array.prototype.indexOf.call(selectEl.options, option);
+                if (currentIndex < 0) return;
+
+                if (e.shiftKey && lastIndex !== null) {
+                    const start = Math.min(lastIndex, currentIndex);
+                    const end = Math.max(lastIndex, currentIndex);
+                    for (let i = start; i <= end; i++) {
+                        selectEl.options[i].selected = true;
+                    }
+                } else {
+                    option.selected = !option.selected;
+                    lastIndex = currentIndex;
+                }
+
+                selectEl.dispatchEvent(new Event("change", { bubbles: true }));
+            });
+        });
+    })();
+</script>

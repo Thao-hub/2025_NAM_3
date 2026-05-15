@@ -1,0 +1,876 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ t.checkout|default:"Thanh toán" }}</title>
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1100px 420px at 10% -10%, rgba(197, 245, 234, .42) 0%, transparent 55%),
+        radial-gradient(900px 340px at 92% 0%, rgba(255, 232, 213, .36) 0%, transparent 58%),
+        linear-gradient(160deg, #f8fafb, #f1f6f4);
+    }
+    .site-shell { min-height: 100vh; }
+    .site-header {
+      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 10px 28px rgba(8, 47, 44, 0.18);
+    }
+    .site-header .wrap {
+      max-width: 1320px;
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: #fff;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo span { color: #ffd7a8; }
+    .site-nav { display: flex; gap: 28px; }
+    .site-nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btnFind, .btnWhite {
+      width: 140px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .btnFind {
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(249, 115, 22, .28);
+    }
+    .btnWhite {
+      width: 112px;
+      background: rgba(255,255,255,.92);
+      color: #123545;
+      border: 1px solid rgba(255,255,255,.45);
+    }
+    .page-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+    main.page-wrap > section.grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr) !important;
+      gap: 18px;
+      align-items: start;
+    }
+    main.page-wrap > section.grid > section.panel.card {
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(245,250,249,.9));
+      border: 1px solid rgba(148, 163, 184, .14);
+      box-shadow: 0 18px 42px rgba(15, 23, 42, .08);
+    }
+    main.page-wrap > section.grid > section.panel.card:last-child {
+      position: sticky;
+      top: 96px;
+    }
+    main.page-wrap > section.grid > section.panel.card:first-child h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    main.page-wrap > section.grid > section.panel.card:first-child form {
+      display: grid;
+      gap: 14px;
+    }
+    main.page-wrap > section.grid > section.panel.card:first-child .form-group {
+      margin-bottom: 0;
+    }
+    main.page-wrap > section.grid > section.panel.card:first-child .form-group input,
+    main.page-wrap > section.grid > section.panel.card:first-child .form-group textarea,
+    main.page-wrap > section.grid > section.panel.card:first-child .form-group select {
+      border-radius: 16px;
+    }
+    main.page-wrap > section.grid > section.panel.card:first-child > form > .btn.btn-primary:last-child {
+      justify-self: start;
+      min-width: 180px;
+    }
+    main.page-wrap > section.grid > section.panel.card:last-child h3 {
+      margin-top: 0;
+      margin-bottom: 14px;
+    }
+    .site-footer {
+      margin-top: 20px;
+      background: #0f172a;
+      color: #cbd5f5;
+    }
+    .site-footer .container {
+      width: min(100%, 1320px);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .newsletter-section {
+      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+      padding: 24px 0;
+    }
+    .newsletter-content {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .newsletter-content h3 { margin: 0; color: #fff; font-size: 20px; font-weight: 900; line-height: 1.35; }
+    .newsletter-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .newsletter-form input {
+      min-width: 280px;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: #fff;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .newsletter-form button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .footer-info { padding: 34px 0; }
+    .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 24px; }
+    .footer-col h4 { margin: 0 0 12px; font-size: 16px; color: #fff; font-weight: 900; }
+    .footer-col p, .footer-col li, .footer-col a { color: #cbd5f5; font-size: 14px; line-height: 1.6; }
+    .footer-col ul { margin: 0; padding: 0; list-style: none; }
+    .footer-col li + li { margin-top: 8px; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid rgba(203, 213, 245, 0.2); padding: 14px 0; text-align: center; }
+    .footer-bottom p { margin: 0; }
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .site-nav { gap: 16px; }
+    }
+    .voucher-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .voucher-hint {
+      margin-top: 8px;
+      color: #486581;
+      font-size: 13px;
+    }
+    .voucher-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .voucher-card {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(15, 118, 110, 0.16);
+      background: rgba(240, 253, 250, 0.9);
+    }
+    .voucher-card strong,
+    .voucher-card span {
+      display: block;
+    }
+    .voucher-card strong {
+      color: #123545;
+      font-size: 14px;
+    }
+    .voucher-card span {
+      margin-top: 4px;
+      color: #486581;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .voucher-card code {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.1);
+      color: #0f5f59;
+      font-weight: 700;
+    }
+    .voucher-empty {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(248,250,252,.88);
+      color: #64748b;
+      font-size: 13px;
+    }
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .summary-line.total {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    main.page-wrap > section.grid > section.panel.card:last-child > div[style*="border-bottom"] {
+      padding: 12px 14px !important;
+      border-radius: 18px;
+      background: rgba(248,250,252,.88);
+      border: 1px solid rgba(226,232,240,.95);
+      margin-bottom: 10px;
+    }
+    .payment-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .payment-option {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,.24);
+      background: rgba(255,255,255,.88);
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+    .payment-option:has(input:checked) {
+      border-color: rgba(15, 118, 110, .55);
+      box-shadow: 0 14px 28px rgba(15, 118, 110, .12);
+      transform: translateY(-1px);
+    }
+    .payment-option input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      align-self: center;
+      justify-self: center;
+    }
+    .payment-option span {
+      display: block;
+      min-width: 0;
+    }
+    .payment-title {
+      font-weight: 800;
+      color: #123545;
+      line-height: 1.35;
+    }
+    .payment-desc {
+      margin-top: 4px;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    .payment-extra {
+      margin-top: 12px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px dashed rgba(14, 116, 144, .28);
+      background: rgba(236, 254, 255, .72);
+    }
+    .payment-extra.is-hidden {
+      display: none;
+    }
+    .payment-extra .top-sub {
+      margin-top: 8px;
+    }
+    .saved-address-shortcuts {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .saved-address-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,.2);
+      background: rgba(248,250,252,.82);
+    }
+    .saved-address-text {
+      min-width: 0;
+    }
+    .saved-address-text strong {
+      display: block;
+      color: #123545;
+      font-size: 14px;
+    }
+    .saved-address-text span {
+      display: block;
+      margin-top: 4px;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .saved-address-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+    @media (max-width: 900px) {
+      main.page-wrap > section.grid {
+        grid-template-columns: 1fr !important;
+      }
+      main.page-wrap > section.grid > section.panel.card:last-child {
+        position: static;
+      }
+      .saved-address-item {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .saved-address-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .voucher-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="site-shell">
+    {% include 'shared/navbar.html' %}
+
+    <main class="page-wrap">
+      {% if messages %}{% for message in messages %}<div class="msg">{{ message }}</div>{% endfor %}{% endif %}
+      <section class="grid" style="grid-template-columns:1.2fr .8fr;">
+        <section class="panel card">
+          <h1 style="margin-top:0;">{{ t.checkout|default:"Thanh toán" }}</h1>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if saved_addresses %}
+              <div class="form-group">
+                <label>Địa chỉ đã lưu</label>
+                <select id="saved-address-select">
+                  <option value="">Chọn nhanh từ sổ địa chỉ</option>
+                  {% for address in saved_addresses %}
+                    <option
+                      value="{{ address.pk }}"
+                      data-name="{{ address.ho_ten_nguoi_nhan }}"
+                      data-phone="{{ address.so_dien_thoai }}"
+                      data-address="{{ address.dia_chi_day_du }}"
+                      data-lat="{% if address.vi_do is not None %}{{ address.vi_do }}{% endif %}"
+                      data-lng="{% if address.kinh_do is not None %}{{ address.kinh_do }}{% endif %}"
+                      {% if selected_address_id == address.pk|stringformat:"s" or forloop.first and address.mac_dinh and not selected_address_id %}selected{% endif %}
+                    >
+                      {{ address.ho_ten_nguoi_nhan }} - {{ address.dia_chi_day_du }}{% if address.mac_dinh %} (Mặc định){% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+                <input type="hidden" name="selected_address_id" id="selected-address-id" value="{{ selected_address_id }}">
+                <div class="saved-address-shortcuts">
+                  {% for address in saved_addresses %}
+                    <div class="saved-address-item">
+                      <div class="saved-address-text">
+                        <strong>{{ address.ho_ten_nguoi_nhan }}{% if address.mac_dinh %} &bull; M&#7863;c &#273;&#7883;nh{% endif %}</strong>
+                        <span>{{ address.dia_chi_day_du }}</span>
+                      </div>
+                      <div class="saved-address-actions">
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+            <div class="form-group"><label>{{ t.receiver_name|default:"Người nhận" }}</label><input type="text" name="receiver_name" value="{{ initial_name }}"></div>
+            <div class="form-group"><label>Email</label><input type="email" value="{{ initial_email }}" disabled></div>
+            <div class="form-group"><label>Số điện thoại</label><input type="text" name="phone" value="{{ initial_phone }}"></div>
+            <div class="form-group"><label>{{ t.delivery_address|default:"Địa chỉ giao hàng" }}</label><input type="text" name="address" value="{{ initial_address }}"></div>
+            <div class="form-group">
+            <label>Vị trí giao hàng</label>
+
+               <!-- MAP -->
+            <div id="map" style="height:300px;border-radius:16px;margin-top:10px;"></div>
+
+              <!-- HIDDEN INPUT -->
+               <input type="hidden" name="delivery_lat" id="lat" value="{{ delivery_lat }}">
+               <input type="hidden" name="delivery_lng" id="lng" value="{{ delivery_lng }}">
+
+              <!-- STATUS -->
+              <div class="top-sub" id="delivery-coord-status">
+              {% if delivery_lat and delivery_lng %}
+               Đã có tọa độ sẵn.
+               {% else %}
+                Vui lòng chọn vị trí trên bản đồ.
+              {% endif %}
+              </div>
+              <div class="top-sub" id="shipping-preview-status" style="margin-top:6px;"></div>
+
+             <!-- NÚT GPS -->
+             <button type="button" onclick="getLocation()" style="margin-top:8px;">
+             📍 Lấy vị trí hiện tại
+             </button>
+
+            <div class="top-sub" style="margin-top:8px;">
+              Click vào bản đồ để chọn vị trí giao hàng.
+            </div>
+            </div>
+            <div class="form-group">
+              <label>Mã voucher</label>
+              <div class="voucher-row">
+                <input type="text" name="voucher_code" value="{{ voucher_code }}" placeholder="Nhập mã giảm giá">
+                <button class="btn btn-light" type="submit" name="preview_voucher" value="1">Áp dụng</button>
+              </div>
+              {% if applied_voucher %}
+                <div class="voucher-hint">Đã áp dụng voucher <strong>{{ applied_voucher.ma_code }}</strong> cho đơn hàng này.</div>
+              {% else %}
+                <div class="voucher-hint">Nếu mã hợp lệ, giảm giá sẽ được tính ngay trong phần tóm tắt.</div>
+              {% endif %}
+              {% if available_vouchers %}
+                <div class="voucher-list">
+                  {% for voucher in available_vouchers %}
+                    <div class="voucher-card">
+                      <div>
+                        <strong>{{ voucher.title }} <code>{{ voucher.code }}</code></strong>
+                        <span>Giảm ngay {{ voucher.display_discount_amount }}{% if voucher.description %} • {{ voucher.description }}{% endif %}</span>
+                      </div>
+                      <button class="btn btn-light" type="button" data-voucher-code="{{ voucher.code }}">Dùng mã này</button>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="voucher-empty">Hiện chưa có voucher online phù hợp với giỏ hàng này.</div>
+              {% endif %}
+            </div>
+            <div class="form-group"><label>Ghi chú</label><textarea name="note">{{ note_value }}</textarea></div>
+            <div class="top-sub">Nếu giỏ hàng có nhiều chi nhánh khác nhau, hệ thống sẽ tự tách thành nhiều đơn và tính phí ship riêng cho từng chi nhánh.</div>
+            <button class="btn btn-primary" type="submit">{{ t.place_order|default:"Đặt hàng" }}</button>
+          </form>
+        </section>
+        <section class="panel card">
+          <h3 style="margin-top:0;">{{ t.cart|default:"Giỏ hàng" }}</h3>
+          {% for group in store_groups %}
+            <div style="padding:12px 14px;border:1px solid #e5e7eb;border-radius:18px;background:rgba(248,250,252,.88);margin-bottom:12px;" data-store-group-id="{{ group.store.pk }}">
+              <strong>{{ group.store.ten }}</strong>
+              <div class="top-sub" style="margin-top:4px;">{{ group.store.dia_chi }}</div>
+              <div class="top-sub" data-store-distance-line>Khoảng cách: {{ group.distance_label }} | Phí ship: <span data-store-shipping-fee>{{ group.display_shipping_fee }}</span></div>
+              {% for item in group.items %}
+                <div style="padding:10px 0;border-bottom:1px solid #e5e7eb;">
+                  <strong>{{ item.product.ten }}</strong>
+                  <div class="top-sub">{{ item.display_unit_price }} x {{ item.quantity }} = {{ item.display_line_total }}</div>
+                </div>
+              {% endfor %}
+              <div class="summary-line"><span>Tạm tính chi nhánh</span><strong>{{ group.display_subtotal }}</strong></div>
+              <div class="summary-line"><span>Giảm giá phân bổ</span><strong data-store-discount-amount>-{{ group.display_discount_amount }}</strong></div>
+              <div class="summary-line"><span>Phí giao hàng</span><strong data-store-shipping-fee>{{ group.display_shipping_fee }}</strong></div>
+              <div class="summary-line"><span>Tổng chi nhánh</span><strong data-store-final-amount>{{ group.display_final_amount }}</strong></div>
+            </div>
+          {% endfor %}
+          <div style="margin-top:12px;font-weight:700;">{{ t.quantity|default:"Số lượng" }}: {{ cart_total_quantity }}</div>
+          <div class="summary-line"><span>Tạm tính</span><strong>{{ display_subtotal_amount }}</strong></div>
+          <div class="summary-line"><span>Giảm giá</span><strong id="checkout-discount-amount">-{{ display_discount_amount }}</strong></div>
+          <div class="summary-line"><span>Phí giao hàng</span><strong id="checkout-shipping-total">{{ display_shipping_total }}</strong></div>
+          <div class="summary-line total"><span>{{ t.total_amount|default:"Tổng tiền" }}</span><span id="checkout-final-amount">{{ display_final_amount }}</span></div>
+        </section>
+      </section>
+    </main>
+
+    {% include 'shared/footer.html' %}
+  </div>
+  {% if saved_addresses %}
+    <script>
+(function () {
+  const select = document.getElementById("saved-address-select");
+  if (!select) return;
+
+  const selectedAddressInput = document.getElementById("selected-address-id");
+  const receiver = document.querySelector('input[name="receiver_name"]');
+  const phone = document.querySelector('input[name="phone"]');
+  const address = document.querySelector('input[name="address"]');
+  const latInput = document.querySelector('input[name="delivery_lat"]');
+  const lngInput = document.querySelector('input[name="delivery_lng"]');
+  const coordStatus = document.getElementById("delivery-coord-status");
+  const shortcutButtons = document.querySelectorAll('[data-select-saved-address]');
+
+  const applySavedAddress = () => {
+    const option = select.options[select.selectedIndex];
+    if (!option || !option.value) return;
+
+    // Fill thông tin cơ bản
+    if (selectedAddressInput) selectedAddressInput.value = option.value || "";
+    if (receiver && option.dataset.name) receiver.value = option.dataset.name;
+    if (phone && option.dataset.phone) phone.value = option.dataset.phone;
+    if (address && option.dataset.address) address.value = option.dataset.address;
+
+    // 🔥 CHỈ SET LAT/LNG NẾU CÓ
+    if (option.dataset.lat && option.dataset.lng) {
+      const lat = option.dataset.lat;
+      const lng = option.dataset.lng;
+
+      if (latInput) latInput.value = lat;
+      if (lngInput) lngInput.value = lng;
+
+      // update map
+      if (typeof map !== "undefined") {
+        map.setView([lat, lng], 15);
+
+        if (typeof marker !== "undefined" && marker) {
+          marker.setLatLng([lat, lng]);
+        } else {
+          marker = L.marker([lat, lng]).addTo(map);
+        }
+      }
+
+      if (coordStatus) {
+        coordStatus.textContent = "Đã lấy tọa độ từ địa chỉ đã lưu.";
+      }
+
+      if (typeof refreshShippingPreview === "function") {
+        refreshShippingPreview();
+      }
+
+    } else {
+      // ❌ KHÔNG ĐƯỢC RESET LAT/LNG
+      if (coordStatus) {
+        coordStatus.textContent = "Địa chỉ chưa có tọa độ → vui lòng chọn trên bản đồ.";
+      }
+    }
+  };
+
+  select.addEventListener("change", applySavedAddress);
+
+  shortcutButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      select.value = button.dataset.selectSavedAddress || "";
+      applySavedAddress();
+      select.focus();
+    });
+  });
+
+  if (select.value) applySavedAddress();
+})();
+</script>
+  {% endif %}
+  <script>
+    (function () {
+      const checkoutForm = document.querySelector("main form[method='post']");
+      if (checkoutForm) {
+        const voucherInput = checkoutForm.querySelector('input[name="voucher_code"]');
+        const voucherPreviewBtn = checkoutForm.querySelector('button[name="preview_voucher"]');
+        const voucherButtons = checkoutForm.querySelectorAll("[data-voucher-code]");
+        voucherButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            if (!voucherInput) return;
+            voucherInput.value = button.dataset.voucherCode || "";
+            if (voucherPreviewBtn) {
+              voucherPreviewBtn.click();
+              return;
+            }
+            voucherInput.focus();
+          });
+        });
+        const noteGroup = checkoutForm.querySelector('textarea[name="note"]')?.closest(".form-group");
+        const submitBtn = checkoutForm.querySelector('button[type="submit"]:not([name="preview_voucher"])');
+        const selectedMethod = "{{ payment_method|default:'cod'|escapejs }}";
+        const initialTransferCode = "{{ transfer_code|default:''|escapejs }}";
+        const hasTransferReceipt = "{{ has_transfer_receipt|yesno:'1,0' }}" === "1";
+        const paymentSection = document.createElement("div");
+        paymentSection.className = "form-group";
+        paymentSection.innerHTML = `
+          <label>Phương thức thanh toán</label>
+          <div class="payment-grid">
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="cod">
+              <span>
+                <div class="payment-title">Thanh toán khi nhận hàng</div>
+                <div class="payment-desc">Thanh toán trực tiếp cho nhân viên khi nhận đơn.</div>
+              </span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="bank_transfer">
+              <span>
+                <div class="payment-title">Chuyển khoản ngân hàng</div>
+                <div class="payment-desc">Chứng từ chuyển khoản sẽ được đối chiếu sau khi hệ thống ghi nhận đơn.</div>
+              </span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="ewallet">
+              <span>
+                <div class="payment-title">Ví điện tử</div>
+                <div class="payment-desc">Dùng cho ví điện tử hoặc cổng thanh toán tích hợp ở bước xác nhận tiếp theo.</div>
+              </span>
+            </label>
+          </div>
+          <div class="payment-extra is-hidden" data-bank-transfer-extra>
+            <div class="payment-title">Thông tin đối chiếu chuyển khoản</div>
+            <div class="payment-desc">Tải biên lai để admin đối chiếu nhanh và xác nhận đơn chuyển khoản.</div>
+            <div class="form-group" style="margin-top:12px;">
+              <label>Mã giao dịch</label>
+              <input type="text" name="transfer_code" value="${initialTransferCode}" placeholder="VD: MB123456789 hoặc QR-2026-001">
+            </div>
+            <div class="form-group" style="margin-top:12px;">
+              <label>Ảnh biên lai chuyển khoản</label>
+              <input type="file" name="transfer_receipt" accept="image/*">
+              <div class="top-sub">${hasTransferReceipt ? "Đã có biên lai được chọn trong lần gửi trước. Bạn có thể tải lại nếu muốn thay." : "Chấp nhận ảnh chụp màn hình, mã QR hoặc biên lai internet banking."}</div>
+            </div>
+          </div>
+        `;
+        const paymentGrid = paymentSection.querySelector(".payment-grid");
+        const transferExtra = paymentSection.querySelector("[data-bank-transfer-extra]");
+        if (paymentGrid && !paymentGrid.querySelector('input[value="momo"]')) {
+          const momoOption = document.createElement("label");
+          momoOption.className = "payment-option";
+          momoOption.innerHTML = `
+            <input type="radio" name="payment_method" value="momo">
+            <span>
+              <div class="payment-title">Ví MoMo</div>
+              <div class="payment-desc">Chọn MoMo để thanh toán qua ví MoMo và xác nhận ở bước thanh toán tiếp theo.</div>
+            </span>
+          `;
+          paymentGrid.insertBefore(momoOption, paymentGrid.querySelector('input[value="ewallet"]')?.closest(".payment-option") || null);
+        }
+        const selectedRadio = paymentSection.querySelector(`input[value="${selectedMethod || "cod"}"]`) || paymentSection.querySelector('input[value="cod"]');
+        if (selectedRadio) selectedRadio.checked = true;
+        const syncPaymentExtra = function () {
+          const checked = paymentSection.querySelector('input[name="payment_method"]:checked');
+          if (!transferExtra) return;
+          transferExtra.classList.toggle("is-hidden", !(checked && checked.value === "bank_transfer"));
+        };
+        paymentSection.querySelectorAll('input[name="payment_method"]').forEach((input) => {
+          input.addEventListener("change", syncPaymentExtra);
+        });
+        syncPaymentExtra();
+        if (noteGroup) {
+          noteGroup.parentNode.insertBefore(paymentSection, noteGroup);
+        } else if (submitBtn) {
+          submitBtn.parentNode.insertBefore(paymentSection, submitBtn);
+        } else {
+          checkoutForm.appendChild(paymentSection);
+        }
+      }
+
+    })();
+  </script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+    const map = L.map('map').setView([10.762622, 106.660172], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+         attribution: '&copy; OpenStreetMap'
+       }).addTo(map);
+
+      let marker;
+      const addressInput = document.querySelector('input[name="address"]');
+
+      async function fetchJSON(url) {
+        const res = await fetch(url, { credentials: "same-origin" });
+        const data = await res.json().catch(() => null);
+        if (!res.ok) {
+          const msg = data && (data.error || data.message) ? (data.error || data.message) : `HTTP ${res.status}`;
+          throw new Error(msg);
+        }
+        return data;
+      }
+
+      async function refreshShippingPreview() {
+        const lat = document.getElementById("lat").value;
+        const lng = document.getElementById("lng").value;
+        const statusEl = document.getElementById("shipping-preview-status");
+        const voucherInput = document.querySelector('input[name="voucher_code"]');
+
+        if (!lat || !lng) {
+          if (statusEl) statusEl.innerText = "";
+          return;
+        }
+
+        if (statusEl) statusEl.innerText = "Đang cập nhật phí ship...";
+
+        try {
+          const params = new URLSearchParams({
+            delivery_lat: lat,
+            delivery_lng: lng,
+          });
+          const voucherCode = (voucherInput?.value || "").trim();
+          if (voucherCode) params.set("voucher_code", voucherCode);
+
+          const data = await fetchJSON(`/api/checkout/shipping-preview/?${params.toString()}`);
+          if (!data || !data.ok) {
+            throw new Error(data && data.error ? data.error : "Không thể tính phí ship.");
+          }
+
+          (data.store_groups || []).forEach((group) => {
+            const container = document.querySelector(`[data-store-group-id="${group.store_id}"]`);
+            if (!container) return;
+
+            const distanceLine = container.querySelector("[data-store-distance-line]");
+            if (distanceLine) {
+              distanceLine.innerHTML = `Khoảng cách: ${group.distance_label} | Phí ship: <span data-store-shipping-fee>${group.display_shipping_fee}</span>`;
+            }
+
+            container.querySelectorAll("[data-store-shipping-fee]").forEach((el) => {
+              el.textContent = group.display_shipping_fee;
+            });
+
+            const discountEl = container.querySelector("[data-store-discount-amount]");
+            if (discountEl) discountEl.textContent = `-${group.display_discount_amount}`;
+
+            const finalEl = container.querySelector("[data-store-final-amount]");
+            if (finalEl) finalEl.textContent = group.display_final_amount;
+          });
+
+          const discountTotalEl = document.getElementById("checkout-discount-amount");
+          const shippingTotalEl = document.getElementById("checkout-shipping-total");
+          const finalAmountEl = document.getElementById("checkout-final-amount");
+          if (discountTotalEl) discountTotalEl.textContent = `-${data.display_discount_amount}`;
+          if (shippingTotalEl) shippingTotalEl.textContent = data.display_shipping_total;
+          if (finalAmountEl) finalAmountEl.textContent = data.display_final_amount;
+
+          if (statusEl) statusEl.innerText = "Đã cập nhật phí ship.";
+        } catch (e) {
+          if (statusEl) {
+            statusEl.innerText = `Không cập nhật được phí ship. ${e && e.message ? e.message : ""}`.trim();
+          }
+        }
+      }
+
+      function setDeliveryCoord(lat, lng, message) {
+        document.getElementById("lat").value = lat;
+        document.getElementById("lng").value = lng;
+        map.setView([lat, lng], 15);
+        if (marker) {
+          marker.setLatLng([lat, lng]);
+        } else {
+          marker = L.marker([lat, lng]).addTo(map);
+        }
+        document.getElementById("delivery-coord-status").innerText = message || "Đã ghim vị trí theo địa chỉ.";
+        refreshShippingPreview();
+      }
+
+      async function geocodeAndPin() {
+        if (!addressInput) return;
+        const q = (addressInput.value || "").trim();
+        if (q.length < 3) {
+          document.getElementById("delivery-coord-status").innerText =
+            "Vui lòng nhập địa chỉ (ít nhất 3 ký tự) rồi nhấn Enter.";
+          return;
+        }
+
+        document.getElementById("delivery-coord-status").innerText = "Đang tìm vị trí theo địa chỉ...";
+        try {
+          const g = await fetchJSON(`/api/geocode-address/?q=${encodeURIComponent(q)}&limit=1`);
+          const loc = g && Array.isArray(g.results) ? g.results[0] : null;
+          if (!loc || loc.lat == null || loc.lon == null) {
+            document.getElementById("delivery-coord-status").innerText =
+              "Không tìm thấy vị trí phù hợp. Hãy thử nhập rõ hơn (số nhà, đường, quận, TP).";
+            return;
+          }
+          setDeliveryCoord(loc.lat, loc.lon, `Đã ghim theo địa chỉ: ${loc.display_name || q}`);
+        } catch (e) {
+          document.getElementById("delivery-coord-status").innerText =
+            `Không tìm được vị trí theo địa chỉ. (${e && e.message ? e.message : "Lỗi"})`;
+        }
+      }
+
+      // click map
+       map.on('click', function(e) {
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    document.getElementById("lat").value = lat;
+    document.getElementById("lng").value = lng;
+
+    if (marker) {
+        marker.setLatLng(e.latlng);
+    } else {
+        marker = L.marker(e.latlng).addTo(map);
+      }
+
+     document.getElementById("delivery-coord-status").innerText =
+      "Đã chọn vị trí trên bản đồ";
+     refreshShippingPreview();
+      });
+
+        // GPS
+        function getLocation() {
+        navigator.geolocation.getCurrentPosition((pos) => {
+         const lat = pos.coords.latitude;
+         const lng = pos.coords.longitude;
+
+        document.getElementById("lat").value = lat;
+        document.getElementById("lng").value = lng;
+
+        map.setView([lat, lng], 15);
+
+        if (marker) {
+        marker.setLatLng([lat, lng]);
+        } else {
+        marker = L.marker([lat, lng]).addTo(map);
+        }
+
+      document.getElementById("delivery-coord-status").innerText =
+      "Đã lấy vị trí GPS";
+      refreshShippingPreview();
+     });
+     }
+
+      // Enter ở ô địa chỉ → geocode + ghim tọa độ
+      if (addressInput) {
+        addressInput.addEventListener("keydown", function (e) {
+          if (e.key !== "Enter") return;
+          e.preventDefault();
+          geocodeAndPin();
+        });
+      }
+
+      // chặn submit nếu chưa chọn, nhưng vẫn cho phép preview voucher
+    document.querySelector("main form").addEventListener("submit", function (e) {
+      const submitter = e.submitter;
+      const isVoucherPreview = submitter && submitter.name === "preview_voucher";
+      if (isVoucherPreview) {
+        return;
+      }
+
+      const lat = document.getElementById("lat").value;
+      const lng = document.getElementById("lng").value;
+
+      if (!lat || !lng) {
+        e.preventDefault();
+        alert("Vui lòng chọn vị trí giao hàng!");
+      }
+    });
+
+      if (document.getElementById("lat").value && document.getElementById("lng").value) {
+        refreshShippingPreview();
+      }
+  </script>
+</body>
+</html>

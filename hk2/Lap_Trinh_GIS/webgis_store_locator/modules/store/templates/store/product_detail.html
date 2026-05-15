@@ -1,0 +1,796 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ product.ten }} | {{ t.products_page|default:"Sản phẩm" }}</title>
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+  <style>
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1100px 420px at 10% -10%, rgba(197, 245, 234, .42) 0%, transparent 55%),
+        radial-gradient(900px 340px at 92% 0%, rgba(255, 232, 213, .36) 0%, transparent 58%),
+        linear-gradient(160deg, #f8fafb, #f1f6f4);
+    }
+    .site-shell { min-height: 100vh; }
+    .site-header {
+      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 10px 28px rgba(8, 47, 44, 0.18);
+    }
+    .site-header .wrap {
+      max-width: 1320px;
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: #fff;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo span { color: #ffd7a8; }
+    .site-nav { display: flex; gap: 28px; }
+    .site-nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btnFind, .btnWhite {
+      width: 140px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .btnFind {
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(249, 115, 22, .28);
+    }
+    .btnWhite {
+      width: 112px;
+      background: rgba(255,255,255,.92);
+      color: #123545;
+      border: 1px solid rgba(255,255,255,.45);
+    }
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+    .detail-panel {
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(12px);
+    }
+    .page-kicker {
+      margin: 0;
+      color: #6b7280;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 800;
+    }
+    .page-title {
+      margin: 6px 0 0;
+      color: #1f2937;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 34px;
+      line-height: 1.15;
+    }
+    .page-subtitle {
+      margin: 8px 0 0;
+      color: #667085;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(320px, .95fr) minmax(0, 1.05fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .gallery-stack {
+      display: grid;
+      gap: 14px;
+    }
+    .product-image {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 24px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      background: #fff;
+    }
+    .thumb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+      gap: 12px;
+    }
+    .thumb-btn {
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      background: rgba(255,255,255,.9);
+      border-radius: 18px;
+      padding: 6px;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .thumb-btn:hover,
+    .thumb-btn.is-active {
+      transform: translateY(-1px);
+      border-color: rgba(20,184,166,.55);
+      box-shadow: 0 12px 28px rgba(20,184,166,.16);
+    }
+    .thumb-btn img {
+      width: 100%;
+      height: 84px;
+      object-fit: cover;
+      display: block;
+      border-radius: 14px;
+      background: #fff;
+    }
+    .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: rgba(20,184,166,.1);
+      color: #0f766e;
+      font-weight: 800;
+      border: 1px solid rgba(20,184,166,.16);
+    }
+    .price {
+      font-size: 34px;
+      font-weight: 900;
+      color: #0f766e;
+      margin: 10px 0 6px;
+    }
+    .stock-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 8px 0 14px;
+    }
+    .stock-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 16px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 14px;
+      border: 1px solid transparent;
+    }
+    .stock-badge.in-stock {
+      background: rgba(16,185,129,.12);
+      color: #047857;
+      border-color: rgba(16,185,129,.24);
+    }
+    .stock-badge.out-stock {
+      background: rgba(239,68,68,.1);
+      color: #b91c1c;
+      border-color: rgba(239,68,68,.2);
+    }
+    .stock-hint {
+      color: #5b6472;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .desc {
+      color: #5b6472;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 0;
+    }
+    .detail-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(15,23,42,.08);
+    }
+    .detail-item .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #5b6472;
+      margin-bottom: 6px;
+    }
+    .detail-item .value {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1f2937;
+    }
+    .branch-stock-panel {
+      margin-top: 4px;
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(248, 250, 252, .9);
+      border: 1px solid rgba(15, 23, 42, .08);
+    }
+    .branch-stock-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .branch-stock-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+    .branch-stock-sub {
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .branch-stock-list {
+      display: grid;
+      gap: 10px;
+    }
+    .branch-stock-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(148, 163, 184, .18);
+    }
+    .branch-stock-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: #1f2937;
+    }
+    .branch-stock-meta {
+      margin-top: 4px;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .branch-stock-qty {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 92px;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 14px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .branch-stock-qty.in-stock {
+      background: rgba(16,185,129,.12);
+      color: #047857;
+      border-color: rgba(16,185,129,.24);
+    }
+    .branch-stock-qty.out-stock {
+      background: rgba(239,68,68,.1);
+      color: #b91c1c;
+      border-color: rgba(239,68,68,.2);
+    }
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 0;
+    }
+    .actions form { margin: 0; }
+    .cta-btn {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .cta-btn:hover {
+      transform: translateY(-1px);
+    }
+    .cta-primary {
+      color: #fff;
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      box-shadow: 0 14px 28px rgba(20,184,166,.24);
+    }
+    .cta-secondary {
+      color: #123545;
+      background: #e2e8f0;
+      border-color: rgba(148, 163, 184, .3);
+    }
+    .cta-btn[disabled] {
+      opacity: .6;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    .cta-btn.is-out-stock {
+      background: linear-gradient(180deg, #e5e7eb, #d1d5db);
+      color: #6b7280;
+      border-color: rgba(148, 163, 184, .35);
+      box-shadow: none;
+    }
+    .cta-btn.is-out-stock[disabled] {
+      opacity: 1;
+    }
+    .hero-summary {
+      display: grid;
+      gap: 18px;
+      padding: 20px 22px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(245,250,249,.88));
+      border: 1px solid rgba(148, 163, 184, .14);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, .06);
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .related-card {
+      text-decoration: none;
+      color: inherit;
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(15,23,42,.08);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(17, 24, 39, 0.08);
+    }
+    .related-card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+    }
+    .related-card .body {
+      padding: 14px;
+    }
+    .site-footer {
+      margin-top: 20px;
+      background: #0f172a;
+      color: #cbd5f5;
+    }
+    .site-footer .container {
+      width: min(100%, 1320px);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .newsletter-section {
+      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+      padding: 24px 0;
+    }
+    .newsletter-content {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .newsletter-content h3 {
+      margin: 0;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+    .newsletter-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .newsletter-form input {
+      min-width: 280px;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: #fff;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .newsletter-form button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .footer-info { padding: 34px 0; }
+    .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 24px; }
+    .footer-col h4 { margin: 0 0 12px; font-size: 16px; color: #fff; font-weight: 900; }
+    .footer-col p, .footer-col li, .footer-col a { color: #cbd5f5; font-size: 14px; line-height: 1.6; }
+    .footer-col ul { margin: 0; padding: 0; list-style: none; }
+    .footer-col li + li { margin-top: 8px; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid rgba(203, 213, 245, 0.2); padding: 14px 0; text-align: center; }
+    .footer-bottom p { margin: 0; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .actions { grid-template-columns: 1fr; }
+      .site-nav { gap: 16px; }
+      .product-image { height: 320px; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="site-shell">
+    {% include 'shared/navbar.html' %}
+
+    <main class="page-wrap">
+      <section class="detail-panel">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px;">
+          <div>
+            <p class="page-kicker">{{ t.products_page|default:"Sản phẩm" }}</p>
+            <h1 class="page-title">{{ product.ten }}</h1>
+            <p class="page-subtitle">Chi tiết sản phẩm, ảnh trưng bày và thông tin mua hàng.</p>
+          </div>
+          <a class="btnWhite" href="{% url 'store:product_catalog' %}">Quay lại danh mục</a>
+        </div>
+
+        <div class="hero">
+          <div class="gallery-stack" data-product-gallery data-autoplay-ms="5000">
+            {% if gallery_images %}
+              <img
+                class="product-image"
+                id="productMainImage"
+                data-gallery-main
+                src="{{ gallery_images.0.url }}"
+                alt="{{ gallery_images.0.alt }}"
+              >
+              {% if gallery_images|length > 1 %}
+                <div class="thumb-grid">
+                  {% for image in gallery_images %}
+                    <button
+                      class="thumb-btn{% if forloop.first %} is-active{% endif %}"
+                      type="button"
+                      data-gallery-thumb
+                      data-image-url="{{ image.url }}"
+                      data-image-alt="{{ image.alt }}"
+                      aria-label="{{ image.caption|default:image.alt }}"
+                    >
+                      <img src="{{ image.url }}" alt="{{ image.alt }}">
+                    </button>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% else %}
+              <div class="detail-panel" style="height:420px;display:grid;place-items:center;">Chưa có ảnh sản phẩm</div>
+            {% endif %}
+          </div>
+
+          <div class="hero-content">
+            <div class="meta">
+              <span class="pill">{{ product.nhom_san_pham|default:"Sản phẩm tiện lợi" }}</span>
+              <span class="pill">{{ product.thuong_hieu|default:"Thương hiệu" }}</span>
+            </div>
+            <div class="hero-summary">
+              <div class="price">{{ product.display_price }}</div>
+              <p class="desc">
+                {{ product.ten }} là lựa chọn phù hợp cho nhu cầu mua nhanh tại cửa hàng tiện lợi.
+                Bạn có thể xem ảnh sản phẩm, thông tin cơ bản và thêm trực tiếp vào giỏ hàng ngay tại đây.
+              </p>
+
+              {% if branch_stock %}
+                <div class="branch-stock-panel">
+                  <div class="branch-stock-header">
+                    <div class="branch-stock-title">Tồn kho theo từng chi nhánh</div>
+                    <div class="branch-stock-sub">Có hàng tại {{ product.available_store_count }}/{{ branch_stock|length }} cửa hàng</div>
+                  </div>
+
+                  {{ branch_stock_search|json_script:"branch-stock-search-data" }}
+
+                  <div style="display:grid;gap:10px;margin-top:12px;">
+                    <div style="display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center;">
+                      <input
+                        id="branch-store-search"
+                        type="text"
+                        placeholder="Nhập tên/địa chỉ cửa hàng..."
+                        style="width:100%;padding:12px 14px;border-radius:14px;border:1px solid rgba(148,163,184,.3);font-weight:700;background:#fff;"
+                      >
+                      <button
+                        id="branch-store-search-btn"
+                        type="button"
+                        class="cta-btn cta-secondary"
+                        style="padding:12px 14px;border-radius:14px;"
+                      >
+                        Tìm
+                      </button>
+                    </div>
+
+                    <div id="branch-store-search-results" style="display:none;"></div>
+                  </div>
+
+                  <div class="branch-stock-list">
+                    {% if branch_stock_featured %}
+                      {% for item in branch_stock_featured %}
+                        <div class="branch-stock-item">
+                          <div>
+                            <div class="branch-stock-name">{{ item.store_name }}</div>
+                            <div class="branch-stock-meta">
+                              {{ item.chain_name }}{% if item.district %} · {{ item.district }}{% endif %}<br>
+                              {{ item.address }}
+                            </div>
+                          </div>
+                          <span class="branch-stock-qty {% if item.is_out %}out-stock{% else %}in-stock{% endif %}">
+                            {{ item.stock_label }}
+                          </span>
+                        </div>
+                      {% endfor %}
+                    {% else %}
+                      <div style="padding:12px 14px;border-radius:14px;border:1px dashed rgba(148,163,184,.35);background:rgba(255,255,255,.6);font-weight:800;color:#64748b;">
+                        Hiện chưa có cửa hàng còn hàng.
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <div class="label">Nhà cung cấp</div>
+                  <div class="value">{{ product.nha_cung_cap|default:"-" }}</div>
+                </div>
+                <div class="detail-item">
+                  <div class="label">Mã sản phẩm</div>
+                  <div class="value">SP-{{ product.pk }}</div>
+                </div>
+                <div class="detail-item">
+                  <div class="label">Tồn kho tổng</div>
+                  <div class="value">
+                    {% if total_store_stock > 0 %}{{ total_store_stock }} sản phẩm{% else %}Hết hàng{% endif %}
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <div class="label">Thương hiệu</div>
+                  <div class="value">{{ product.thuong_hieu|default:"-" }}</div>
+                </div>
+              </div>
+              
+              <div class="actions">
+                {% if not branch_stock %}
+                  <button class="cta-btn cta-secondary is-out-stock" type="button" disabled>Hết hàng</button>
+                {% else %}
+                  <div style="display:grid;gap:10px;width:100%;margin-bottom:12px;grid-column:1/-1;">
+                    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start;">
+                      <div style="grid-column:1/-1;font-size:13px;font-weight:800;color:#475569;">
+                        Chọn chi nhánh mua hàng
+                      </div>
+
+                      <select id="selected-store"
+                        style="width:100%;height:52px;padding:0 16px;border-radius:16px;border:1px solid rgba(148,163,184,.3);font-weight:700;background:#fff;">
+                        {% for stock in branch_stock %}
+                          <option value="{{ stock.store.pk }}"
+                            {% if selected_store_id == stock.store.pk %}selected{% elif not selected_store_id and forloop.first %}selected{% endif %}>
+                            {{ stock.store.ten }}{% if stock.store.chuoi %} - {{ stock.store.chuoi.ten }}{% endif %} |{{ stock.stock_label }}
+                          </option>
+                        {% endfor %}
+                      </select>
+
+                      <form method="post" action="{% url 'store:cart_add' product.pk %}" style="margin:0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="store_id" value="{% if selected_store_id %}{{ selected_store_id }}{% else %}{{ branch_stock.0.store.pk }}{% endif %}">
+                        <input type="hidden" name="next" value="{% url 'store:product_detail' product.pk %}">
+                        <button class="cta-btn cta-secondary" type="submit" style="width:100%;height:52px;border-radius:16px;">
+                          {{ t.add_to_cart|default:"Thêm vào giỏ" }}
+                        </button>
+                      </form>
+
+                      <form method="post" action="{% url 'store:cart_add' product.pk %}" style="margin:0;grid-column:1/-1;">
+                        {% csrf_token %}
+                        <input type="hidden" name="store_id" value="{% if selected_store_id %}{{ selected_store_id }}{% else %}{{ branch_stock.0.store.pk }}{% endif %}">
+                        <input type="hidden" name="next" value="{% url 'store:checkout' %}">
+                        <button class="cta-btn cta-primary" type="submit" style="width:100%;border-radius:16px;">
+                          {{ t.buy_now|default:"Mua ngay" }}
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {% if related_products %}
+        <section class="detail-panel" style="margin-top:20px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+            <div>
+              <h2 style="margin:0;font-size:28px;">Sản phẩm liên quan</h2>
+              <div class="page-subtitle" style="margin-top:6px;">Một vài gợi ý khác bạn có thể quan tâm.</div>
+            </div>
+          </div>
+          <div class="related-grid">
+            {% for item in related_products %}
+              <a class="related-card" href="{% url 'store:product_detail' item.pk %}">
+                {% if item.hinh_anh %}
+                  <img src="{{ item.hinh_anh.url }}" alt="{{ item.ten }}">
+                {% endif %}
+                <div class="body">
+                  <div style="font-weight:800;font-size:20px;line-height:1.35;">{{ item.ten }}</div>
+                  <div class="top-sub" style="margin-top:6px;">{{ item.nhom_san_pham|default:"-" }} | {{ item.thuong_hieu|default:"-" }}</div>
+                  <div style="margin-top:10px;color:#0f766e;font-weight:900;">{{ item.display_price }}</div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    </main>
+
+    {% include 'shared/footer.html' %}
+  </div>
+
+  <script src="/static/store/js/product_gallery.js"></script>
+  <script>
+    (function () {
+      const storeSelect = document.getElementById("selected-store");
+      const storeSearch = document.getElementById("branch-store-search");
+      const storeSearchBtn = document.getElementById("branch-store-search-btn");
+      const storeSearchResults = document.getElementById("branch-store-search-results");
+      const storeSearchDataEl = document.getElementById("branch-stock-search-data");
+      let storeSearchData = [];
+
+      if (storeSearchDataEl) {
+        try {
+          storeSearchData = JSON.parse(storeSearchDataEl.textContent || "[]") || [];
+        } catch (e) {
+          storeSearchData = [];
+        }
+      }
+
+      function syncStore() {
+        if (!storeSelect) return;
+        const storeId = storeSelect.value || "";
+        document.querySelectorAll('input[name="store_id"]').forEach((input) => {
+            input.value = storeId;
+        });
+      }
+
+      function renderSearchResults(matches) {
+        if (!storeSearchResults) return;
+        if (!matches.length) {
+          storeSearchResults.style.display = "none";
+          storeSearchResults.innerHTML = "";
+          return;
+        }
+        storeSearchResults.style.display = "grid";
+        storeSearchResults.style.gap = "8px";
+        storeSearchResults.style.padding = "10px";
+        storeSearchResults.style.border = "1px solid rgba(148,163,184,.22)";
+        storeSearchResults.style.borderRadius = "14px";
+        storeSearchResults.style.background = "rgba(255,255,255,.9)";
+
+        storeSearchResults.innerHTML = matches
+          .map((m) => {
+            return (
+              '<div style="text-align:left;border:1px solid rgba(148,163,184,.22);background:#fff;border-radius:14px;padding:10px 12px;font-weight:800;color:#0f172a;">' +
+              '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">' +
+              '<div style="min-width:0;">' +
+              '<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + m.title + '</div>' +
+              '<div style="margin-top:2px;font-weight:700;color:#64748b;font-size:12px;">' + m.subtitle + '</div>' +
+              '</div>' +
+              '<span style="flex:0 0 auto;font-weight:900;font-size:12px;padding:6px 10px;border-radius:999px;' +
+                (m.isOut ? 'background:rgba(239,68,68,.1);color:#b91c1c;border:1px solid rgba(239,68,68,.2);' : 'background:rgba(16,185,129,.12);color:#047857;border:1px solid rgba(16,185,129,.24);') +
+              '">' + m.stock + '</span>' +
+              '</div>' +
+              '</div>'
+            );
+          })
+          .join("");
+      }
+
+      function runSearch() {
+        if (!storeSearch) return;
+        const q = (storeSearch.value || "").trim().toLowerCase();
+        if (!q) {
+          renderSearchResults([]);
+          return;
+        }
+        if (!storeSearchResults) return;
+
+        const matches = [];
+        for (const item of storeSearchData) {
+          const haystack = (
+            (item.store_name || "") +
+            " " +
+            (item.chain_name || "") +
+            " " +
+            (item.district || "") +
+            " " +
+            (item.address || "")
+          )
+            .trim()
+            .toLowerCase();
+          if (!haystack.includes(q)) continue;
+
+          const title = (item.store_name || "").trim() + (item.chain_name ? " - " + item.chain_name : "");
+          const subtitleParts = [];
+          if (item.district) subtitleParts.push(item.district);
+          if (item.address) subtitleParts.push(item.address);
+          const subtitle = subtitleParts.join(" · ");
+
+          matches.push({
+            title: title || "-",
+            subtitle: subtitle || "",
+            stock: (item.stock_label || "").trim(),
+            isOut: !!item.is_out,
+          });
+          if (matches.length >= 8) break;
+        }
+
+        if (!matches.length) {
+          storeSearchResults.style.display = "block";
+          storeSearchResults.style.padding = "10px 12px";
+          storeSearchResults.style.border = "1px dashed rgba(148,163,184,.35)";
+          storeSearchResults.style.borderRadius = "14px";
+          storeSearchResults.style.background = "rgba(255,255,255,.6)";
+          storeSearchResults.innerHTML =
+            '<div style="font-weight:800;color:#64748b;">Không tìm thấy cửa hàng phù hợp.</div>';
+          return;
+        }
+
+        renderSearchResults(matches);
+      }
+
+      if (storeSelect) storeSelect.addEventListener("change", syncStore);
+      if (storeSearch) storeSearch.addEventListener("input", runSearch);
+      if (storeSearchBtn) storeSearchBtn.addEventListener("click", runSearch);
+      syncStore();
+    })();
+  </script>
+</body>
+</html>

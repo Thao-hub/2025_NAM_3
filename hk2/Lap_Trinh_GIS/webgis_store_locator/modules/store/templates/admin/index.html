@@ -1,0 +1,526 @@
+{% extends "admin/base.html" %}
+{% block title %}Tổng quan{% endblock %}
+{% block page_title %}Tổng quan dữ liệu{% endblock %}
+{% block content %}
+  <style>
+    .dashboard-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .dashboard-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .kpi-card {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,250,252,.92));
+      border: 1px solid rgba(148, 163, 184, .14);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, .06);
+    }
+    .kpi-label {
+      margin: 0 0 10px;
+      color: #64748b;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 800;
+    }
+    .kpi-value {
+      margin: 0;
+      color: #102a43;
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+    .kpi-sub {
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.55;
+    }
+    .chart-panel {
+      padding: 22px;
+      border-radius: 28px;
+      background:
+        radial-gradient(280px 180px at 100% 0%, rgba(253, 186, 116, .18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.98), rgba(244,252,250,.94));
+      border: 1px solid rgba(148, 163, 184, .14);
+      box-shadow: 0 20px 44px rgba(15, 23, 42, .08);
+    }
+    .chart-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .chart-sub {
+      color: #64748b;
+      line-height: 1.6;
+    }
+    .chart-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .line-chart-card {
+      padding: 16px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(148, 163, 184, .14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+    }
+    .line-chart-box {
+      position: relative;
+      min-height: 270px;
+    }
+    .line-chart-box svg {
+      display: block;
+      width: 100%;
+      height: 270px;
+    }
+    .line-grid-line {
+      stroke: rgba(148, 163, 184, .22);
+      stroke-width: 1;
+      stroke-dasharray: 4 6;
+    }
+    .line-axis {
+      stroke: rgba(148, 163, 184, .28);
+      stroke-width: 1.25;
+    }
+    .chart-bar {
+      fill: url(#revenue-bar-gradient);
+      opacity: .96;
+      filter: drop-shadow(0 10px 12px rgba(220, 38, 38, .12));
+    }
+    .chart-bar-cap {
+      fill: rgba(255,255,255,.22);
+    }
+    .line-orders {
+      fill: none;
+      stroke: #2563eb;
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .line-point-orders {
+      fill: #2563eb;
+      stroke: rgba(255,255,255,.95);
+      stroke-width: 2;
+    }
+    .axis-label-left,
+    .axis-label-right {
+      fill: #64748b;
+      font-size: 2.8px;
+      font-weight: 700;
+    }
+    .axis-label-left {
+      text-anchor: end;
+    }
+    .axis-label-right {
+      text-anchor: start;
+    }
+    .chart-float-tag {
+      fill: #102a43;
+      font-size: 3px;
+      font-weight: 800;
+    }
+    .chart-float-pill {
+      fill: rgba(255,255,255,.92);
+      stroke: rgba(148, 163, 184, .18);
+      stroke-width: .35;
+    }
+    .trend-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .trend-day {
+      padding: 10px 8px;
+      border-radius: 18px;
+      background: rgba(248,250,252,.85);
+      border: 1px solid rgba(148, 163, 184, .12);
+      text-align: center;
+    }
+    .trend-label {
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .trend-meta {
+      margin-top: 6px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .trend-meta strong {
+      color: #102a43;
+      font-size: 13px;
+    }
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #475569;
+      font-weight: 700;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+    }
+    .legend-line {
+      width: 18px;
+      height: 0;
+      border-top: 3px solid #2563eb;
+      border-radius: 999px;
+    }
+    .dashboard-side {
+      display: grid;
+      gap: 14px;
+    }
+    .payment-visual {
+      display: grid;
+      grid-template-columns: 140px minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      margin-top: 16px;
+    }
+    .payment-donut {
+      width: 140px;
+      height: 140px;
+      border-radius: 999px;
+      position: relative;
+      background: #e2e8f0;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, .12);
+    }
+    .payment-donut::after {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.97);
+      box-shadow: inset 0 0 0 1px rgba(226, 232, 240, .9);
+    }
+    .payment-donut-center {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #0f172a;
+      font-weight: 900;
+    }
+    .payment-donut-center span {
+      display: block;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .mix-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(148, 163, 184, .14);
+    }
+    .mix-row-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .mix-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+    .mix-copy {
+      min-width: 0;
+    }
+    .mix-percent {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .mix-row strong {
+      display: block;
+      color: #102a43;
+      font-size: 17px;
+    }
+    .mini-highlight {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(15,118,110,.1), rgba(249,115,22,.08));
+      border: 1px solid rgba(15,118,110,.12);
+    }
+    .dashboard-section {
+      margin-top: 16px;
+    }
+    @media (max-width: 1180px) {
+      .dashboard-hero {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 720px) {
+      .dashboard-kpis {
+        grid-template-columns: 1fr;
+      }
+      .trend-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .payment-visual {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+    }
+  </style>
+
+  <section class="dashboard-hero">
+    <div class="chart-panel">
+      <div class="chart-head">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:28px;">Doanh thu và đơn hàng 7 ngày</h2>
+          <div class="chart-sub">Theo dõi nhịp vận hành gần nhất để ưu tiên xử lý đơn, thanh toán và tồn kho.</div>
+        </div>
+        <div class="chart-actions">
+          <a class="btn btn-light" href="{% url 'store:admin_dashboard_export_revenue' %}">Xuất doanh thu</a>
+          <a class="btn btn-primary" href="{% url 'store:admin_list' 'don-hang' %}">Mở danh sách đơn hàng</a>
+        </div>
+      </div>
+
+      <div class="line-chart-card">
+        <div class="line-chart-box">
+          <svg viewBox="0 0 100 100" role="img" aria-label="Biểu đồ doanh thu cột và số đơn đường trong 7 ngày">
+            <defs>
+              <linearGradient id="revenue-bar-gradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#fda4af"></stop>
+                <stop offset="45%" stop-color="#ef4444"></stop>
+                <stop offset="100%" stop-color="#b91c1c"></stop>
+              </linearGradient>
+            </defs>
+            {% for tick in dashboard_chart_meta.revenue_axis_ticks %}
+              <text class="axis-label-left" x="{{ dashboard_chart_meta.chart_left|add:'-1.6' }}" y="{{ tick.y|add:'1' }}">{{ tick.label }}</text>
+            {% endfor %}
+            {% for tick in dashboard_chart_meta.order_axis_ticks %}
+              <text class="axis-label-right" x="{{ dashboard_chart_meta.chart_right|add:'1.6' }}" y="{{ tick.y|add:'1' }}">{{ tick.label }}</text>
+            {% endfor %}
+            <line class="line-grid-line" x1="{{ dashboard_chart_meta.chart_left }}" y1="12" x2="{{ dashboard_chart_meta.chart_right }}" y2="12"></line>
+            <line class="line-grid-line" x1="{{ dashboard_chart_meta.chart_left }}" y1="37" x2="{{ dashboard_chart_meta.chart_right }}" y2="37"></line>
+            <line class="line-grid-line" x1="{{ dashboard_chart_meta.chart_left }}" y1="62" x2="{{ dashboard_chart_meta.chart_right }}" y2="62"></line>
+            <line class="line-axis" x1="{{ dashboard_chart_meta.chart_left }}" y1="{{ dashboard_chart_meta.chart_bottom }}" x2="{{ dashboard_chart_meta.chart_right }}" y2="{{ dashboard_chart_meta.chart_bottom }}"></line>
+            <line class="line-axis" x1="{{ dashboard_chart_meta.chart_left }}" y1="{{ dashboard_chart_meta.chart_top }}" x2="{{ dashboard_chart_meta.chart_left }}" y2="{{ dashboard_chart_meta.chart_bottom }}"></line>
+            <line class="line-axis" x1="{{ dashboard_chart_meta.chart_right }}" y1="{{ dashboard_chart_meta.chart_top }}" x2="{{ dashboard_chart_meta.chart_right }}" y2="{{ dashboard_chart_meta.chart_bottom }}"></line>
+            {% for item in seven_day_series %}
+              <rect class="chart-bar" x="{{ item.bar_x }}" y="{{ item.bar_y }}" width="7.6" height="{{ item.bar_height }}" rx="2.3"></rect>
+              {% if item.bar_height > 6 %}
+                <rect class="chart-bar-cap" x="{{ item.bar_x }}" y="{{ item.bar_y }}" width="7.6" height="2.1" rx="2.1"></rect>
+              {% endif %}
+            {% endfor %}
+            <polyline class="line-orders" points="{{ dashboard_chart_meta.order_line_points }}"></polyline>
+            {% for item in seven_day_series %}
+              <circle class="line-point-orders" cx="{{ item.chart_x }}" cy="{{ item.order_chart_y }}" r="1.9"></circle>
+              {% if item.order_count %}
+                <rect class="chart-float-pill" x="{{ item.order_badge_x }}" y="{{ item.order_badge_y }}" width="8" height="4.8" rx="2.2"></rect>
+                <text class="chart-float-tag" x="{{ item.chart_x }}" y="{{ item.order_badge_text_y }}" text-anchor="middle">{{ item.order_count }}</text>
+              {% endif %}
+            {% endfor %}
+          </svg>
+        </div>
+
+        <div class="trend-grid">
+          {% for item in seven_day_series %}
+            <div class="trend-day">
+              <div class="trend-label">{{ item.label }}</div>
+              <div class="trend-meta"><strong>{{ item.display_revenue }}</strong><br>{{ item.order_count }} đơn mới</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#dc2626;"></span>Cột doanh thu đã thanh toán</div>
+        <div class="legend-item"><span class="legend-line"></span>Đường số đơn tạo mới</div>
+        <div class="legend-item">Đỉnh doanh thu: {{ dashboard_chart_meta.max_revenue }}</div>
+        <div class="legend-item">Đỉnh số đơn: {{ dashboard_chart_meta.max_orders }}</div>
+      </div>
+    </div>
+
+    <div class="dashboard-side">
+      <article class="panel card">
+        <h2 style="margin:0 0 6px;font-size:24px;">Kênh thanh toán</h2>
+        <div class="top-sub">Phân bố phương thức thanh toán khách đang sử dụng.</div>
+        <div class="payment-visual">
+          <div class="payment-donut" style="background: {{ dashboard_chart_meta.payment_conic_gradient }};">
+            <div class="payment-donut-center">
+              <div>{{ dashboard_chart_meta.payment_total }}</div>
+              <span>Đơn thanh toán</span>
+            </div>
+          </div>
+          <div style="display:grid;gap:12px;">
+            {% for item in payment_mix %}
+              <div class="mix-row">
+                <div class="mix-row-meta">
+                  <span class="mix-dot" style="background: {{ item.color }};"></span>
+                  <div class="mix-copy">
+                    <strong>{{ item.label }}</strong>
+                    <div class="mix-percent">{{ item.percent }}%</div>
+                  </div>
+                </div>
+                <span class="chip chip-info">{{ item.value }} đơn</span>
+              </div>
+            {% empty %}
+              <div class="top-sub">{{ t.no_data|default:"Chưa có dữ liệu." }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </article>
+
+      <div class="mini-highlight">
+        <div class="kpi-label">Doanh thu hôm nay</div>
+        <div class="kpi-value" style="font-size:34px;">{{ dashboard_stats.today_revenue }}</div>
+        <div class="kpi-sub">Chỉ tính các đơn đã xác nhận thanh toán trong ngày hiện tại.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-kpis">
+    <article class="kpi-card">
+      <p class="kpi-label">Doanh thu đã thanh toán</p>
+      <p class="kpi-value">{{ dashboard_stats.paid_revenue }}</p>
+      <div class="kpi-sub">Tổng doanh thu từ các đơn đã xác nhận thanh toán.</div>
+    </article>
+    <article class="kpi-card">
+      <p class="kpi-label">Đơn hôm nay</p>
+      <p class="kpi-value">{{ dashboard_stats.today_orders }}</p>
+      <div class="kpi-sub">Số đơn mới phát sinh trong ngày hiện tại.</div>
+    </article>
+    <article class="kpi-card">
+      <p class="kpi-label">Chờ xử lý / chờ chuyển khoản</p>
+      <p class="kpi-value">{{ dashboard_stats.pending_orders }} / {{ dashboard_stats.awaiting_transfer_orders }}</p>
+      <div class="kpi-sub">Ưu tiên xác nhận đơn và đối chiếu các đơn chuyển khoản.</div>
+    </article>
+    <article class="kpi-card">
+      <p class="kpi-label">Sắp hết / hết hàng</p>
+      <p class="kpi-value">{{ dashboard_stats.low_stock_count }} / {{ dashboard_stats.out_stock_count }}</p>
+      <div class="kpi-sub">Theo dõi nhanh rủi ro thiếu hàng trên toàn hệ thống.</div>
+    </article>
+  </section>
+
+  <section class="grid dashboard-section">
+    <article class="panel card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:24px;">Đơn hàng gần đây</h2>
+          <div class="top-sub">Theo dõi nhanh đơn mới, cửa hàng xử lý và trạng thái thanh toán.</div>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px;">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Cửa hàng xử lý</th>
+              <th>Thanh toán</th>
+              <th>Tổng tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in recent_orders_dashboard %}
+              <tr>
+                <td>Mã đơn: {{ order.pk }}</td>
+                <td>
+                  <strong>{{ order.khach_hang.username }}</strong>
+                  <div class="top-sub">{{ order.get_trang_thai_display }} | {{ order.created_at|date:"d/m/Y H:i" }}</div>
+                </td>
+                <td>{{ order.cua_hang_xu_ly.ten|default:"-" }}</td>
+                <td>{{ order.get_trang_thai_thanh_toan_display }}</td>
+                <td>{{ order.display_total_amount }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5">{{ t.no_data|default:"Chưa có dữ liệu." }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:24px;">Cửa hàng nổi bật</h2>
+          <div class="top-sub">Xếp theo số đơn được xử lý và doanh thu đã thanh toán.</div>
+        </div>
+        <a class="btn btn-light" href="{% url 'store:admin_inventory_hub' %}">Xem kho theo cửa hàng</a>
+      </div>
+      <div class="table-wrap" style="margin-top:16px;">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Cửa hàng</th>
+              <th>Chuỗi</th>
+              <th>Đơn xử lý</th>
+              <th>Doanh thu</th>
+              <th>Tồn hiện có</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for store in store_leaderboard %}
+              <tr>
+                <td>{{ store.ten }}</td>
+                <td>{{ store.chuoi.ten }}</td>
+                <td>{{ store.total_orders }}</td>
+                <td>{{ store.display_total_revenue }}</td>
+                <td>{{ store.total_units }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5">{{ t.no_data|default:"Chưa có dữ liệu." }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <section class="grid dashboard-section">
+    <article class="panel card">
+      <h2 style="margin:0 0 6px;font-size:24px;">Module dữ liệu</h2>
+      <div class="top-sub">Điểm vào nhanh cho các nhóm dữ liệu nội bộ.</div>
+      <div style="display:grid;gap:12px;margin-top:16px;">
+        {% for module in modules %}
+          <div class="mix-row">
+            <div>
+              <strong>{{ module.name }}</strong>
+              <div class="top-sub">{{ module.count }} bản ghi</div>
+            </div>
+            <a class="btn btn-primary" href="{% url 'store:admin_list' module.slug %}">{{ t.manage_module|default:"Quản lý module" }}</a>
+          </div>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+{% endblock %}

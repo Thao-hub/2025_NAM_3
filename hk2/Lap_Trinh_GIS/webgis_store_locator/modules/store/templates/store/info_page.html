@@ -1,0 +1,630 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }} | Circle K & GS25</title>
+  <style>
+    :root {
+      --red: #e31c23;
+      --red2: #c3141a;
+      --yellow: #ffd100;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #dbe2ef;
+      --panel: #ffffff;
+      --bg: #edf2fb;
+      --border: #e0e7ff;
+      --container: 1320px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(227, 28, 35, 0.16), transparent 38%),
+        radial-gradient(circle at 88% 10%, rgba(255, 209, 0, 0.2), transparent 30%),
+        var(--bg);
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* Header giống trang chủ */
+    header {
+      background: linear-gradient(135deg, var(--red) 0%, var(--red2) 100%);
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 5000;
+      box-shadow: 0 6px 20px rgba(227, 28, 35, .25);
+    }
+    header .wrap {
+      width: 100%;
+      max-width: var(--container);
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: white;
+      line-height: 1;
+    }
+    .logo span { color: var(--yellow); }
+    nav {
+      display: flex;
+      gap: 32px;
+    }
+    nav a {
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+    nav a:hover {
+      color: var(--yellow);
+      transform: translateY(-1px);
+    }
+    .btnFind {
+      background: var(--yellow);
+      color: #111;
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-weight: 800;
+      box-shadow: 0 4px 16px rgba(255, 209, 0, .4);
+      transition: all 0.25s;
+    }
+    .btnFind:hover {
+      box-shadow: 0 8px 24px rgba(255, 209, 0, .5);
+    }
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 1000;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .btnWhite {
+      background: #fff;
+      color: #111827;
+      border: 1px solid var(--border);
+    }
+    .mini { padding: 6px 10px; border-radius: 999px; }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .header-actions .btnFind,
+    .header-actions .btnWhite {
+      width: 140px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1;
+    }
+    .header-actions .btnWhite {
+      width: 112px;
+      border-radius: 999px;
+    }
+
+    .hero {
+      width: min(1200px, 100%);
+      margin: 26px auto 0;
+      padding: 0 20px;
+    }
+    .hero-wrap {
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      background: var(--panel);
+      box-shadow: 0 28px 42px rgba(15, 23, 42, 0.14);
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      min-height: 320px;
+    }
+    .hero-copy {
+      padding: 34px 30px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+        linear-gradient(120deg, rgba(227, 28, 35, 0.09), rgba(13, 22, 51, 0.05));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .kicker {
+      display: inline-block;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 10px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4.2vw, 46px);
+      line-height: 1.1;
+      font-weight: 1000;
+      color: #0d1633;
+    }
+    .summary {
+      margin: 16px 0 0;
+      font-size: 18px;
+      line-height: 1.75;
+      color: #334155;
+      font-weight: 600;
+      max-width: 70ch;
+    }
+    .hero-media {
+      position: relative;
+      min-height: 280px;
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(13, 22, 51, 0.08), rgba(13, 22, 51, 0.42));
+    }
+
+    .content {
+      width: min(1200px, 100%);
+      margin: 22px auto 40px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+    .block {
+      grid-column: span 4;
+      background: var(--panel);
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 26px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .block-image {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+    }
+    .block-body {
+      padding: 20px;
+    }
+    .block h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.3;
+      color: #0b132b;
+    }
+    .block p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.72;
+      font-weight: 600;
+    }
+
+    .actions {
+      width: min(1200px, 100%);
+      margin: 0 auto 32px;
+      padding: 0 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .actions a {
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 11px 15px;
+      font-size: 14px;
+      font-weight: 900;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      background: #fff;
+    }
+    .actions a.primary {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+    }
+
+    /* News page */
+    .news-page {
+      width: min(1200px, 100%);
+      margin: 26px auto 34px;
+      padding: 0 20px;
+    }
+    .news-title {
+      margin: 0 0 18px;
+      color: #db291d;
+      font-size: clamp(30px, 4.8vw, 46px);
+      font-weight: 1000;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .news-featured {
+      background: #fff;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: 0 22px 36px rgba(15, 23, 42, 0.12);
+      display: grid;
+      grid-template-columns: 1.08fr 1fr;
+      margin-bottom: 22px;
+    }
+    .news-featured-media {
+      min-height: 330px;
+      background-size: cover;
+      background-position: center;
+    }
+    .news-featured-body {
+      padding: 28px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .news-badge {
+      display: inline-flex;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 6px 11px;
+      background: rgba(219, 41, 29, 0.12);
+      color: #b91c1c;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .news-featured h2 {
+      margin: 0;
+      font-size: clamp(26px, 3.1vw, 36px);
+      line-height: 1.22;
+      color: #0b132b;
+      font-weight: 1000;
+    }
+    .news-featured p {
+      margin: 0;
+      color: #475569;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.72;
+    }
+    .news-btn {
+      margin-top: auto;
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: #db291d;
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .news-card {
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+    .news-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+    .news-card-slider {
+      position: relative;
+      overflow: hidden;
+      background: #e2e8f0;
+    }
+    .news-card-slide {
+      display: none;
+    }
+    .news-card-slide.is-active {
+      display: block;
+    }
+    .news-card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 215px;
+    }
+    .news-card h3 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.3;
+      color: #0f172a;
+    }
+    .news-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.65;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .news-card a {
+      margin-top: auto;
+      color: #b91c1c;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    /* Footer giống trang chủ */
+    .site-footer {
+      margin-top: 20px;
+      background: #0f172a;
+      color: #cbd5f5;
+    }
+    .site-footer .container {
+      width: min(100%, var(--container));
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .newsletter-section {
+      background: linear-gradient(135deg, var(--red) 0%, var(--red2) 100%);
+      padding: 24px 0;
+    }
+    .newsletter-content {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .newsletter-content h3 {
+      margin: 0;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+    .newsletter-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .newsletter-form input {
+      min-width: 280px;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: #fff;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .newsletter-form button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--yellow);
+      color: #111827;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .footer-info { padding: 34px 0; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 24px;
+    }
+    .footer-col h4 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      color: #fff;
+      font-weight: 900;
+    }
+    .footer-col p,
+    .footer-col li,
+    .footer-col a {
+      color: #cbd5f5;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .footer-col ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .footer-col li + li { margin-top: 8px; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid rgba(203, 213, 245, 0.2);
+      padding: 14px 0;
+      text-align: center;
+    }
+    .footer-bottom p {
+      margin: 0;
+      color: #cbd5f5;
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-wrap { grid-template-columns: 1fr; }
+      .hero-media { min-height: 220px; }
+      .block { grid-column: span 6; }
+      .news-featured { grid-template-columns: 1fr; }
+      .news-featured-media { min-height: 240px; }
+      .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .newsletter-form input { min-width: 220px; }
+    }
+    @media (max-width: 700px) {
+      .logo { font-size: 28px; }
+      nav { gap: 14px; }
+      .hero-copy { padding: 24px 20px; }
+      .summary { font-size: 16px; }
+      .block { grid-column: span 12; }
+      .news-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  {% include 'shared/navbar.html' %}
+
+  {% if page_slug == "tin-tuc-su-kien" %}
+    <section class="news-page">
+      <h1 class="news-title">Tin tức &amp; Sự kiện</h1>
+
+      {% if featured_news %}
+        <article class="news-featured">
+          <div class="news-featured-media" style="background-image: url('{{ featured_news.image }}');"></div>
+          <div class="news-featured-body">
+            <span class="news-badge">{{ featured_news.category }}</span>
+            <h2>{{ featured_news.title }}</h2>
+            <p>{{ featured_news.excerpt }}</p>
+            <a href="{% url 'store:news_detail' slug=featured_news.slug %}" class="news-btn">Xem thêm</a>
+          </div>
+        </article>
+      {% endif %}
+
+      {% if news_items %}
+        <div class="news-grid">
+          {% for item in news_items %}
+            <article class="news-card">
+              <img src="{{ item.image }}" alt="{{ item.title }}" loading="lazy" />
+              <div class="news-card-body">
+                <span class="news-badge">{{ item.category }}</span>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.excerpt }}</p>
+                <a href="{% url 'store:news_detail' slug=item.slug %}">Xem thêm</a>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </section>
+  {% else %}
+    <section class="hero">
+      <article class="hero-wrap">
+        <div class="hero-copy">
+          <span class="kicker">{{ kicker }}</span>
+          <h1>{{ title }}</h1>
+          <p class="summary">{{ summary }}</p>
+        </div>
+        <div class="hero-media" style="background-image: url('{{ hero_image }}');"></div>
+      </article>
+    </section>
+
+    <section class="content">
+      {% if sections %}
+        {% for section in sections %}
+          <article class="block">
+            {% if section.image %}
+              <img class="block-image" src="{{ section.image }}" alt="{{ section.heading }}" loading="lazy" />
+            {% endif %}
+            <div class="block-body">
+              <h2>{{ section.heading }}</h2>
+              <p>{{ section.content }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      {% else %}
+        <article class="block" style="grid-column: span 12;">
+          <div class="block-body">
+            <h2>Nội dung chưa sẵn sàng</h2>
+            <p>Vui lòng quay lại trang chủ hoặc liên hệ bộ phận hỗ trợ để được hướng dẫn thêm.</p>
+          </div>
+        </article>
+      {% endif %}
+    </section>
+
+    {% if gallery_images %}
+      <section class="content" style="margin-top:0;">
+        <article class="block" style="grid-column: span 12;">
+          <div class="block-body">
+            <h2>Thu vien hinh anh</h2>
+            <div class="news-grid" style="margin-top:16px;">
+              {% for image in gallery_images %}
+                <article class="news-card">
+                  <div class="news-card-slider" data-about-slider data-interval="5000">
+                    {% for slide in image.images %}
+                      <div class="news-card-slide {% if forloop.first %}is-active{% endif %}" data-about-slide>
+                        <img src="{{ slide.url }}" alt="{{ slide.alt|default:title }}" loading="lazy" />
+                      </div>
+                    {% endfor %}
+                  </div>
+                  {% if image.title or image.caption %}
+                    <div class="news-card-body">
+                      {% if image.title %}
+                        <h3>{{ image.title }}</h3>
+                      {% endif %}
+                      {% if image.caption %}
+                      <p>{{ image.caption }}</p>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                </article>
+              {% endfor %}
+            </div>
+          </div>
+        </article>
+      </section>
+    {% endif %}
+
+    <div class="actions">
+      <a class="primary" href="{% url 'store:home' %}">Về trang chủ</a>
+      <a href="{% url 'store:map_page' %}">Hệ thống cửa hàng</a>
+      <a href="{% url 'store:home' %}#products">Sản phẩm nổi bật</a>
+    </div>
+  {% endif %}
+
+  {% include 'shared/footer.html' %}
+  <script>
+    (function () {
+      const sliders = document.querySelectorAll("[data-about-slider]");
+      sliders.forEach((slider) => {
+        const slides = slider.querySelectorAll("[data-about-slide]");
+        if (slides.length <= 1) return;
+        let index = 0;
+        const activate = (nextIndex) => {
+          slides[index].classList.remove("is-active");
+          index = nextIndex;
+          slides[index].classList.add("is-active");
+        };
+        window.setInterval(() => {
+          activate((index + 1) % slides.length);
+        }, Number(slider.getAttribute("data-interval") || 5000));
+      });
+    })();
+  </script>
+</body>
+</html>

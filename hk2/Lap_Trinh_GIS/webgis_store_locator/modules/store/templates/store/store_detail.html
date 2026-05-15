@@ -1,0 +1,552 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ store.ten }} | Cửa hàng</title>
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+  <style>
+    body {
+      margin: 0;
+      background: #f5f5f5;
+      color: #222;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    }
+    .shop-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 22px 18px 54px;
+    }
+    .shop-shell {
+      display: grid;
+      gap: 14px;
+    }
+    .shop-card {
+      background: #fff;
+      border: 1px solid #ededed;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+    }
+    .shop-hero {
+      padding: 24px 0 0;
+      overflow: hidden;
+    }
+    .shop-hero-main {
+      padding: 0 22px 18px;
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .shop-cover {
+      position: relative;
+      min-height: 144px;
+      padding: 18px;
+      border-radius: 4px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(26, 32, 44, .18), rgba(17, 24, 39, .68)),
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.16), transparent 24%),
+        linear-gradient(135deg, #374151, #111827);
+      color: #fff;
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .shop-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid rgba(255,255,255,.9);
+      background: #fff;
+      display: grid;
+      place-items: center;
+      color: #111827;
+      font-size: 20px;
+      font-weight: 900;
+    }
+    .shop-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .shop-name {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 0;
+    }
+    .shop-cover-sub {
+      margin-top: 6px;
+      color: rgba(255,255,255,.82);
+      font-size: 13px;
+    }
+    .shop-cover-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .shop-btn {
+      min-height: 34px;
+      padding: 0 16px;
+      border-radius: 2px;
+      border: 1px solid rgba(255,255,255,.8);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .shop-btn.primary {
+      background: rgba(255,255,255,.16);
+    }
+    .shop-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 24px;
+      padding: 6px 2px;
+    }
+    .shop-stat {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      color: #4b5563;
+      font-size: 14px;
+    }
+    .shop-stat strong {
+      color: #ee4d2d;
+      font-weight: 700;
+    }
+    .shop-nav {
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      gap: 28px;
+      padding: 0 22px;
+      overflow-x: auto;
+    }
+    .shop-nav a {
+      padding: 14px 0 12px;
+      color: #555;
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      font-size: 14px;
+    }
+    .shop-nav a.active,
+    .shop-nav a:hover {
+      color: #ee4d2d;
+      border-bottom-color: #ee4d2d;
+    }
+
+    .voucher-strip {
+      padding: 14px 18px;
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      background: #fff;
+    }
+    .voucher-card {
+      min-width: 220px;
+      border: 1px solid #ffd6cf;
+      background: #fff8f7;
+      padding: 12px 14px;
+      display: grid;
+      gap: 6px;
+      color: #ee4d2d;
+      position: relative;
+    }
+    .voucher-card::after {
+      content: "";
+      position: absolute;
+      inset: 8px 8px 8px auto;
+      width: 1px;
+      border-left: 1px dashed #f7b4a8;
+    }
+    .voucher-title {
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .voucher-text {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .voucher-meta {
+      color: #9ca3af;
+      font-size: 11px;
+    }
+
+    .section-box {
+      padding: 18px;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      margin: 0;
+      color: #222;
+      font-size: 18px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .section-link {
+      color: #ee4d2d;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .product-card {
+      border: 1px solid #f0f0f0;
+      background: #fff;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .product-thumb {
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      object-fit: cover;
+      background: #fff;
+      display: block;
+    }
+    .product-body {
+      padding: 10px;
+    }
+    .product-name {
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 40px;
+      color: #222;
+    }
+    .product-price {
+      margin-top: 8px;
+      color: #ee4d2d;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .product-meta {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: #9ca3af;
+      font-size: 11px;
+    }
+
+    .info-layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+    .info-banner {
+      min-height: 220px;
+      border-radius: 2px;
+      background:
+        linear-gradient(135deg, rgba(8, 145, 178, .35), rgba(14, 116, 144, .78)),
+        radial-gradient(circle at 70% 28%, rgba(255,255,255,.28), transparent 20%),
+        linear-gradient(120deg, #0f172a, #0f766e);
+      color: #fff;
+      display: flex;
+      align-items: end;
+      padding: 20px;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+    .info-copy {
+      color: #4b5563;
+      line-height: 1.75;
+      font-size: 14px;
+    }
+    .info-copy p {
+      margin: 0 0 10px;
+    }
+
+    .review-list {
+      display: grid;
+      gap: 14px;
+    }
+    .review-card {
+      border: 1px solid #f0f0f0;
+      padding: 14px;
+      background: #fff;
+    }
+    .review-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .review-user {
+      font-weight: 700;
+      color: #222;
+    }
+    .review-time {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+    .review-stars {
+      color: #f59e0b;
+      font-size: 14px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .review-text {
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .review-media {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .review-media img,
+    .review-media video {
+      width: 82px;
+      height: 82px;
+      object-fit: cover;
+      border: 1px solid #f0f0f0;
+      background: #fff;
+    }
+    .staff-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+    .staff-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
+      color: #4b5563;
+      font-size: 13px;
+    }
+    .staff-item strong {
+      color: #111827;
+    }
+@media (max-width: 1100px) {
+      .product-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 860px) {
+      .shop-hero-main,
+      .info-layout {
+        grid-template-columns: 1fr;
+      }
+      .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 560px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+      .shop-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'shared/navbar.html' %}
+
+  <main class="shop-page">
+    <section class="shop-shell">
+      <section class="shop-card shop-hero">
+        <div class="shop-hero-main">
+          <div class="shop-cover">
+            <div class="shop-avatar">
+              {% if store_logo_url %}
+                <img src="{{ store_logo_url }}" alt="{{ store.chuoi.ten }}">
+              {% else %}
+                {{ store.chuoi.ten|slice:":1" }}
+              {% endif %}
+            </div>
+            <div>
+              <h1 class="shop-name">{{ store.ten }}</h1>
+              <div class="shop-cover-sub">
+                {{ store.chuoi.ten }}
+                {% if store.hoat_dong_24h %}
+                  · Mở cửa 24/7
+                {% else %}
+                  · {{ store.mo_cua|time:"H:i"|default:"--:--" }} - {{ store.dong_cua|time:"H:i"|default:"--:--" }}
+                {% endif %}
+              </div>
+              <div class="shop-cover-sub" style="margin-top:2px;">{{ store.dia_chi }}</div>
+              <div class="shop-cover-actions">
+                <a class="shop-btn primary" href="{% url 'store:map_page' %}">Xem trên bản đồ</a>
+                <a class="shop-btn" href="#reviews">Đánh giá</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="shop-stats">
+            <div class="shop-stat"><span>Sản phẩm:</span><strong>{{ store_products|length }}</strong></div>
+            <div class="shop-stat"><span>Đánh giá:</span><strong>{{ average_rating }} / 5{% if review_count %} ({{ review_count }}){% endif %}</strong></div>
+            <div class="shop-stat"><span>Đơn xử lý:</span><strong>{{ processing_orders }}</strong></div>
+            <div class="shop-stat"><span>Nhân viên:</span><strong>{{ employee_count }}</strong></div>
+            <div class="shop-stat"><span>Quận / huyện:</span><strong>{{ store.quan_huyen }}</strong></div>
+            <div class="shop-stat"><span>Tệp review:</span><strong>{{ review_media_count }}</strong></div>
+          </div>
+        </div>
+
+        <nav class="shop-nav">
+          <a class="active" href="#products">Tất cả sản phẩm</a>
+          <a href="#promotions">Voucher</a>
+          <a href="#info">Thông tin shop</a>
+          <a href="#reviews">Đánh giá</a>
+        </nav>
+      </section>
+
+      {% if store_promotions %}
+        <section id="promotions" class="shop-card voucher-strip">
+          {% for promo in store_promotions %}
+            <article class="voucher-card">
+              <div class="voucher-title">{{ promo.ten }}</div>
+              <div class="voucher-text">
+                {% if promo.loai_giam == "percent" %}
+                  Giảm {{ promo.gia_tri_giam|floatformat:0 }}%{% if promo.display_cap %} · tối đa {{ promo.display_cap }}{% endif %}
+                {% else %}
+                  Giảm {{ promo.display_discount }}
+                {% endif %}
+              </div>
+              <div class="voucher-text">Đơn tối thiểu {{ promo.display_min_order }}</div>
+              {% if promo.ma_code %}
+                <div class="voucher-meta">Mã: {{ promo.ma_code }}</div>
+              {% endif %}
+            </article>
+          {% endfor %}
+        </section>
+      {% endif %}
+
+      <section id="products" class="shop-card section-box">
+        <div class="section-head">
+          <h2 class="section-title">Gợi ý cho bạn</h2>
+          <a class="section-link" href="{% url 'store:product_catalog' %}">Xem tất cả</a>
+        </div>
+        <div class="product-grid">
+          {% for product in store_products %}
+            <a class="product-card" href="{% url 'store:product_detail' product.pk %}?store_id={{ store.pk }}">
+              {% if product.hinh_anh %}
+                <img class="product-thumb" src="{{ product.hinh_anh.url }}" alt="{{ product.ten }}">
+              {% else %}
+                <div class="product-thumb"></div>
+              {% endif %}
+              <div class="product-body">
+                <div class="product-name">{{ product.ten }}</div>
+                <div class="product-price">{{ product.display_price }}</div>
+                <div class="product-meta">
+                  <span>Kho {{ product.store_stock }}</span>
+                  <span>{{ product.thuong_hieu|default:"Circle K" }}</span>
+                </div>
+              </div>
+            </a>
+          {% empty %}
+            <p>Chưa có sản phẩm hiển thị cho cửa hàng này.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section id="info" class="shop-card section-box">
+        <div class="section-head">
+          <h2 class="section-title">Thông tin shop</h2>
+        </div>
+        <div class="info-layout">
+          <div class="info-banner">
+            {{ store.chuoi.ten }}
+          </div>
+          <div class="info-copy">
+            <p>Xin chào, chào mừng bạn đến với <strong>{{ store.ten }}</strong>.</p>
+            <p>{{ store.chuoi.mo_ta|default:"Cửa hàng phục vụ đa dạng đồ uống, đồ ăn nhanh và các sản phẩm tiện lợi hằng ngày." }}</p>
+            <p>Địa chỉ: {{ store.dia_chi }}.</p>
+            <p>Khu vực phục vụ: {{ store.quan_huyen }}.</p>
+            {% if store.hoat_dong_24h %}
+              <p>Giờ hoạt động: mở cửa 24/7 để phục vụ bạn mọi lúc.</p>
+            {% else %}
+              <p>Giờ hoạt động: {{ store.mo_cua|time:"H:i"|default:"--:--" }} - {{ store.dong_cua|time:"H:i"|default:"--:--" }}.</p>
+            {% endif %}
+            <p>Bạn có thể xem vị trí trực tiếp trên trang bản đồ, tra cứu review và đặt hàng ngay từ hệ thống hiện tại.</p>
+            {% if store_staff %}
+              <div class="staff-list">
+                {% for staff in store_staff %}
+                  <div class="staff-item">
+                    <div>
+                      <strong>{{ staff.ho_ten }}</strong>
+                      {% if staff.chuc_vu %}· {{ staff.chuc_vu }}{% endif %}
+                    </div>
+                    <div>{{ staff.so_dien_thoai|default:"Sẽ phản hồi trên chat" }}</div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <section id="reviews" class="shop-card section-box">
+        <div class="section-head">
+          <h2 class="section-title">Đánh giá gần đây</h2>
+          <a class="section-link" href="{% url 'store:map_page' %}">Xem trên trang bản đồ</a>
+        </div>
+        <div class="review-list">
+          {% for review in store_reviews %}
+            <article class="review-card">
+              <div class="review-head">
+                <div>
+                  <div class="review-user">{{ review.user.username }}</div>
+                  <div class="review-time">{{ review.display_created }}</div>
+                </div>
+              </div>
+              <div class="review-stars">
+                {% for _ in "12345" %}
+                  {% if forloop.counter <= review.so_sao %}★{% else %}☆{% endif %}
+                {% endfor %}
+              </div>
+              <div class="review-text">{{ review.binh_luan|default:"Không có bình luận văn bản." }}</div>
+              {% if review.preview_media %}
+                <div class="review-media">
+                  {% for media in review.preview_media %}
+                    {% if media.kind == "video" %}
+                      <video src="{{ media.url }}" muted preload="metadata"></video>
+                    {% else %}
+                      <img src="{{ media.url }}" alt="Review media">
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </article>
+          {% empty %}
+            <p>Chưa có đánh giá nào cho cửa hàng này.</p>
+          {% endfor %}
+        </div>
+      </section>
+    </section>
+  </main>
+
+{% include 'shared/footer.html' %}
+</body>
+</html>

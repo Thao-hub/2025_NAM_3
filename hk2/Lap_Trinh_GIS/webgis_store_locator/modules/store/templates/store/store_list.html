@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách cửa hàng | Circle K & GS25</title>
+  <style>
+    :root {
+      --red: #e31c23;
+      --red2: #c3141a;
+      --yellow: #ffd100;
+      --bg: #f5f7fb;
+      --text: #0f172a;
+      --container: 1320px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .top-header {
+      background: linear-gradient(135deg, var(--red) 0%, var(--red2) 100%);
+      position: sticky;
+      top: 0;
+      z-index: 5000;
+      box-shadow: 0 6px 20px rgba(227, 28, 35, .25);
+    }
+    .top-wrap {
+      width: 100%;
+      max-width: var(--container);
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .top-logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: #fff;
+      line-height: 1;
+    }
+    .top-logo span { color: var(--yellow); }
+    .top-nav { display: flex; gap: 32px; }
+    .top-nav a {
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+    }
+    .top-nav a:hover { color: var(--yellow); }
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+    .top-btn-find,
+    .top-btn-admin {
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      border-radius: 999px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .top-btn-find {
+      width: 140px;
+      background: var(--yellow);
+      color: #111;
+      box-shadow: 0 4px 16px rgba(255, 209, 0, .4);
+    }
+    .top-btn-admin {
+      width: 112px;
+      background: #fff;
+      color: #111827;
+      border: 1px solid #e0e7ff;
+    }
+    .content {
+      max-width: 1080px;
+      margin: 32px auto;
+      padding: 0 20px 40px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(2, 6, 23, .08);
+    }
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .store-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+    .store-item h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+    .muted { color: #475569; }
+    .pagination {
+      margin-top: 18px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+    .page-link {
+      min-width: 40px;
+      height: 40px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      border: 1px solid #d8e1ef;
+      background: #fff;
+      color: #0f172a;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .page-link.is-active {
+      background: #0f766e;
+      border-color: #0f766e;
+      color: #fff;
+    }
+    .page-link.is-disabled {
+      opacity: .45;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  {% include 'shared/navbar.html' %}
+
+  <main class="content">
+    <section class="card">
+      <h1 style="margin:0 0 10px;">Danh sách cửa hàng</h1>
+      <p class="muted">Khám phá hệ thống cửa hàng Circle K và GS25 theo từng trang để tra cứu nhanh hơn.</p>
+
+      <div class="store-grid">
+        {% for store in stores %}
+          <article class="store-item">
+            <h2><a href="{% url 'store:store_detail_page' store.pk %}" style="color:inherit;text-decoration:none;">{{ store.ten }}</a></h2>
+            <p class="muted"><strong>Chuỗi:</strong> {{ store.chuoi.ten }}</p>
+            <p class="muted"><strong>Địa chỉ:</strong> {{ store.dia_chi }}</p>
+            <p class="muted"><strong>Quận/Huyện:</strong> {{ store.quan_huyen }}</p>
+            <p class="muted">
+              <strong>Giờ hoạt động:</strong>
+              {% if store.hoat_dong_24h %}
+                24/7
+              {% else %}
+                {{ store.mo_cua|time:"H:i"|default:"--:--" }} - {{ store.dong_cua|time:"H:i"|default:"--:--" }}
+              {% endif %}
+            </p>
+            <a href="{% url 'store:store_detail_page' store.pk %}" class="page-link" style="margin-top:8px;">Xem trang cửa hàng</a>
+          </article>
+        {% empty %}
+          <p>Chưa có dữ liệu cửa hàng.</p>
+        {% endfor %}
+      </div>
+
+      {% if paginator.num_pages > 1 %}
+        <div class="pagination">
+          <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?page=1{% else %}#{% endif %}">Đầu</a>
+          <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}">Trước</a>
+          {% for p in paginator.page_range %}
+            {% if p == 1 or p == paginator.num_pages or p >= page_obj.number|add:"-1" and p <= page_obj.number|add:"1" %}
+              <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?page={{ p }}">{{ p }}</a>
+            {% endif %}
+          {% endfor %}
+          <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}">Sau</a>
+          <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?page={{ paginator.num_pages }}{% else %}#{% endif %}">Cuối</a>
+        </div>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

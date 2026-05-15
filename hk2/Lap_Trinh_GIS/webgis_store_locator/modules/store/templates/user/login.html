@@ -1,0 +1,170 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ t.user_login_title|default:'Đăng nhập tài khoản của bạn' }}</title>
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+  <style>
+    body {
+      background: #173f52;
+    }
+
+    .login-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+      background: transparent !important;
+    }
+
+    .login-box {
+      width: min(100%, 560px);
+      padding: 32px 32px 28px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 24px 60px rgba(7, 27, 38, 0.18);
+      backdrop-filter: blur(12px);
+    }
+
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(20, 184, 166, .1);
+      border: 1px solid rgba(15, 118, 110, .16);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .login-title {
+      margin: 0 0 10px;
+      line-height: 1.08;
+    }
+
+    .login-sub {
+      margin: 0 0 24px;
+      max-width: 460px;
+      color: var(--muted);
+      line-height: 1.62;
+    }
+
+    .login-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .form-group {
+      margin: 0;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .form-group input {
+      width: 100%;
+    }
+
+    .login-actions {
+      padding-top: 2px;
+    }
+
+    .msg {
+      margin: 0 0 18px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      line-height: 1.55;
+    }
+
+    .login-links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(148, 163, 184, .18);
+    }
+
+    .login-links a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .login-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .login-shell {
+        padding: 28px 14px;
+      }
+
+      .login-box {
+        padding: 24px 18px 20px;
+      }
+
+      .login-sub {
+        margin-bottom: 20px;
+      }
+
+      .login-links {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="login-shell">
+    <form class="login-box fade-up" method="post">
+      {% csrf_token %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+      <h1 class="login-title">{{ t.user_login_title|default:'Đăng nhập tài khoản của bạn' }}</h1>
+      {% if t.user_login_hint %}
+        <p class="login-sub">{{ t.user_login_hint }}</p>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        <div class="msg">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="login-form">
+        <div class="form-group">
+          <label for="{{ form.username.id_for_label }}">{{ t.username|default:"Tài khoản" }}</label>
+          {{ form.username }}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.password.id_for_label }}">{{ t.password|default:"Mật khẩu" }}</label>
+          {{ form.password }}
+        </div>
+
+        <div class="login-actions">
+          <button class="btn btn-primary" type="submit" style="width:100%;">{{ t.login|default:'Đăng nhập' }}</button>
+        </div>
+      </div>
+
+      <div class="login-links">
+        <a href="{% url 'store:user_register' %}">{{ t.register|default:"Đăng ký" }}</a>
+        <a href="{% url 'store:user_password_reset' %}">Quên mật khẩu?</a>
+        <a href="{% url 'store:home' %}">{{ t.store_front|default:"Cửa hàng" }}</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% block title %}Chi tiết thông báo{% endblock %}
+{% block page_title %}Chi tiết thông báo{% endblock %}
+{% block content %}
+  <section class="panel card" style="display:grid; gap:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+      <div>
+        <div class="top-sub">Thông báo #{{ notification.id }}</div>
+        <h2 style="margin:6px 0 0;">{{ notification.title }}</h2>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <span class="chip {% if notification.level == 'error' %}chip-danger{% elif notification.level == 'warning' %}chip-warn{% elif notification.level == 'success' %}chip-success{% else %}chip-info{% endif %}">
+          {{ notification.level }}
+        </span>
+        {% if notification.status_code %}
+          <span class="chip {% if notification.status_code >= 500 %}chip-danger{% elif notification.status_code >= 400 %}chip-warn{% elif notification.status_code >= 200 %}chip-success{% else %}chip-info{% endif %}">
+            {{ notification.status_code }}
+          </span>
+        {% endif %}
+        <span class="chip {% if notification.resolved %}chip-success{% else %}chip-warn{% endif %}">
+          {% if notification.resolved %}Đã đọc{% else %}Chưa đọc{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <div class="panel card" style="padding:14px 16px; background:#fbfdff;">
+      <div class="top-sub">Nội dung</div>
+      <div style="margin-top:8px; line-height:1.7; white-space:pre-wrap; word-break:break-word;">
+        {{ notification.message|default:"Không có nội dung chi tiết." }}
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+      <div class="panel card" style="padding:12px 14px;">
+        <div class="top-sub">Thời gian</div>
+        <div style="margin-top:6px; font-weight:700;">{{ notification.created_at|date:"d/m/Y H:i:s" }}</div>
+      </div>
+      <div class="panel card" style="padding:12px 14px;">
+        <div class="top-sub">Phương thức</div>
+        <div style="margin-top:6px; font-weight:700;">{{ notification.method|default:"-" }}</div>
+      </div>
+      <div class="panel card" style="padding:12px 14px;">
+        <div class="top-sub">Đường dẫn liên quan</div>
+        <div style="margin-top:6px;">
+          {% if notification.path %}
+            <a href="{{ notification.path }}" style="word-break:break-word;">{{ notification.path }}</a>
+          {% else %}
+            -
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn btn-light" href="{% url 'store:admin_notifications' %}">Quay lại thông báo</a>
+      {% if notification.path %}
+        <a class="btn btn-primary" href="{{ notification.path }}">Mở trang liên quan</a>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

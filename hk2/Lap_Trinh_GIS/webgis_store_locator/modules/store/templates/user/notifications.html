@@ -1,0 +1,33 @@
+﻿{% extends 'user/account_base.html' %}
+{% block extra_head %}
+.notice-toolbar{display:flex;justify-content:flex-end;gap:12px;align-items:center;padding:16px 24px;border-bottom:1px solid #eef2f7}.notice-list{display:grid}.notice-item{display:grid;grid-template-columns:84px minmax(0,1fr) 132px;gap:18px;padding:18px 24px;border-top:1px solid #eef2f7;background:#f8fffe}.notice-item:nth-child(even){background:#fff}.notice-item:first-child{border-top:0}.notice-thumb{width:84px;height:84px;border-radius:18px;overflow:hidden;background:#f1f5f9;display:grid;place-items:center;color:#bbb;font-size:15px}.notice-thumb img{width:100%;height:100%;object-fit:cover}.notice-title{margin:0 0 8px;font-size:15px;font-weight:800;line-height:1.45;color:#0f172a}.notice-body{margin:0;color:#64748b;font-size:15px;line-height:1.55}.notice-time{margin-top:8px;color:#94a3b8;font-size:15px;line-height:1.55}.notice-actions{display:grid;align-content:start;justify-items:end;gap:10px}.notice-expand{display:inline-flex;align-items:center;gap:6px;color:#0f766e;font-size:15px;cursor:pointer;margin-top:8px;font-weight:700}.notice-more{display:none;margin-top:10px;color:#475569;font-size:15px;line-height:1.55}.notice-item.is-open .notice-more{display:block}.notice-item.is-open .notice-expand .icon{transform:rotate(180deg)}.icon{transition:.15s ease}@media (max-width:900px){.notice-item{grid-template-columns:1fr}.notice-actions{justify-items:start}}
+{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="notice-toolbar">
+    <button class="ghost-btn" type="button">Đánh dấu Đã đọc tất cả</button>
+  </div>
+  <div class="notice-list">
+    {% for notice in notifications %}
+      <article class="notice-item {% if notice.highlight %}is-highlight{% endif %}" data-notice>
+        <div class="notice-thumb">{% if notice.thumbnail_url %}<img src="{{ notice.thumbnail_url }}" alt="{{ notice.title }}">{% else %}NO IMG{% endif %}</div>
+        <div>
+          <h2 class="notice-title">{{ notice.title }}</h2>
+          <p class="notice-body">{{ notice.preview }}</p>
+          <div class="notice-time">{{ notice.created_text }}</div>
+          <div class="notice-expand" data-toggle><span class="icon">⌄</span> Xem thêm</div>
+          <div class="notice-more">{{ notice.message }}</div>
+        </div>
+        <div class="notice-actions">
+          <a class="ghost-btn" href="{{ notice.href }}">{{ notice.action_label }}</a>
+        </div>
+      </article>
+    {% empty %}
+      <div style="padding:36px 30px;color:#888;">Chưa có thông báo phù hợp.</div>
+    {% endfor %}
+  </div>
+</section>
+<script>
+(function(){document.querySelectorAll('[data-toggle]').forEach(function(btn){btn.addEventListener('click',function(){btn.closest('[data-notice]').classList.toggle('is-open');});});})();
+</script>
+{% endblock %}

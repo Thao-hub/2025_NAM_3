@@ -1,0 +1,476 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thông báo của tôi</title>
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+  <style>
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1100px 420px at 10% -10%, rgba(197, 245, 234, .42) 0%, transparent 55%),
+        radial-gradient(900px 340px at 92% 0%, rgba(255, 232, 213, .36) 0%, transparent 58%),
+        linear-gradient(160deg, #f8fafb, #f1f6f4);
+    }
+    .site-shell { min-height: 100vh; }
+    .site-header {
+      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 10px 28px rgba(8, 47, 44, 0.18);
+    }
+    .site-header .wrap {
+      max-width: 1320px;
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: #fff;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo span { color: #ffd7a8; }
+    .site-nav { display: flex; gap: 28px; }
+    .site-nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btnFind, .btnWhite {
+      width: 140px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .btnFind {
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(249, 115, 22, .28);
+    }
+    .btnWhite {
+      width: 112px;
+      background: rgba(255,255,255,.92);
+      color: #123545;
+      border: 1px solid rgba(255,255,255,.45);
+    }
+    .notify-menu, .account-menu { position: relative; }
+    .notify-menu summary, .account-menu summary { list-style: none; cursor: pointer; }
+    .notify-menu summary {
+      width: 52px;
+      min-width: 52px;
+      padding: 0;
+      position: relative;
+    }
+    .notify-menu summary::after { display: none; }
+    .notify-icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .notify-count {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notify-panel, .account-menu-panel {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: min(360px, calc(100vw - 32px));
+      border-radius: 22px;
+      background: rgba(255,255,255,.98);
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+      overflow: hidden;
+      z-index: 6;
+    }
+    .notify-header {
+      padding: 14px 18px;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+    .notify-list { max-height: 360px; overflow: auto; background: #fff7f1; }
+    .notify-item {
+      display: block;
+      padding: 14px 18px;
+      color: #1f2937;
+      text-decoration: none;
+      border-top: 1px solid rgba(148,163,184,.14);
+    }
+    .notify-item:first-child { border-top: none; }
+    .notify-item:hover, .account-menu-link:hover, .notify-footer:hover { background: #f8fafc; }
+    .notify-item-title {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .notify-item-body { color: #64748b; font-size: 13px; line-height: 1.5; }
+    .notify-item-badge {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(239,68,68,.12);
+      color: #dc2626;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .notify-footer, .account-menu-link {
+      display: block;
+      padding: 12px 18px;
+      text-decoration: none;
+      color: #123545;
+      font-weight: 800;
+    }
+    .account-menu summary {
+      min-width: 150px;
+      padding: 0 16px;
+    }
+    .account-menu summary::-webkit-details-marker { display: none; }
+    .account-menu summary::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg) translateY(-1px);
+      opacity: .7;
+      display: inline-block;
+      margin-left: 10px;
+    }
+    .account-menu-label {
+      padding: 12px 18px 8px;
+      color: #0f172a;
+      font-weight: 800;
+      border-bottom: 1px solid rgba(148,163,184,.16);
+      margin-bottom: 6px;
+    }
+    .account-menu-link.logout { color: #dc2626; }
+    .page-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+    .notice-shell {
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(15,23,42,.08);
+      border-radius: 30px;
+      box-shadow: 0 24px 54px rgba(15,23,42,.08);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+    .notice-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      padding: 28px 30px 20px;
+      border-bottom: 1px solid rgba(148,163,184,.16);
+    }
+    .notice-kicker {
+      margin: 0;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .notice-title {
+      margin: 8px 0 0;
+      color: #1f2937;
+      font-size: 42px;
+      line-height: 1.08;
+      font-family: "Fraunces", Georgia, serif;
+    }
+    .notice-subtitle {
+      margin: 10px 0 0;
+      color: #667085;
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 640px;
+    }
+    .notice-list {
+      padding: 16px 22px 26px;
+      display: grid;
+      gap: 14px;
+    }
+    .notice-card {
+      display: grid;
+      grid-template-columns: 88px minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      padding: 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(148,163,184,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.95));
+    }
+    .notice-card.is-new {
+      background: linear-gradient(180deg, rgba(255,247,241,.98), rgba(255,241,235,.94));
+    }
+    .notice-thumb {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #f8fafc, #eef2f7);
+      display: grid;
+      place-items: center;
+      color: #cbd5e1;
+    }
+    .notice-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .notice-thumb svg {
+      width: 34px;
+      height: 34px;
+      stroke: currentColor;
+    }
+    .notice-meta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .notice-card-title {
+      margin: 0;
+      color: #1f2937;
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+    .notice-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(239,68,68,.12);
+      color: #dc2626;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .notice-body {
+      color: #667085;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0 0 8px;
+    }
+    .notice-time {
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .notice-actions {
+      display: grid;
+      gap: 10px;
+      justify-items: end;
+    }
+    .notice-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #0f766e;
+      background: rgba(20,184,166,.12);
+    }
+    .notice-status.warm {
+      color: #c2410c;
+      background: rgba(249,115,22,.12);
+    }
+    .notice-status.muted {
+      color: #475569;
+      background: rgba(148,163,184,.15);
+    }
+    .notice-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 132px;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.24);
+      background: #fff;
+      color: #123545;
+      text-decoration: none;
+      font-weight: 800;
+    }
+    .notice-empty {
+      padding: 28px;
+      text-align: center;
+      color: #64748b;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .pagination {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 22px 28px;
+    }
+    .page-link {
+      min-width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      text-decoration: none;
+      color: #123545;
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(148,163,184,.2);
+      font-weight: 800;
+    }
+    .page-link.is-active {
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      color: #fff;
+      border-color: transparent;
+    }
+    .page-link.is-disabled {
+      pointer-events: none;
+      opacity: .45;
+    }
+    @media (max-width: 900px) {
+      .notice-card {
+        grid-template-columns: 72px minmax(0, 1fr);
+      }
+      .notice-actions {
+        grid-column: 1 / -1;
+        justify-items: start;
+      }
+      .footer-grid { grid-template-columns: 1fr; }
+      .site-nav { gap: 16px; }
+    }
+    @media (max-width: 640px) {
+      .notice-title { font-size: 34px; }
+      .notice-card {
+        grid-template-columns: 1fr;
+      }
+      .notice-thumb {
+        width: 72px;
+        height: 72px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="site-shell">
+    {% include 'shared/navbar.html' %}
+
+    <main class="page-wrap">
+      <section class="notice-shell">
+        <div class="notice-top">
+          <div>
+            <p class="notice-kicker">Khu vực người dùng</p>
+            <h1 class="notice-title">Thông báo của tôi</h1>
+            <p class="notice-subtitle">Tổng hợp tất cả cập nhật liên quan đến đơn hàng, trạng thái xử lý và các thay đổi mới nhất trong tài khoản của bạn.</p>
+          </div>
+          <a class="notice-btn" href="{% url 'store:my_orders' %}">Xem đơn hàng</a>
+        </div>
+
+        {% if notifications %}
+          <div class="notice-list">
+            {% for notice in notifications %}
+              <article class="notice-card {% if notice.is_new %}is-new{% endif %}">
+                <div class="notice-thumb" aria-hidden="true">
+                  {% if notice.thumbnail_url %}
+                    <img src="{{ notice.thumbnail_url }}" alt="{{ notice.title }}">
+                  {% else %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 21a8 8 0 0 0-16 0"/>
+                      <circle cx="12" cy="8" r="4"/>
+                    </svg>
+                  {% endif %}
+                </div>
+                <div>
+                  <div class="notice-meta">
+                    <h2 class="notice-card-title">{{ notice.title }}</h2>
+                    {% if notice.is_new %}<span class="notice-pill">Mới</span>{% endif %}
+                  </div>
+                  <p class="notice-body">{{ notice.message }}</p>
+                  <div class="notice-time">{{ notice.created_text }}</div>
+                </div>
+                <div class="notice-actions">
+                  <span class="notice-status {{ notice.accent }}">{{ notice.status_label }}</span>
+                  <a class="notice-btn" href="{{ notice.href }}">{{ notice.action_label }}</a>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="notice-empty">Bạn chưa có thông báo nào.</div>
+        {% endif %}
+
+        {% if paginator.num_pages > 1 %}
+          <div class="pagination">
+            <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?page=1{% else %}#{% endif %}">Đầu</a>
+            <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}">Trước</a>
+            {% for p in paginator.page_range %}
+              {% if p == 1 or p == paginator.num_pages or p >= page_obj.number|add:"-1" and p <= page_obj.number|add:"1" %}
+                <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?page={{ p }}">{{ p }}</a>
+              {% endif %}
+            {% endfor %}
+            <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}">Sau</a>
+            <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?page={{ paginator.num_pages }}{% else %}#{% endif %}">Cuối</a>
+          </div>
+        {% endif %}
+      </section>
+    </main>
+
+    {% include 'shared/footer.html' %}
+  </div>
+</body>
+</html>

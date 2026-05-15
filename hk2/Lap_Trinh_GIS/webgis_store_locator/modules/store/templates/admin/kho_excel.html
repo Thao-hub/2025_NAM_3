@@ -1,0 +1,76 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div style="
+        padding:12px;
+        margin-bottom:15px;
+        border-radius:6px;
+        background:#d1fae5;
+        color:#065f46;
+        font-weight:600;">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div style="max-width:700px;margin:30px auto;">
+
+  <h2 style="margin-bottom:20px;">📊 Quản lý Excel Kho</h2>
+
+  <!-- IMPORT -->
+  <div style="
+      background:#fff;
+      padding:20px;
+      border-radius:10px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.05);
+      margin-bottom:20px;
+  ">
+    <h4 style="margin-bottom:15px;">Import dữ liệu</h4>
+
+    <form method="post" enctype="multipart/form-data"
+          action="/admin/giao-dich-kho/excel/import/">
+
+      {% csrf_token %}
+
+      <input type="file" name="file" required
+             style="margin-bottom:15px;">
+
+      <br>
+
+      <button class="btn btn-primary" type="submit">
+        📥 Import Excel
+      </button>
+
+    </form>
+  </div>
+
+  <!-- EXPORT -->
+  <div style="
+      background:#fff;
+      padding:20px;
+      border-radius:10px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.05);
+  ">
+    <h4 style="margin-bottom:15px;">Xuất dữ liệu</h4>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      
+      <a href="/admin/giao-dich-kho/excel/export/"
+         class="btn btn-success">
+        📤 Xuất Excel
+      </a>
+
+      <a href="/admin/giao-dich-kho/excel/template/"
+         class="btn btn-light">
+        📄 Tải file mẫu
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}
+WebGIS Admin{% if title %} | {{ title }}{% endif %}
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+
+<!-- ICON + VENDOR CSS -->
+<link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+
+<!-- MAIN CSS (Corona) -->
+<link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+<!-- PATCH CSS (PHẢI ĐẶT CUỐI) -->
+<link rel="stylesheet" href="{% static 'assets/css/django_admin_patch.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <a href="{% url 'admin:index' %}" style="color:#fff;text-decoration:none;">
+    WebGIS – Admin
+  </a>
+</h1>
+{% endblock %}

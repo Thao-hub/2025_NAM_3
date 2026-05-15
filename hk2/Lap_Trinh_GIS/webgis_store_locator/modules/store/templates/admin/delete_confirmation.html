@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ t.delete|default:"Xóa" }} {{ model_name }}{% endblock %}
+{% block page_title %}{{ t.confirm_delete|default:"Xác nhận xóa" }}{% endblock %}
+{% block content %}
+  <section class="panel card" style="max-width:780px;">
+    <p class="top-sub">{{ t.you_are_deleting|default:"Bạn đang xóa một bản ghi của" }} {{ model_name }}.</p>
+    <h3 style="margin-top:0;">{{ object }}</h3>
+    <form method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+      {% csrf_token %}
+      <button class="btn btn-danger" type="submit">{{ t.confirm_delete|default:"Xác nhận xóa" }}</button>
+      <a class="btn btn-light" href="{% url 'store:admin_list' model_slug %}">{{ t.cancel|default:"Hủy" }}</a>
+    </form>
+  </section>
+{% endblock %}
+
+
+
+
+

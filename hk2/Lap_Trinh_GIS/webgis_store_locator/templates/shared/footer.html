@@ -1,0 +1,157 @@
+<style>
+  .site-footer {
+    margin-top: 20px;
+    background: linear-gradient(180deg, #102a33 0%, #0f172a 58%, #0b1220 100%) !important;
+    color: #cbd5e1 !important;
+  }
+  .site-footer .container {
+    width: min(100%, 1320px);
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .site-footer .newsletter-section {
+    background: linear-gradient(135deg, #134e4a 0%, #0f766e 100%) !important;
+    border-top: 1px solid rgba(255,255,255,.06);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    padding: 24px 0;
+  }
+  .site-footer .newsletter-content {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .site-footer .newsletter-content h3,
+  .site-footer .footer-col h4 {
+    color: #f8fafc !important;
+  }
+  .site-footer .newsletter-content h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.35;
+  }
+  .site-footer .newsletter-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .site-footer .newsletter-form input {
+    min-width: 280px;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,.94) !important;
+    color: #0f172a;
+    font-weight: 700;
+    box-shadow: none !important;
+  }
+  .site-footer .newsletter-form button {
+    border: none;
+    border-radius: 999px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, #f59e0b, #ea580c) !important;
+    color: #fff;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: none !important;
+  }
+  .site-footer .footer-info {
+    padding: 34px 0;
+  }
+  .site-footer .footer-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 24px;
+  }
+  .site-footer .footer-col h4 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 900;
+  }
+  .site-footer .footer-col p,
+  .site-footer .footer-col li,
+  .site-footer .footer-col a,
+  .site-footer .footer-bottom p {
+    color: #cbd5e1 !important;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .site-footer .footer-col ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .site-footer .footer-col li + li {
+    margin-top: 8px;
+  }
+  .site-footer .footer-col a:hover {
+    color: #ffffff !important;
+  }
+  .site-footer .footer-bottom {
+    border-top: 1px solid rgba(203, 213, 245, 0.2);
+    padding: 14px 0;
+    text-align: center;
+  }
+  .site-footer .footer-bottom p {
+    margin: 0;
+    font-size: 13px;
+  }
+  @media (max-width: 900px) {
+    .site-footer .footer-grid {
+      grid-template-columns: 1fr;
+    }
+    .site-footer .newsletter-form input {
+      min-width: 220px;
+    }
+  }
+</style>
+<footer class="site-footer">
+  <div class="newsletter-section">
+    <div class="container newsletter-content">
+      <h3>ĐĂNG KÝ NHẬN THÔNG TIN TỪ CIRCLE K AND GS25</h3>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Nhập địa chỉ email của bạn..." required>
+        <button type="submit">ĐĂNG KÝ</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h4>CÔNG TY TNHH TTT</h4>
+        <p>Địa chỉ: 53 Đường Đức Hiền, Phường Tây Thạnh, TP. HCM</p>
+        <p>Điện thoại: +84 08 6280 1009</p>
+        <p>Email: 1250080170@sv.hcmunre.edu.vn</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>VỀ CHÚNG TÔI</h4>
+        <ul>
+          <li><a href="{% url 'store:info_page' slug='gioi-thieu-circle-k' %}">Giới thiệu Circle K</a></li>
+          <li><a href="{% url 'store:home' %}#stores">Hệ thống cửa hàng</a></li>
+          <li><a href="{% url 'store:info_page' slug='tin-tuc-su-kien' %}">Tin tức và Sự kiện</a></li>
+          <li><a href="{% url 'store:info_page' slug='tuyen-dung' %}">Tuyển dụng</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>CHÍNH SÁCH</h4>
+        <ul>
+          <li><a href="{% url 'store:info_page' slug='chinh-sach-bao-mat' %}">Chính sách bảo mật</a></li>
+          <li><a href="{% url 'store:info_page' slug='chinh-sach-thanh-toan' %}">Chính sách thanh toán</a></li>
+          <li><a href="{% url 'store:info_page' slug='dieu-khoan-su-dung' %}">Điều khoản sử dụng</a></li>
+          <li><a href="{% url 'store:feedback' %}">Góp ý và phản hồi</a></li>
+          <li><a href="/404-test/">Trang lỗi 404</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 Circle K AND GS25 Vietnam. All rights reserved. Code by Thai and Team.</p>
+  </div>
+</footer>

@@ -1,0 +1,529 @@
+{% extends "admin/base.html" %}
+{% block title %}Trang gioi thieu{% endblock %}
+{% block page_title %}{{ t.about_admin|default:"Trang gioi thieu" }}{% endblock %}
+{% block content %}
+  <style>
+    .about-layout {
+      display: grid;
+      gap: 18px;
+    }
+    .about-live {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .about-live-preview {
+      border: 1px solid rgba(148,163,184,.16);
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(227, 28, 35, 0.12), transparent 38%),
+        radial-gradient(circle at 88% 10%, rgba(255, 209, 0, 0.16), transparent 30%),
+        #edf2fb;
+      padding: 18px;
+    }
+    .about-live-shell {
+      display: grid;
+      gap: 18px;
+    }
+    .about-live-hero {
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid rgba(15,23,42,.08);
+      background: #fff;
+      box-shadow: 0 28px 42px rgba(15,23,42,.12);
+      display: grid;
+      grid-template-columns: 1.08fr 1fr;
+      min-height: 320px;
+    }
+    .about-live-copy {
+      padding: 34px 30px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.98), rgba(255,255,255,.92)),
+        linear-gradient(120deg, rgba(227,28,35,.09), rgba(13,22,51,.05));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .about-live-kicker {
+      display: inline-block;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 10px;
+    }
+    .about-live-copy h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.1;
+      font-weight: 1000;
+      color: #0d1633;
+    }
+    .about-live-copy p {
+      margin: 16px 0 0;
+      font-size: 18px;
+      line-height: 1.75;
+      color: #334155;
+      font-weight: 600;
+    }
+    .about-live-hero-image {
+      min-height: 280px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .about-live-hero-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(13,22,51,.08), rgba(13,22,51,.42));
+    }
+    .about-live-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .about-live-card {
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid #dbe2ef;
+      box-shadow: 0 14px 26px rgba(15,23,42,.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .about-live-card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+    }
+    .about-live-slider {
+      position: relative;
+      overflow: hidden;
+      background: #e2e8f0;
+    }
+    .about-live-slide {
+      display: none;
+    }
+    .about-live-slide.is-active {
+      display: block;
+    }
+    .about-live-card-body {
+      padding: 20px;
+    }
+    .about-live-card-body h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.3;
+      color: #0b132b;
+    }
+    .about-live-card-body p {
+      margin: 0;
+      color: #475569;
+      font-size: 15px;
+      line-height: 1.72;
+      font-weight: 600;
+    }
+    .about-side {
+      display: grid;
+      gap: 14px;
+    }
+    .about-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .about-gallery-card {
+      display: grid;
+      gap: 8px;
+    }
+    .about-gallery-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,.14);
+      background: #f8fafc;
+      display: block;
+    }
+    .about-gallery-card input {
+      width: 100%;
+    }
+    .about-gallery-card textarea {
+      width: 100%;
+      min-height: 88px;
+    }
+    .about-admin-group-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .about-admin-group-card {
+      border: 1px solid rgba(148,163,184,.16);
+      border-radius: 20px;
+      padding: 14px;
+      background: #f8fafc;
+      display: grid;
+      gap: 10px;
+    }
+    .about-admin-group-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .about-admin-slider {
+      position: relative;
+      overflow: hidden;
+      background: #e2e8f0;
+      border-radius: 18px;
+    }
+    .about-admin-slide {
+      display: none;
+    }
+    .about-admin-slide.is-active {
+      display: block;
+    }
+    .about-admin-slide img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+    .about-slot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .about-slot-card {
+      border: 1px solid rgba(148,163,184,.16);
+      border-radius: 20px;
+      padding: 14px;
+      background: #f8fafc;
+      display: grid;
+      gap: 10px;
+    }
+    .about-preview-hero {
+      min-height: 220px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(15,118,110,.12), rgba(249,115,22,.1));
+      border: 1px solid rgba(148,163,184,.14);
+      overflow: hidden;
+    }
+    .about-preview-hero img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+    .about-content-preview {
+      white-space: pre-line;
+      line-height: 1.7;
+      color: #334155;
+    }
+    .about-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      font-size: 13px;
+      background: rgba(15,118,110,.10);
+      color: #0f766e;
+    }
+    .about-status.is-default {
+      background: rgba(245,158,11,.12);
+      color: #b45309;
+    }
+    @media (max-width: 1180px) {
+      .about-live {
+        grid-template-columns: 1fr;
+      }
+      .about-live-hero,
+      .about-live-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 760px) {
+      .about-gallery {
+        grid-template-columns: 1fr;
+      }
+      .about-slot-grid {
+        grid-template-columns: 1fr;
+      }
+      .about-admin-group-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <section class="about-layout">
+    <article class="panel card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:24px;">Trang dang hien thi cho nguoi dung</h2>
+          <div class="top-sub">Day moi la logic chinh: admin quan ly noi dung o day va xem ngay trang gioi thieu dang live o ben canh.</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <span class="about-status {% if not about_is_customized %}is-default{% endif %}">
+            {% if about_is_customized %}
+              Dang dung noi dung admin
+            {% else %}
+              Dang dung trang gioi thieu cu mac dinh
+            {% endif %}
+          </span>
+          <a class="btn btn-light" href="{{ public_about_url }}" target="_blank" rel="noopener">Mo trang nguoi dung</a>
+        </div>
+      </div>
+    </article>
+
+    <section class="about-live">
+      <article class="panel card">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px;">
+          <div>
+            <h2 style="margin:0 0 6px;font-size:24px;">Xem truc tiep trang gioi thieu</h2>
+            <div class="top-sub">Khung nay dung chung du lieu voi trang nguoi dung, nhung render truc tiep trong admin de khong bi loi iframe.</div>
+          </div>
+        </div>
+        <div class="about-live-preview">
+          <div class="about-live-shell">
+            <article class="about-live-hero">
+              <div class="about-live-copy">
+                <span class="about-live-kicker">{{ public_preview.kicker }}</span>
+                <h2>{{ public_preview.title }}</h2>
+                <p>{{ public_preview.summary }}</p>
+              </div>
+              <div class="about-live-hero-image" style="background-image:url('{{ public_preview.hero_image }}');"></div>
+            </article>
+
+            {% if public_preview.sections %}
+              <div class="about-live-grid">
+                {% for section in public_preview.sections %}
+                  <article class="about-live-card">
+                    {% if section.image %}
+                      <img src="{{ section.image }}" alt="{{ section.heading }}">
+                    {% endif %}
+                    <div class="about-live-card-body">
+                      <h3>{{ section.heading }}</h3>
+                      <p>{{ section.content }}</p>
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if public_preview.gallery_images %}
+              <div class="about-live-grid">
+                {% for image in public_preview.gallery_images %}
+                  <article class="about-live-card">
+                    <div class="about-live-slider" data-about-slider data-interval="5000">
+                      {% for slide in image.images %}
+                        <div class="about-live-slide {% if forloop.first %}is-active{% endif %}" data-about-slide>
+                          <img src="{{ slide.url }}" alt="{{ slide.alt|default:public_preview.title }}">
+                        </div>
+                      {% endfor %}
+                    </div>
+                    {% if image.title or image.caption %}
+                      <div class="about-live-card-body">
+                        {% if image.title %}
+                          <h3>{{ image.title }}</h3>
+                        {% endif %}
+                        {% if image.caption %}
+                          <p>{{ image.caption }}</p>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                  </article>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+
+      <aside class="about-side">
+        <article class="panel card">
+          <h2 style="margin:0 0 8px;font-size:24px;">Tom tat noi dung admin</h2>
+          <div class="top-sub">Cap nhat luc: {{ page_obj.cap_nhat_luc|date:"d/m/Y H:i"|default:"-" }}</div>
+
+          <div class="about-preview-hero" style="margin-top:16px;">
+            {% if file_previews.anh_bia.url %}
+              <img src="{{ file_previews.anh_bia.url }}" alt="{{ page_obj.tieu_de }}">
+            {% else %}
+              <div style="display:grid;place-items:center;height:220px;color:#64748b;font-weight:700;">Chua co anh bia rieng</div>
+            {% endif %}
+          </div>
+
+          <div style="margin-top:16px;">
+            <h3 style="margin:0 0 8px;font-size:26px;">{{ page_obj.tieu_de|default:"Chua co tieu de" }}</h3>
+            <div class="top-sub">{{ page_obj.mo_ta_ngan|default:"Chua co mo ta ngan." }}</div>
+          </div>
+
+          <div class="about-content-preview" style="margin-top:16px;">
+            {{ page_obj.noi_dung|default:"Chua co noi dung bai gioi thieu." }}
+          </div>
+        </article>
+
+        <article class="panel card">
+          <h2 style="margin:0 0 8px;font-size:22px;">Anh va mo ta</h2>
+          <div class="top-sub">Tat ca anh thu vien va chu thich se duoc dung lai o trang nguoi dung.</div>
+          <div class="about-gallery" style="margin-top:14px;">
+            {% for image in gallery_preview_images %}
+              <div class="about-gallery-card">
+                <img src="{{ image.url }}" alt="{{ image.caption|default:'Anh thu vien' }}">
+                {% if image.title %}
+                  <div style="font-weight:700;color:#0f172a;">{{ image.title }}</div>
+                {% endif %}
+                {% if image.caption %}
+                  <div class="top-sub">{{ image.caption }}</div>
+                {% endif %}
+              </div>
+            {% empty %}
+              <div class="top-sub">Chua co anh minh hoa.</div>
+            {% endfor %}
+          </div>
+        </article>
+      </aside>
+    </section>
+
+    <article class="panel card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px;">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:24px;">Luu bai gioi thieu</h2>
+          <div class="top-sub">Mot bai gioi thieu gom 1 tieu de, 1 mo ta chung va nhieu anh, moi anh co mo ta rieng.</div>
+        </div>
+        <a class="btn btn-light" href="{% url 'store:admin_dashboard' %}">Quay lai dashboard</a>
+      </div>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="err" style="margin-bottom:14px;">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% for field in form %}
+          {% if field.name == "anh_noi_dung_1" or field.name == "anh_noi_dung_2" or field.name == "anh_noi_dung_3" %}
+          {% elif field.name == "gallery_images" or field.name == "gallery_captions" %}
+          {% else %}
+          <div class="form-row">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% if field.field.widget.input_type == "file" %}
+              <div class="file-input-wrap">
+                {{ field }}
+              </div>
+              <div class="file-preview-block">
+                {% if field.name == "gallery_images" %}
+                  {% if gallery_preview_images %}
+                    <div class="about-gallery" style="margin-top:10px;">
+                      {% for image in gallery_preview_images %}
+                        <div class="about-gallery-card">
+                          <img src="{{ image.url }}" alt="{{ image.caption|default:'Anh thu vien' }}">
+                          <input type="text" name="{{ image.caption_input_name }}" value="{{ image.caption }}" placeholder="Mo ta cho anh nay">
+                        </div>
+                      {% endfor %}
+                    </div>
+                  {% else %}
+                    <div class="top-sub">Chua co anh thu vien.</div>
+                  {% endif %}
+                {% elif field.name == "anh_bia" and file_previews.anh_bia.url %}
+                  <img class="file-preview-image" src="{{ file_previews.anh_bia.url }}" alt="{{ field.label }}" data-preview-for="{{ field.id_for_label }}">
+                {% endif %}
+                {% if field.name != "gallery_images" %}
+                  <img class="file-preview-image is-hidden" src="" alt="{{ field.label }}" data-preview-for="{{ field.id_for_label }}">
+                {% endif %}
+              </div>
+            {% else %}
+              {{ field }}
+            {% endif %}
+            {% if field.help_text %}<div class="top-sub">{{ field.help_text }}</div>{% endif %}
+            {% for error in field.errors %}
+              <div class="err" style="margin-top:8px; margin-bottom:0;">{{ error }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endfor %}
+
+        <div class="form-row">
+          <label>Bai cu da luu</label>
+          {% if gallery_admin_groups %}
+            <div class="about-admin-group-grid">
+              {% for group in gallery_admin_groups %}
+                <div class="about-admin-group-card">
+                  <div class="about-admin-group-head">
+                    <div style="font-weight:700;color:#0f172a;">{{ group.group_key }}</div>
+                    <label style="display:flex;align-items:center;gap:8px;">
+                      <input type="checkbox" name="delete_group_keys" value="{{ group.group_key }}">
+                      <span>Xoa bai nay</span>
+                    </label>
+                  </div>
+                  <div class="about-admin-slider" data-about-slider data-interval="5000">
+                    {% for slide in group.images %}
+                      <div class="about-admin-slide {% if forloop.first %}is-active{% endif %}" data-about-slide>
+                        <img src="{{ slide.url }}" alt="{{ slide.alt|default:'Anh thu vien' }}">
+                      </div>
+                    {% endfor %}
+                  </div>
+                  <div class="top-sub">{{ group.images|length }} anh trong bai nay</div>
+                  <input type="text" name="{{ group.title_input_name }}" value="{{ group.title }}" placeholder="Tieu de bai">
+                  <textarea name="{{ group.caption_input_name }}" placeholder="Mo ta bai nay">{{ group.caption }}</textarea>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="top-sub">Chua co bai cu nao.</div>
+          {% endif %}
+          <div class="top-sub" style="margin-top:10px;">Moi bai cu la 1 cum slider. Ban co the sua tieu de, mo ta hoac tick de xoa ca bai.</div>
+        </div>
+
+        <div class="form-row">
+          <label>Them anh moi</label>
+          <div class="about-slot-grid">
+            {% for slot in gallery_input_slots %}
+              <div class="about-slot-card">
+                <div style="font-weight:700;color:#0f172a;">Ban {{ slot.index }}</div>
+                <input type="text" name="gallery_slot_title_{{ slot.index }}" placeholder="Tieu de anh {{ slot.index }}">
+                <input type="file" name="gallery_slot_images_{{ slot.index }}" accept="image/*" multiple>
+                <textarea name="gallery_slot_caption_{{ slot.index }}" placeholder="Mo ta anh {{ slot.index }}"></textarea>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="top-sub" style="margin-top:10px;">Moi ban cho phep chon nhieu anh mot lan va neu da tai len thi can it nhat 3 anh.</div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="btn btn-primary" type="submit">Lưu bài giới thiệu</button>
+          <a class="btn btn-light" href="{{ public_about_url }}" target="_blank" rel="noopener">Xem trang nguoi dung</a>
+        </div>
+      </form>
+    </article>
+  </section>
+  <script>
+    (function () {
+      const sliders = document.querySelectorAll("[data-about-slider]");
+      sliders.forEach((slider) => {
+        const slides = slider.querySelectorAll("[data-about-slide]");
+        if (slides.length <= 1) return;
+        let index = 0;
+        const activate = (nextIndex) => {
+          slides[index].classList.remove("is-active");
+          index = nextIndex;
+          slides[index].classList.add("is-active");
+        };
+        window.setInterval(() => {
+          activate((index + 1) % slides.length);
+        }, Number(slider.getAttribute("data-interval") || 5000));
+      });
+    })();
+  </script>
+{% endblock %}

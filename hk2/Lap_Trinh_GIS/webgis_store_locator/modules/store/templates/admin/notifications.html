@@ -1,0 +1,164 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ t.notification_title|default:"Thông báo hệ thống" }}{% endblock %}
+{% block page_title %}{{ t.notification_title|default:"Thông báo hệ thống" }}{% endblock %}
+{% block content %}
+  <section class="panel card" style="margin-bottom:16px; padding:24px;">
+    <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+      <div>
+        <div class="top-sub" style="text-transform:uppercase; letter-spacing:.08em;">Trung tâm thông báo</div>
+        <h2 style="margin:8px 0 4px; font-size:30px;">Cập nhật theo từng sự kiện</h2>
+        <div class="top-sub">Xem nhanh đơn hàng, đánh giá và lỗi hệ thống theo kiểu feed, rồi bấm vào để mở đúng nơi cần xử lý.</div>
+      </div>
+      <form method="post" style="margin:0;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="mark_all_read">
+        <button class="btn btn-light" type="submit">Đánh dấu đã đọc tất cả</button>
+      </form>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;">
+      <span class="chip chip-info" style="padding:10px 14px;">Tổng {{ notification_stats.total }}</span>
+      <span class="chip chip-warn" style="padding:10px 14px;">Chưa đọc {{ notification_stats.unread }}</span>
+      <span class="chip chip-danger" style="padding:10px 14px;">Lỗi {{ notification_stats.error }}</span>
+      <span class="chip chip-success" style="padding:10px 14px;">Thông tin {{ notification_stats.info }}</span>
+    </div>
+
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">
+      {% for tab in notification_tabs %}
+        <a
+          href="?tab={{ tab.key }}"
+          class="chip {% if active_tab == tab.key %}chip-info{% else %}chip-muted{% endif %}"
+          style="padding:12px 16px; text-decoration:none; font-weight:700; {% if active_tab == tab.key %}box-shadow:0 12px 24px rgba(37, 99, 235, .14);{% else %}color:#475569;{% endif %}"
+        >
+          {{ tab.label }} · {{ tab.count }}
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel card" style="padding:18px;">
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="delete_selected">
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+        <label style="display:inline-flex; align-items:center; gap:10px; font-weight:700; color:#334155;">
+          <input type="checkbox" data-select-all data-select-target="notif">
+          Chọn tất cả
+        </label>
+        <button class="btn btn-danger" type="submit">Xóa đã chọn</button>
+      </div>
+
+      <div style="display:grid; gap:16px;">
+        {% for card in notification_cards %}
+          {% with n=card.notification %}
+            <details class="panel card" {% if not n.resolved %}open{% endif %} style="padding:0; overflow:hidden; border-color:{% if not n.resolved %}#f7ccb7{% else %}#dbe4f0{% endif %}; background:{% if not n.resolved %}linear-gradient(180deg, #fff8f3 0%, #ffffff 100%){% else %}#ffffff{% endif %};">
+              <summary style="list-style:none; cursor:pointer; display:grid; grid-template-columns:auto 94px minmax(0,1fr) auto; gap:16px; align-items:center; padding:18px;">
+                <label style="align-self:flex-start; padding-top:8px;" onclick="event.stopPropagation()">
+                  <input type="checkbox" name="selected_ids" value="{{ n.id }}" data-select-item="notif">
+                </label>
+
+                <div style="width:94px; height:94px; border-radius:22px; overflow:hidden; background:{% if card.category == 'order' %}#eef2ff{% elif card.category == 'review' %}#fef3c7{% elif card.category == 'error' %}#ffe4e6{% else %}#e0f2fe{% endif %}; display:flex; align-items:center; justify-content:center; box-shadow:0 12px 30px rgba(15, 23, 42, 0.08);">
+                  {% if card.thumb_url and card.thumb_kind == 'image' %}
+                    <img src="{{ card.thumb_url }}" alt="{{ card.thumb_label|default:n.title }}" style="width:100%; height:100%; object-fit:cover;">
+                  {% elif card.thumb_url and card.thumb_kind == 'video' %}
+                    <video src="{{ card.thumb_url }}" muted preload="metadata" style="width:100%; height:100%; object-fit:cover;"></video>
+                  {% else %}
+                    <span style="font-size:38px; font-weight:800; color:{% if card.category == 'order' %}#4f46e5{% elif card.category == 'review' %}#d97706{% elif card.category == 'error' %}#e11d48{% else %}#0284c7{% endif %};">
+                      {% if card.category == 'order' %}🧾{% elif card.category == 'review' %}★{% elif card.category == 'error' %}!{% else %}i{% endif %}
+                    </span>
+                  {% endif %}
+                </div>
+
+                <div style="min-width:0;">
+                  <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+                    <span class="chip {% if n.level == 'error' %}chip-danger{% elif n.level == 'warning' %}chip-warn{% elif n.level == 'success' %}chip-success{% else %}chip-info{% endif %}">
+                      {{ n.level|upper }}
+                    </span>
+                    {% if n.status_code %}
+                      <span class="chip {% if n.status_code >= 500 %}chip-danger{% elif n.status_code >= 400 %}chip-warn{% elif n.status_code >= 200 %}chip-success{% else %}chip-info{% endif %}">
+                        {{ n.status_code }}
+                      </span>
+                    {% endif %}
+                    <span class="chip {% if n.resolved %}chip-success{% else %}chip-warn{% endif %}">
+                      {% if n.resolved %}Đã đọc{% else %}Chưa đọc{% endif %}
+                    </span>
+                    <span class="top-sub">#{{ n.id }}</span>
+                  </div>
+
+                  <div style="font-size:20px; font-weight:800; line-height:1.35; color:#0f172a;">
+                    {{ n.title }}
+                  </div>
+
+                  <div style="margin-top:6px; color:#475569; font-size:15px; line-height:1.6; word-break:break-word;">
+                    {{ card.preview }}
+                  </div>
+
+                  <div style="margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; color:#64748b; font-size:14px;">
+                    <span>{{ n.created_at|date:"H:i d/m/Y" }}</span>
+                    {% if n.method %}
+                      <span>{{ n.method }}</span>
+                    {% endif %}
+                    <span style="font-weight:700; color:#0f766e;">Bấm để {% if not n.resolved %}xem và mở rộng{% else %}xem thêm{% endif %}</span>
+                  </div>
+                </div>
+
+                <div style="display:grid; gap:10px; min-width:158px;" onclick="event.stopPropagation()">
+                  <a class="btn btn-primary" href="{% url 'store:admin_notification_open' n.id %}" style="text-align:center;">
+                    Xem chi tiết
+                  </a>
+                  <span class="btn btn-light" style="text-align:center; pointer-events:none;">
+                    Bung / xếp
+                  </span>
+                </div>
+              </summary>
+
+              <div style="padding:0 18px 18px 128px;">
+                <div class="panel card" style="padding:16px; background:#fbfdff;">
+                  <div style="display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start;">
+                    <div>
+                      <div class="top-sub" style="margin-bottom:6px;">Nội dung đầy đủ</div>
+                      <div style="color:#334155; line-height:1.7; white-space:pre-wrap; word-break:break-word;">
+                        {{ card.full_message }}
+                      </div>
+                    </div>
+                    <div style="display:grid; gap:8px; min-width:170px;">
+                      <a class="btn btn-primary" href="{% url 'store:admin_notification_open' n.id %}" style="text-align:center;">
+                        Đi tới chi tiết
+                      </a>
+                      {% if card.target_path %}
+                        <div class="top-sub" style="text-align:right;">Liên kết đích đã được gắn sẵn</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+          {% endwith %}
+        {% empty %}
+          <div class="panel card" style="padding:22px; color:#64748b;">
+            {{ t.notification_empty|default:"Chưa có thông báo." }}
+          </div>
+        {% endfor %}
+      </div>
+    </form>
+  </section>
+
+  {% if paginator.num_pages > 1 %}
+    <section class="panel card pagination">
+      <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="?tab={{ active_tab }}&page={% if page_obj.has_previous %}1{% else %}{{ page_obj.number }}{% endif %}" aria-label="First">«</a>
+      <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="?tab={{ active_tab }}&page={% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}{{ page_obj.number }}{% endif %}" aria-label="Previous">‹</a>
+
+      {% for p in paginator.page_range %}
+        {% if p == 1 or p == paginator.num_pages %}
+          <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?tab={{ active_tab }}&page={{ p }}">{{ p }}</a>
+        {% elif p >= page_obj.number|add:"-2" and p <= page_obj.number|add:"2" %}
+          <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?tab={{ active_tab }}&page={{ p }}">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+
+      <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="?tab={{ active_tab }}&page={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{{ page_obj.number }}{% endif %}" aria-label="Next">›</a>
+      <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="?tab={{ active_tab }}&page={% if page_obj.has_next %}{{ paginator.num_pages }}{% else %}{{ page_obj.number }}{% endif %}" aria-label="Last">»</a>
+    </section>
+  {% endif %}
+{% endblock %}

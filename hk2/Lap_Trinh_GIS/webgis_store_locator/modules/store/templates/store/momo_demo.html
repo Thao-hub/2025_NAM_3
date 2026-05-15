@@ -1,0 +1,398 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MoMo Demo - Mã đơn: {{ order.pk }}</title>
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+  <style>
+    body {
+      margin: 0;
+      background:
+        radial-gradient(900px 340px at 8% -10%, rgba(236, 72, 153, .18) 0%, transparent 52%),
+        radial-gradient(880px 340px at 92% 0%, rgba(251, 191, 36, .16) 0%, transparent 54%),
+        linear-gradient(160deg, #fff7fb, #fff1f7 46%, #fdf2f8 100%);
+    }
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+    .demo-shell {
+      display: grid;
+      gap: 18px;
+    }
+    .demo-hero,
+    .demo-card {
+      border-radius: 30px;
+      overflow: hidden;
+      border: 1px solid rgba(236, 72, 153, .16);
+      box-shadow: 0 24px 54px rgba(136, 19, 55, .12);
+    }
+    .demo-hero {
+      padding: 28px 30px;
+      background: linear-gradient(135deg, #d61f69 0%, #ec4899 56%, #f472b6 100%);
+      color: #fff;
+    }
+    .demo-kicker {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .demo-title {
+      margin: 12px 0 8px;
+      font-size: 38px;
+      line-height: 1.05;
+      font-weight: 900;
+    }
+    .demo-sub {
+      margin: 0;
+      max-width: 760px;
+      color: rgba(255,255,255,.92);
+      line-height: 1.6;
+    }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(340px, .95fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .demo-card {
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(252,244,248,.96));
+    }
+    .card-title {
+      margin: 0 0 14px;
+      font-size: 22px;
+      color: #1f2937;
+      font-weight: 900;
+    }
+    .meta-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .meta-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid #f3d0df;
+    }
+    .meta-label {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #9d174d;
+    }
+    .meta-value {
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #111827;
+    }
+    .amount-box {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #fdf2f8, #fff);
+      border: 1px solid #f9a8d4;
+    }
+    .amount-label {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #9d174d;
+    }
+    .amount-value {
+      margin-top: 10px;
+      font-size: 34px;
+      font-weight: 900;
+      color: #be185d;
+    }
+    .qr-card {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #fff, #fdf2f8);
+      border: 1px solid #f3d0df;
+      text-align: center;
+    }
+    .qr-frame {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+      padding: 14px;
+      border-radius: 28px;
+      background: #fff;
+      border: 1px dashed #f9a8d4;
+      display: grid;
+      place-items: center;
+    }
+    .qr-frame svg {
+      width: 180px;
+      height: 180px;
+    }
+    .qr-code {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #9d174d;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    .qr-hint {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+    .steps {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid #f3d0df;
+    }
+    .step-index {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #ec4899;
+      color: #fff;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+    .action-stack {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .action-btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .action-btn.success {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: #fff;
+      box-shadow: 0 16px 32px rgba(34, 197, 94, .22);
+    }
+    .action-btn.fail {
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      color: #fff;
+      box-shadow: 0 16px 32px rgba(239, 68, 68, .22);
+    }
+    .action-link {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 18px;
+      text-decoration: none;
+      font-weight: 800;
+      color: #7c2d12;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+    .processing-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, .56);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+    }
+    .processing-overlay.is-visible {
+      display: flex;
+    }
+    .processing-card {
+      width: min(100%, 420px);
+      padding: 28px 26px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(253,242,248,.98));
+      border: 1px solid rgba(244, 114, 182, .24);
+      box-shadow: 0 28px 60px rgba(15, 23, 42, .22);
+      text-align: center;
+    }
+    .processing-spinner {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      border: 6px solid rgba(236, 72, 153, .16);
+      border-top-color: #ec4899;
+      animation: spin 1s linear infinite;
+    }
+    .processing-title {
+      margin: 0;
+      font-size: 24px;
+      color: #111827;
+      font-weight: 900;
+    }
+    .processing-sub {
+      margin: 10px 0 0;
+      color: #64748b;
+      line-height: 1.6;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @media (max-width: 900px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+      .demo-title {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="site-shell">
+    {% include 'shared/navbar.html' %}
+
+    <main class="page-wrap">
+      {% if messages %}{% for message in messages %}<div class="msg">{{ message }}</div>{% endfor %}{% endif %}
+
+      <section class="demo-shell">
+        <section class="demo-hero">
+          <div class="demo-kicker">MoMo Demo Gateway</div>
+          <h1 class="demo-title">Thanh toán MoMo demo</h1>
+          <p class="demo-sub">Đây là màn demo để mô phỏng bước chuyển sang cổng MoMo. Bạn có thể quét QR minh họa, sau đó bấm kết quả thành công hoặc thất bại để kiểm tra toàn bộ luồng đơn hàng và trạng thái thanh toán.</p>
+        </section>
+
+        <section class="demo-grid">
+          <section class="demo-card">
+            <h2 class="card-title">Thông tin giao dịch</h2>
+            <div class="meta-grid">
+              <div class="meta-item">
+                <div class="meta-label">Mã đơn hàng</div>
+                <div class="meta-value">Mã đơn: {{ order.pk }}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Mã giao dịch demo</div>
+                <div class="meta-value">{{ momo_demo_code }}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Người nhận</div>
+                <div class="meta-value">{{ order.ho_ten_nguoi_nhan }}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Trạng thái hiện tại</div>
+                <div class="meta-value">{{ order.get_trang_thai_thanh_toan_display }}</div>
+              </div>
+            </div>
+
+            <div class="amount-box">
+              <div class="amount-label">Tổng cần thanh toán</div>
+              <div class="amount-value">{{ order_amount_display }}</div>
+            </div>
+
+            <div class="qr-card">
+              <h2 style="margin-bottom:10px;">QR MoMo Demo</h2>
+              <div class="qr-frame">
+                {% if momo_demo_qr_svg %}
+                  {{ momo_demo_qr_svg|safe }}
+                {% else %}
+                  <div style="font-weight:900;color:#be185d;">{{ momo_demo_code }}</div>
+                {% endif %}
+              </div>
+              <div class="qr-code">{{ momo_demo_code }}</div>
+              <div class="qr-hint">Quét QR này để minh họa thao tác mở ví MoMo. Đây là QR demo phục vụ trình bày luồng thanh toán.</div>
+            </div>
+          </section>
+
+          <section class="demo-card">
+            <h2 class="card-title">Mô phỏng thao tác</h2>
+            <div class="steps">
+              <div class="step">
+                <div class="step-index">1</div>
+                <div>Hệ thống đã tạo đơn hàng nội bộ và giữ trạng thái thanh toán ở chế độ demo.</div>
+              </div>
+              <div class="step">
+                <div class="step-index">2</div>
+                <div>Bấm <strong>Thanh toán thành công</strong> để đánh dấu đơn đã trả tiền bằng MoMo.</div>
+              </div>
+              <div class="step">
+                <div class="step-index">3</div>
+                <div>Bấm <strong>Thanh toán thất bại</strong> để giữ đơn ở trạng thái chưa thanh toán.</div>
+              </div>
+            </div>
+
+            <div class="action-stack">
+              <form method="post" data-momo-demo-form>
+                {% csrf_token %}
+                <input type="hidden" name="action" value="success">
+                <button class="action-btn success" type="submit" data-processing-label="Đang xác nhận thanh toán MoMo...">Thanh toán thành công</button>
+              </form>
+              <form method="post" data-momo-demo-form>
+                {% csrf_token %}
+                <input type="hidden" name="action" value="fail">
+                <button class="action-btn fail" type="submit" data-processing-label="Đang xử lý kết quả thất bại...">Thanh toán thất bại</button>
+              </form>
+              <a class="action-link" href="{% url 'store:order_detail' order.pk %}">Quay lại chi tiết đơn hàng</a>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    {% include 'shared/footer.html' %}
+  </div>
+
+  <div class="processing-overlay" id="momoProcessingOverlay" aria-hidden="true">
+    <div class="processing-card">
+      <div class="processing-spinner"></div>
+      <h2 class="processing-title">Đang xử lý thanh toán</h2>
+      <p class="processing-sub" id="momoProcessingText">Hệ thống đang mô phỏng kết nối tới cổng MoMo. Vui lòng đợi trong giây lát...</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const overlay = document.getElementById("momoProcessingOverlay");
+      const text = document.getElementById("momoProcessingText");
+      document.querySelectorAll("[data-momo-demo-form]").forEach((form) => {
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const button = form.querySelector("button[type='submit']");
+          if (overlay) overlay.classList.add("is-visible");
+          if (text && button && button.dataset.processingLabel) {
+            text.textContent = button.dataset.processingLabel;
+          }
+          window.setTimeout(function () {
+            form.submit();
+          }, 2400);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

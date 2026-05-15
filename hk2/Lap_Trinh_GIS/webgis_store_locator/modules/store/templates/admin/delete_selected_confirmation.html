@@ -1,0 +1,67 @@
+{% extends "admin/base_site.html" %}
+{% load i18n l10n %}
+
+{% block content %}
+<div class="card admin-delete-card">
+  <div class="card-body">
+    <div class="admin-delete-head">
+      <h4 class="card-title">X&aacute;c nh&#7853;n x&oacute;a d&#7919; li&#7879;u &#273;&atilde; ch&#7885;n</h4>
+      <p class="admin-delete-sub">Vui l&ograve;ng ki&#7875;m tra k&#7929; tr&#432;&#7899;c khi x&oacute;a h&agrave;ng lo&#7841;t.</p>
+    </div>
+
+    {% if perms_lacking %}
+      <div class="admin-delete-alert admin-delete-alert-danger">
+        <strong>Kh&ocirc;ng th&#7875; x&oacute;a.</strong> B&#7841;n kh&ocirc;ng &#273;&#7911; quy&#7873;n v&#7899;i m&#7897;t s&#7889; &#273;&#7889;i t&#432;&#7907;ng.
+      </div>
+    {% elif protected %}
+      <div class="admin-delete-alert admin-delete-alert-danger">
+        <strong>Kh&ocirc;ng th&#7875; x&oacute;a.</strong> C&oacute; &#273;&#7889;i t&#432;&#7907;ng &#273;ang &#273;&#432;&#7907;c b&#7843;o v&#7879; b&#7903;i li&ecirc;n k&#7871;t.
+      </div>
+    {% else %}
+      <div class="admin-delete-alert admin-delete-alert-warn">
+        B&#7841;n ch&#7855;c ch&#7855;n mu&#7889;n x&oacute;a c&aacute;c d&ograve;ng &#273;&atilde; ch&#7885;n? D&#7919; li&#7879;u v&agrave; li&ecirc;n k&#7871;t s&#7869; b&#7883; x&oacute;a.
+      </div>
+    {% endif %}
+
+    <div class="admin-delete-summary">
+      <h5>T&oacute;m t&#7855;t</h5>
+      <ul>
+        {% for obj in queryset %}
+          <li>C&#7917;a h&agrave;ng: {{ obj }}</li>
+        {% empty %}
+          <li>Kh&ocirc;ng c&oacute; c&#7917;a h&agrave;ng n&agrave;o &#273;&#432;&#7907;c ch&#7885;n.</li>
+        {% endfor %}
+      </ul>
+
+      {% if model_count %}
+        <h6>D&#7919; li&#7879;u li&ecirc;n quan s&#7869; b&#7883; x&oacute;a</h6>
+        <ul>
+          {% for model_name, count in model_count.items %}
+            <li>{{ model_name|capfirst }}: {{ count }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <form method="post" class="admin-delete-form">
+      {% csrf_token %}
+      {% for obj in queryset %}
+        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}">
+      {% endfor %}
+      <input type="hidden" name="action" value="delete_selected">
+      <input type="hidden" name="post" value="yes">
+
+      <div class="admin-delete-actions">
+        {% if not perms_lacking and not protected %}
+          <button type="submit" class="btn btn-danger btn-sm text-white">
+            <i class="mdi mdi-delete-sweep"></i> C&oacute;, x&oacute;a t&#7845;t c&#7843; &#273;&atilde; ch&#7885;n
+          </button>
+        {% endif %}
+        <a href="#" class="btn btn-outline-secondary btn-sm" onclick="history.back(); return false;">
+          H&#7911;y, quay l&#7841;i
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

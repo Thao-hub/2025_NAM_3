@@ -1,0 +1,283 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ t.user_management|default:"Quản lý người dùng" }}{% endblock %}
+{% block page_title %}{{ t.user_management|default:"Quản lý người dùng" }}{% endblock %}
+{% block content %}
+  <style>
+    .user-admin-grid {
+      grid-template-columns: minmax(320px, 1fr) minmax(0, 2.2fr);
+      align-items: start;
+    }
+    .user-list-card {
+      min-width: 0;
+      overflow: hidden;
+    }
+    .user-table-wrap {
+      max-width: 100%;
+      overflow: visible !important;
+    }
+    .user-table-wrap table,
+    .user-table-wrap .table {
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      table-layout: fixed !important;
+    }
+    .user-table-wrap th,
+    .user-table-wrap td {
+      white-space: normal !important;
+      word-break: break-word !important;
+      overflow-wrap: anywhere !important;
+      vertical-align: top;
+      padding: 10px 8px;
+      font-size: 14px;
+    }
+    .user-table-wrap th:nth-child(1),
+    .user-table-wrap td:nth-child(1) { width: 5%; }
+    .user-table-wrap th:nth-child(2),
+    .user-table-wrap td:nth-child(2) { width: 12%; }
+    .user-table-wrap th:nth-child(3),
+    .user-table-wrap td:nth-child(3) { width: 18%; }
+    .user-table-wrap th:nth-child(4),
+    .user-table-wrap td:nth-child(4) { width: 20%; }
+    .user-table-wrap th:nth-child(5),
+    .user-table-wrap td:nth-child(5) { width: 14%; }
+    .user-table-wrap th:nth-child(6),
+    .user-table-wrap td:nth-child(6) { width: 11%; }
+    .user-table-wrap th:nth-child(7),
+    .user-table-wrap td:nth-child(7) { width: 20%; min-width: 0; }
+    .user-table-wrap td input[type="text"],
+    .user-table-wrap td input[type="email"],
+    .user-table-wrap td select {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    .user-row-form {
+      display: grid;
+      gap: 8px;
+      align-items: start;
+      min-width: 0;
+      width: 100%;
+    }
+    .user-row-form select,
+    .user-row-form .btn {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      font-size: 13px;
+    }
+    .user-row-form .btn {
+      min-height: 38px;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.25;
+      padding: 8px 10px;
+    }
+    .user-row-form label {
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    @media (max-width: 1280px) {
+      .user-admin-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <div class="grid user-admin-grid">
+    <section class="panel card user-form-card">
+      <div class="user-card-head">
+        <div>
+          <div class="top-sub">SmartGIS</div>
+          <h3 style="margin:4px 0 0;">{{ t.create_user|default:"Tạo người dùng" }}</h3>
+        </div>
+        <span class="chip">{{ t.user_management|default:"Quản lý người dùng" }}</span>
+      </div>
+      <form method="post" data-password-meter>
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_user">
+        {% if create_user_form.non_field_errors %}
+          <div class="msg">
+            {% for error in create_user_form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div class="form-grid user-form-grid">
+          <div class="form-group">
+            <label>{{ t.username|default:"Tài khoản" }}</label>
+            {{ create_user_form.username }}
+            {{ create_user_form.username.errors }}
+          </div>
+          <div class="form-group">
+            <label>{{ t.full_name|default:"Họ tên" }}</label>
+            <input type="text" name="full_name" value="{{ create_user_full_name|default:'' }}">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ create_user_email|default:'' }}">
+          </div>
+          <div class="form-group">
+            <label>{{ t.role|default:"Vai trò" }}</label>
+            <select name="role">
+              {% for role_value, role_label in role_choices %}
+                <option value="{{ role_value }}" {% if create_user_role == role_value %}selected{% endif %}>{{ role_label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{ t.password|default:"Mật khẩu" }}</label>
+            {{ create_user_form.password1 }}
+            <div class="top-sub" style="margin-top:6px;">
+              {{ t.password_strength|default:"Độ mạnh mật khẩu" }}:
+              <strong
+                data-password-meter-label
+                data-weak="{{ t.password_weak|default:'Yếu' }}"
+                data-medium="{{ t.password_medium|default:'Trung bình' }}"
+                data-strong="{{ t.password_strong|default:'Mạnh' }}"
+              >
+                {% if create_user_password_strength == 'strong' %}{{ t.password_strong|default:"Mạnh" }}
+                {% elif create_user_password_strength == 'medium' %}{{ t.password_medium|default:"Trung bình" }}
+                {% elif create_user_password_strength == 'weak' %}{{ t.password_weak|default:"Yếu" }}
+                {% else %}-{% endif %}
+              </strong>
+            </div>
+            <div class="password-meter" data-password-meter-output><div class="password-meter-bar {% if create_user_password_strength %}is-{{ create_user_password_strength }}{% endif %}" data-password-meter-bar></div></div>
+            <div class="top-sub">{{ t.password_hint|default:"Nên có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt." }}</div>
+            {{ create_user_form.password1.errors }}
+          </div>
+          <div class="form-group">
+            <label>{{ t.password|default:"Mật khẩu" }} (xác nhận)</label>
+            {{ create_user_form.password2 }}
+            {{ create_user_form.password2.errors }}
+          </div>
+          <div class="form-group" style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="is_active" name="is_active" {% if create_user_is_active %}checked{% endif %}>
+            <label for="is_active" style="margin:0;">{{ t.active|default:"Hoạt động" }}</label>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">{{ t.create_user|default:"Tạo người dùng" }}</button>
+      </form>
+    </section>
+
+    <section class="panel card user-list-card">
+      <div class="user-card-head">
+        <div>
+          <div class="top-sub">{{ t.user_portal|default:"Danh sách tài khoản" }}</div>
+          <h3 style="margin:4px 0 0;">{{ t.user_management|default:"Quản lý người dùng" }}</h3>
+        </div>
+        <div class="user-list-badges">
+          <span class="chip">Admin</span>
+          <span class="chip">User</span>
+        </div>
+      </div>
+      <form method="get" class="search-box user-filter">
+        <input type="text" name="q" value="{{ query }}" placeholder="{{ t.search_placeholder|default:'Tìm theo nội dung...' }}" style="flex:1; min-width:220px; max-width:520px; height:44px;">
+        <button class="btn btn-light" type="submit" style="height:44px;">Lọc</button>
+      </form>
+      <div class="user-table-wrap">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>{{ t.username|default:"Tài khoản" }}</th>
+              <th>{{ t.full_name|default:"Họ tên" }}</th>
+              <th>Email</th>
+              <th>{{ t.role|default:"Vai trò" }}</th>
+              <th>{{ t.account_status|default:"Trạng thái" }}</th>
+              <th>{{ t.actions|default:"Thao tác" }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in users %}
+              <tr>
+                <td>{{ item.object.pk }}</td>
+                <td>{{ item.object.username }}</td>
+                <td>
+                  {% if item.object.is_superuser %}
+                    {{ item.full_name }}
+                  {% else %}
+                    <input type="text" name="full_name" value="{% if item.full_name != '-' %}{{ item.full_name }}{% endif %}" form="user-form-{{ item.object.pk }}">
+                  {% endif %}
+                </td>
+                <td>
+                  {% if item.object.is_superuser %}
+                    {{ item.object.email|default:"-" }}
+                  {% else %}
+                    <input type="email" name="email" value="{{ item.object.email|default:'' }}" form="user-form-{{ item.object.pk }}">
+                  {% endif %}
+                </td>
+                <td>{{ item.role_label|default:item.role }}</td>
+                <td>{% if item.object.is_active %}{{ t.active|default:"Hoạt động" }}{% else %}{{ t.inactive|default:"Ngưng" }}{% endif %}</td>
+                <td>
+                  <form id="user-form-{{ item.object.pk }}" method="post" class="user-row-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ item.object.pk }}">
+                    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                    {% if filter_field %}<input type="hidden" name="f" value="{{ filter_field }}">{% endif %}
+                    {% if item.object.is_superuser %}
+                      <span class="chip">Superuser</span>
+                    {% else %}
+                      <a class="btn btn-light" href="{% url 'store:admin_user_password' item.object.pk %}">{{ t.reset_password|default:"Đặt lại mật khẩu" }}</a>
+                      <select name="role">
+                        {% for role_value, role_label in role_choices %}
+                          <option value="{{ role_value }}" {% if item.role == role_value %}selected{% endif %}>{{ role_label }}</option>
+                        {% endfor %}
+                      </select>
+                      <label style="display:flex;gap:6px;align-items:center;">
+                        <input type="checkbox" name="is_active" {% if item.object.is_active %}checked{% endif %}>
+                        <span>{{ t.active|default:"Hoạt động" }}</span>
+                      </label>
+                      <button class="btn btn-primary" type="submit" name="action" value="update_role">{{ t.update_role|default:"Cập nhật quyền" }}</button>
+                      {% if item.role == "SystemAdmin" %}
+                        <button class="btn btn-light" type="submit" name="action" value="toggle_lock">
+                          {% if item.object.is_active %}Khóa admin{% else %}Mở khóa admin{% endif %}
+                        </button>
+                      {% endif %}
+                      <button class="btn btn-danger" type="submit" name="action" value="delete_user" onclick="return confirm('Bạn có chắc muốn xóa tài khoản {{ item.object.username }}?');">
+                        Xóa tài khoản
+                      </button>
+                    {% endif %}
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7">{{ t.no_data|default:"Chưa có dữ liệu." }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  {% if paginator.num_pages > 1 %}
+    <section class="panel card pagination">
+      <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?{% if query %}q={{ query|urlencode }}&{% endif %}{% if filter_field %}f={{ filter_field|urlencode }}&{% endif %}page=1{% else %}#{% endif %}" aria-label="First">
+        <<
+      </a>
+      <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?{% if query %}q={{ query|urlencode }}&{% endif %}{% if filter_field %}f={{ filter_field|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}{% else %}#{% endif %}" aria-label="Previous">
+        <
+      </a>
+
+      {% for p in paginator.page_range %}
+        {% if p == 1 or p == paginator.num_pages %}
+          <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if filter_field %}f={{ filter_field|urlencode }}&{% endif %}page={{ p }}">{{ p }}</a>
+        {% elif p >= page_obj.number|add:"-2" and p <= page_obj.number|add:"2" %}
+          <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if filter_field %}f={{ filter_field|urlencode }}&{% endif %}page={{ p }}">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+
+      <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?{% if query %}q={{ query|urlencode }}&{% endif %}{% if filter_field %}f={{ filter_field|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}{% else %}#{% endif %}" aria-label="Next">
+        >
+      </a>
+      <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?{% if query %}q={{ query|urlencode }}&{% endif %}{% if filter_field %}f={{ filter_field|urlencode }}&{% endif %}page={{ paginator.num_pages }}{% else %}#{% endif %}" aria-label="Last">
+        >>
+      </a>
+    </section>
+  {% endif %}
+{% endblock %}

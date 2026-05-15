@@ -1,0 +1,34 @@
+<!doctype html>
+{% load static %}
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ t.login_title|default:'Đăng nhập quản trị' }}</title>
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+</head>
+<body>
+  <div class="login-shell">
+    <form class="login-box fade-up" method="post">
+      {% csrf_token %}
+      <h1 class="login-title">{{ t.login_title|default:'Đăng nhập quản trị' }}</h1>
+      <p class="login-sub">{{ t.login_only_staff|default:'Chỉ tài khoản staff/superuser được phép truy cập.' }}</p>
+
+      {% if form.non_field_errors %}
+        <div class="err">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <p>
+        <label>{{ t.username|default:'Tài khoản' }}</label>
+        {{ form.username }}
+      </p>
+      <p>
+        <label>{{ t.password|default:'Mật khẩu' }}</label>
+        {{ form.password }}
+      </p>
+
+      <button class="btn btn-primary" type="submit" style="width:100%;">{{ t.login|default:'Đăng nhập' }}</button>
+    </form>
+  </div>
+</body>
+</html>

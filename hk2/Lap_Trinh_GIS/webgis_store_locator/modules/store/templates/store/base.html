@@ -1,0 +1,26 @@
+﻿{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}WebGIS Store Locator{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'store/css/style.css' %}" />
+  <div style="padding:10px; background:#f5f5f5;">
+  <label>Chọn chi nhánh:</label>
+  <select id="selected-store">
+    <option value="">-- Chọn chi nhánh --</option>
+    {% for store in stores %}
+      <option value="{{ store.id }}">{{ store.ten }}</option>
+    {% endfor %}
+  </select>
+</div>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% block content %}{% endblock %}
+  <script src="{% static 'store/js/map.js' %}"></script>
+  <script src="{% static 'shared/js/form-validation.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

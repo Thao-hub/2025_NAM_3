@@ -1,0 +1,35 @@
+{% load admin_urls %}
+
+<div class="d-flex flex-wrap gap-2 submit-row" style="gap:10px;">
+    {% if show_save %}
+    <button type="submit" class="btn btn-primary" name="_save">
+        <i class="mdi mdi-content-save"></i> Lưu
+    </button>
+    {% endif %}
+
+    {% if show_save_and_continue %}
+    <button type="submit" class="btn btn-outline-primary" name="_continue">
+        <i class="mdi mdi-content-save-edit"></i> Lưu và tiếp tục chỉnh sửa
+    </button>
+    {% endif %}
+
+    {% if show_save_and_add_another %}
+    <button type="submit" class="btn btn-outline-primary" name="_addanother">
+        <i class="mdi mdi-plus"></i> Lưu và thêm mới
+    </button>
+    {% endif %}
+
+    {% if show_save_as_new %}
+    <button type="submit" class="btn btn-outline-secondary" name="_saveasnew">
+        <i class="mdi mdi-content-copy"></i> Lưu thành bản mới
+    </button>
+    {% endif %}
+
+    <div class="ml-auto" style="margin-left:auto;">
+        {% if show_delete_link and original %}
+        <a href="{% url opts|admin_urlname:'delete' original.pk|admin_urlquote %}" class="btn btn-danger">
+            <i class="mdi mdi-delete"></i> Xóa
+        </a>
+        {% endif %}
+    </div>
+</div>

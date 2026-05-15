@@ -1,0 +1,93 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ t.trash|default:"Thùng rác" }}{% endblock %}
+{% block page_title %}{{ t.trash|default:"Thùng rác" }}{% endblock %}
+{% block content %}
+  <section class="panel card trash-hero">
+    <div>
+      <div class="trash-kicker">SmartGIS</div>
+      <h2 class="trash-title">{{ t.trash|default:"Thùng rác" }}</h2>
+      <p class="trash-sub">
+        Lưu tạm dữ liệu đã xóa trong {{ trash_retention_days }} ngày. Bạn có thể khôi phục hoặc xóa hẳn ngay.
+      </p>
+    </div>
+    <div class="trash-meta">
+      <div class="trash-stat">
+        <div class="trash-stat-label">{{ t.total_records|default:"Tổng bản ghi" }}</div>
+        <div class="trash-stat-value">{{ page_obj.paginator.count }}</div>
+      </div>
+      <div class="trash-stat">
+        <div class="trash-stat-label">{{ t.expires_at|default:"Tự xóa sau" }}</div>
+        <div class="trash-stat-value">{{ trash_retention_days }} ngày</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel card trash-list">
+    <div class="trash-list-head">
+      <div>ID</div>
+      <div>Module</div>
+      <div>Tên</div>
+      <div>{{ t.deleted_at|default:"Thời gian xóa" }}</div>
+      <div>{{ t.expires_at|default:"Tự xóa sau" }}</div>
+      <div class="trash-actions-head">{{ t.actions|default:"Thao tác" }}</div>
+    </div>
+    {% for row in rows %}
+      <div class="trash-row">
+        <div class="trash-cell trash-id">{{ row.object_id }}</div>
+        <div class="trash-cell">
+          <span class="trash-tag">{{ row.model_name }}</span>
+        </div>
+        <div class="trash-cell trash-name">{{ row.display_name|default:"-" }}</div>
+        <div class="trash-cell">
+          <div class="trash-date">{{ row.deleted_at|date:"d/m/Y H:i" }}</div>
+        </div>
+        <div class="trash-cell">
+          <div class="trash-date">{{ row.expires_at|date:"d/m/Y H:i" }}</div>
+          <div class="trash-countdown">{{ row.expires_at|timeuntil }}</div>
+        </div>
+        <div class="trash-cell trash-actions">
+          <a class="btn btn-primary" href="{{ row.restore_url }}">
+            {{ t.restore|default:"Khôi phục" }}
+          </a>
+          <a class="btn btn-danger" href="{{ row.delete_url }}">
+            {{ t.delete_permanently|default:"Xóa hẳn" }}
+          </a>
+        </div>
+      </div>
+    {% empty %}
+      <div class="trash-empty">
+        <div class="trash-empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 7h2v8h-2v-8Zm4 0h2v8h-2v-8ZM7 10h2v8H7v-8ZM6 21h12a2 2 0 0 0 2-2V9H4v10a2 2 0 0 0 2 2Z"/></svg>
+        </div>
+        <div class="trash-empty-title">{{ t.trash_empty|default:"Thùng rác đang trống." }}</div>
+        <div class="trash-empty-sub">Chưa có dữ liệu nào bị xóa.</div>
+      </div>
+    {% endfor %}
+  </section>
+
+  {% if paginator.num_pages > 1 %}
+    <section class="panel card pagination">
+      <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?page=1{% else %}#{% endif %}" aria-label="First">
+        «
+      </a>
+      <a class="page-link {% if not page_obj.has_previous %}is-disabled{% endif %}" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}" aria-label="Previous">
+        ‹
+      </a>
+
+      {% for p in paginator.page_range %}
+        {% if p == 1 or p == paginator.num_pages %}
+          <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?page={{ p }}">{{ p }}</a>
+        {% elif p >= page_obj.number|add:"-2" and p <= page_obj.number|add:"2" %}
+          <a class="page-link {% if p == page_obj.number %}is-active{% endif %}" href="?page={{ p }}">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+
+      <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}" aria-label="Next">
+        ›
+      </a>
+      <a class="page-link {% if not page_obj.has_next %}is-disabled{% endif %}" href="{% if page_obj.has_next %}?page={{ paginator.num_pages }}{% else %}#{% endif %}" aria-label="Last">
+        »
+      </a>
+    </section>
+  {% endif %}
+{% endblock %}

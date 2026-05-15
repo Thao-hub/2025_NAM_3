@@ -1,0 +1,137 @@
+{% extends "admin/base.html" %}
+{% block title %}Nhập kho theo cửa hàng{% endblock %}
+{% block page_title %}Nhập kho theo cửa hàng{% endblock %}
+{% block content %}
+  <style>
+    .bulk-restock-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .store-picker-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .store-picker-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      max-height: 420px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .store-picker-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(248, 250, 252, 0.88);
+    }
+    .store-picker-item input {
+      margin-top: 4px;
+    }
+    .store-picker-item strong,
+    .store-picker-item span {
+      display: block;
+    }
+    .store-picker-item span {
+      margin-top: 4px;
+    }
+    .summary-strip {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .summary-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.08);
+      color: #0f5f59;
+      font-weight: 700;
+    }
+  </style>
+
+  <section class="panel card">
+    <div class="top-sub" style="margin-bottom:8px;">Chọn một hoặc nhiều cửa hàng. Hệ thống sẽ đối chiếu lại tồn kho theo giao dịch và chỉ nhập bù cho những nơi đang hết hoặc sắp hết hàng.</div>
+    <div class="summary-strip">
+      <div class="summary-chip">Tổng cửa hàng: {{ stores|length }}</div>
+      <div class="summary-chip">Chỉ nhập bù cho cửa hàng tồn thấp</div>
+    </div>
+  </section>
+
+  <section class="panel card" style="margin-top:14px;">
+    <form method="post" class="bulk-restock-grid">
+      {% csrf_token %}
+      <div class="form-row">
+        <label for="id_target_stock">Mức tồn mục tiêu mỗi sản phẩm</label>
+        <input id="id_target_stock" type="number" min="1" name="target_stock" value="{{ target_stock }}">
+        <div class="top-sub">Ví dụ nhập `25` nghĩa là những cặp `cửa hàng x sản phẩm` đang thiếu sẽ được nâng lên tối thiểu 25 đơn vị.</div>
+      </div>
+
+      <div class="form-row">
+        <label for="id_trigger_threshold">Chỉ nhập khi tồn cửa hàng nhỏ hơn hoặc bằng</label>
+        <input id="id_trigger_threshold" type="number" min="0" name="trigger_threshold" value="{{ trigger_threshold|default:5 }}">
+        <div class="top-sub">Mặc định là `5`. Cửa hàng nào đang `0` hoặc `<= 5` mới được đưa vào nhập bù.</div>
+      </div>
+
+      <div class="form-row">
+        <label for="id_note">Ghi chú phiếu nhập</label>
+        <textarea id="id_note" name="note">{{ note_value }}</textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="store-picker-head">
+          <label style="margin:0;">Chọn cửa hàng cần nhập kho</label>
+          <button type="button" class="btn btn-light" id="toggleAllStoresBtn">Chọn tất cả / Bỏ chọn tất cả</button>
+        </div>
+        <div class="store-picker-list">
+          {% for store in stores %}
+            <label class="store-picker-item">
+              <input
+                type="checkbox"
+                name="store_ids"
+                value="{{ store.pk }}"
+                {% if store.pk|stringformat:"s" in selected_store_ids %}checked{% endif %}
+              >
+              <span>
+                <strong>{{ store.ten }}</strong>
+                <span>{{ store.chuoi.ten }} | {{ store.quan_huyen }}</span>
+                <span class="top-sub">{{ store.dia_chi }}</span>
+              </span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" type="submit">Nhập kho ngay</button>
+        <a class="btn btn-light" href="{% url 'store:admin_inventory_hub' %}">Quay lại tổng quan kho</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}
+{% block extra_js %}
+  {{ block.super }}
+  <script>
+    (function () {
+      const toggleBtn = document.getElementById("toggleAllStoresBtn");
+      const checkboxes = Array.from(document.querySelectorAll('input[name="store_ids"]'));
+      if (!toggleBtn || !checkboxes.length) return;
+
+      toggleBtn.addEventListener("click", function () {
+        const allChecked = checkboxes.every((item) => item.checked);
+        checkboxes.forEach((item) => {
+          item.checked = !allChecked;
+        });
+      });
+    })();
+  </script>
+{% endblock %}

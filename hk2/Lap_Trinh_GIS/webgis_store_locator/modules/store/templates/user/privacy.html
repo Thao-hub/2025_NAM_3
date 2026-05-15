@@ -1,0 +1,15 @@
+﻿{% extends 'user/account_base.html' %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h1 class="panel-title">Những thiết lập riêng tư</h1>
+  </div>
+  <div class="panel-body" style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;min-height:260px;">
+    <div style="font-size:15px;line-height:1.55;max-width:560px;">Yêu cầu xóa tài khoản</div>
+    <form method="post">
+      {% csrf_token %}
+      <button class="action-btn" type="submit">{% if privacy_state.delete_requested %}Đã gửi yêu cầu{% else %}Xóa bỏ{% endif %}</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
