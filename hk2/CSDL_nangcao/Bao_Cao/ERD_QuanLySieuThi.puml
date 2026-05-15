@@ -1,0 +1,171 @@
+@startuml
+' ERD Quản Lý Siêu Thị
+' Cách thể hiện: dùng nhãn chữ 1-1, 1-N, N-N thay cho ký hiệu crow-foot.
+
+left to right direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultFontName Arial
+skinparam class {
+    BackgroundColor #D9EEF9
+    BorderColor #3A87AD
+    ArrowColor #666666
+    FontColor #000000
+}
+skinparam note {
+    BackgroundColor #FFF7E6
+    BorderColor #C9A227
+    FontColor #000000
+}
+
+hide methods
+hide stereotypes
+hide circle
+
+class NGANH_HANG {
+  * MaNganh : varchar(10)
+  --
+  TenNganh : nvarchar(100)
+}
+
+class LOAI_HANG {
+  * MaLoai : varchar(10)
+  --
+  TenLoai : nvarchar(100)
+  MaNganh : varchar(10) <<FK>>
+}
+
+class NHA_SAN_XUAT {
+  * MaNSX : varchar(10)
+  --
+  TenNSX : nvarchar(120)
+  DiaChi : nvarchar(200)
+  SDT : varchar(15)
+}
+
+class NHA_PHAN_PHOI {
+  * MaNPP : varchar(10)
+  --
+  TenNPP : nvarchar(120)
+  DiaChi : nvarchar(200)
+  SDT : varchar(15)
+}
+
+class MAT_HANG {
+  * MaHang : varchar(10)
+  --
+  TenHang : nvarchar(120)
+  DonViTinh : nvarchar(20)
+  GiaGoc : decimal(18,0)
+  GiaBan : decimal(18,0)
+  MaLoai : varchar(10) <<FK>>
+  MaNSX : varchar(10) <<FK>>
+  MaNPP : varchar(10) <<FK>>
+  TrangThai : nvarchar(20)
+}
+
+class LO_HANG {
+  * MaLo : varchar(10)
+  --
+  TenLo : nvarchar(80)
+  MaHang : varchar(10) <<FK>>
+  SoLuongNhap : int
+  TonKho : int
+  TenVT : nvarchar(100)
+  NgayNhap : date
+}
+
+class KHUYEN_MAI {
+  * MaKM : varchar(10)
+  --
+  TenChuongTrinh : nvarchar(120)
+  PhanTramGiam : decimal(5,2)
+  NgayBatDau : date
+  NgayKetThuc : date
+  TrangThai : nvarchar(20)
+}
+
+class NHAN_VIEN {
+  * MaNV : varchar(10)
+  --
+  HoTen : nvarchar(100)
+  SDT : varchar(15)
+  DiaChi : nvarchar(200)
+  ChucVu : nvarchar(30)
+  TrangThai : nvarchar(20)
+}
+
+class TAI_KHOAN {
+  * MaTK : varchar(10)
+  --
+  TenDangNhap : varchar(50)
+  MatKhau : varchar(50)
+  Quyen : varchar(20)
+  MaNV : varchar(10) <<FK>>
+  DangHoatDong : bit
+}
+
+class KHACH_HANG {
+  * MaKH : varchar(10)
+  --
+  HoTen : nvarchar(100)
+  SDT : varchar(15)
+  DiaChi : nvarchar(200)
+  HangThanhVien : nvarchar(20)
+  DiemTichLuy : int
+}
+
+class HOA_DON {
+  * MaHD : varchar(10)
+  --
+  NgayLap : datetime
+  TongTien : decimal(18,0)
+  MaNV : varchar(10) <<FK>>
+  MaKM : varchar(10) <<FK>>
+  MaKH : varchar(10) <<FK>>
+  PhuongThucThanhToan : nvarchar(20)
+  TrangThai : nvarchar(20)
+}
+
+class CHI_TIET_HOA_DON {
+  * MaHD : varchar(10) <<FK>>
+  * MaHang : varchar(10) <<FK>>
+  --
+  SoLuong : int
+  DonGiaBan : decimal(18,0)
+}
+
+NGANH_HANG --> LOAI_HANG : Thuộc\n1-N
+LOAI_HANG --> MAT_HANG : Thuộc\n1-N
+NHA_SAN_XUAT --> MAT_HANG : Sản xuất\n1-N
+NHA_PHAN_PHOI --> MAT_HANG : Phân phối\n1-N
+MAT_HANG --> LO_HANG : Có lô hàng\n1-N
+NHAN_VIEN --> TAI_KHOAN : Sở hữu\n1-1
+NHAN_VIEN --> HOA_DON : Lập\n1-N
+KHUYEN_MAI --> HOA_DON : Áp dụng\n1-N
+KHACH_HANG --> HOA_DON : Mua\n1-N
+HOA_DON --> CHI_TIET_HOA_DON : Có\n1-N
+MAT_HANG --> CHI_TIET_HOA_DON : Xuất hiện trong\n1-N
+
+note bottom of CHI_TIET_HOA_DON
+Bảng CHI_TIET_HOA_DON là bảng liên kết
+giữa HOA_DON và MAT_HANG.
+Nếu nhìn ở mức nghiệp vụ thì:
+HOA_DON và MAT_HANG có quan hệ N-N.
+end note
+
+note right of TAI_KHOAN
+Mỗi nhân viên có tối đa 1 tài khoản,
+và mỗi tài khoản thuộc về 1 nhân viên.
+Quan hệ: 1-1
+end note
+
+legend right
+|= Ký hiệu |= Ý nghĩa |
+| 1-1 | Một bản ghi bên A liên với tối đa 1 bản ghi bên B |
+| 1-N | Một bản ghi bên A liên với nhiều bản ghi bên B |
+| N-N | Nhiều bản ghi bên A liên với nhiều bản ghi bên B |
+endlegend
+
+@enduml

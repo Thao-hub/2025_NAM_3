@@ -1,0 +1,74 @@
+@startuml
+' Sơ đồ use case tổng quan - Quản lý bán hàng ở một siêu thị
+
+left to right direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #EAF4FF
+  BorderColor #2F6F9F
+  FontColor #000000
+}
+
+actor "Quản lý" as QuanLy
+actor "Nhân viên bán hàng" as NhanVien
+actor "Khách hàng" as KhachHang
+
+rectangle "Hệ thống quản lý siêu thị" {
+  usecase "Đăng nhập" as UC_DangNhap
+  usecase "Quản lý ngành hàng" as UC_NganhHang
+  usecase "Quản lý loại hàng" as UC_LoaiHang
+  usecase "Quản lý mặt hàng" as UC_MatHang
+  usecase "Quản lý nhà sản xuất" as UC_NSX
+  usecase "Quản lý nhà phân phối" as UC_NPP
+  usecase "Quản lý lô hàng" as UC_LoHang
+  usecase "Quản lý vị trí trưng bày" as UC_ViTri
+  usecase "Quản lý khuyến mãi" as UC_KhuyenMai
+  usecase "Quản lý khách hàng" as UC_KhachHang
+  usecase "Quản lý nhân viên" as UC_NhanVien
+  usecase "Quản lý tài khoản" as UC_TaiKhoan
+  usecase "Lập hóa đơn bán hàng" as UC_HoaDon
+  usecase "Cập nhật chi tiết hóa đơn" as UC_CTHD
+  usecase "Tra cứu tồn kho" as UC_TonKho
+  usecase "Xem doanh thu - thống kê" as UC_ThongKe
+  usecase "Áp dụng khuyến mãi" as UC_ApDungKM
+  usecase "Xem thông tin hóa đơn" as UC_XemHD
+}
+
+QuanLy --> UC_DangNhap
+QuanLy --> UC_NganhHang
+QuanLy --> UC_LoaiHang
+QuanLy --> UC_MatHang
+QuanLy --> UC_NSX
+QuanLy --> UC_NPP
+QuanLy --> UC_LoHang
+QuanLy --> UC_ViTri
+QuanLy --> UC_KhuyenMai
+QuanLy --> UC_KhachHang
+QuanLy --> UC_NhanVien
+QuanLy --> UC_TaiKhoan
+QuanLy --> UC_TonKho
+QuanLy --> UC_ThongKe
+QuanLy --> UC_XemHD
+
+NhanVien --> UC_DangNhap
+NhanVien --> UC_HoaDon
+NhanVien --> UC_CTHD
+NhanVien --> UC_KhachHang
+NhanVien --> UC_TonKho
+NhanVien --> UC_XemHD
+NhanVien --> UC_ApDungKM
+
+KhachHang --> UC_XemHD
+
+UC_HoaDon .> UC_CTHD : <<include>>
+UC_HoaDon .> UC_ApDungKM : <<include>>
+UC_HoaDon .> UC_KhachHang : <<include>>
+UC_ThongKe .> UC_XemHD : <<include>>
+UC_TonKho .> UC_MatHang : <<include>>
+UC_LoHang .> UC_ViTri : <<include>>
+
+@enduml
