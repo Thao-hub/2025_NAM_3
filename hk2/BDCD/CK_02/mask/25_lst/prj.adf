@@ -1,0 +1,6 @@
+Projection    UTM
+Zone          48
+Spheroid      WGS84
+Units         METERS
+Zunits        NO
+Parameters    
